@@ -1,0 +1,19 @@
+{
+  "tool": "thicket_inspector",
+  "version": 1,
+  "labeler": "GS",
+  "exported": "2026-07-13T22:03:22.462Z",
+  "n": 1,
+  "labels": [
+    {
+      "id": 0,
+      "stratum": "intact",
+      "lon": 26.874674,
+      "lat": -33.326644,
+      "label": "intact",
+      "note": "",
+      "labeler": "GS",
+      "ts": "2026-07-13T22:01:41.915Z"
+    }
+  ]
+}

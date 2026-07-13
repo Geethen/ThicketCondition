@@ -4,7 +4,9 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
 <title>Thicket Condition Inspector</title>
-<link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" />
+<link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css"
+  integrity="sha384-MinO0mNliZ3vwppuPOUnGa+iq619pfMhLVUXfC4LHwSCvF9H+6P/KO4Q7qBOYV5V"
+  crossorigin="anonymous" referrerpolicy="no-referrer" />
 <style>
   :root{
     --bg:#0f1115; --panel:#171a21; --panel2:#1e222b; --line:#2a2f3a;
@@ -68,9 +70,35 @@
   .srcbtn.active{border-color:var(--accent); background:#16233d}
   .srcbtn small{display:block; color:var(--muted); font-size:10px; margin-top:2px}
 
-  .waybackrow{display:flex; align-items:center; gap:8px; margin-top:8px; font-size:12px; color:var(--muted)}
-  .waybackrow input[type=range]{flex:1}
-  .waybackrow.hidden{display:none}
+  /* ---- Esri Wayback panel ---- */
+  .wbpanel{margin-top:8px; font-size:12px; color:var(--muted)}
+  .wbpanel.hidden{display:none}
+  .wbrow{display:flex; align-items:center; gap:6px; margin:4px 0}
+  .wbrow select{flex:1; background:#0c0e13; color:var(--ink); border:1px solid var(--line);
+    border-radius:8px; padding:6px 8px; font-size:12px; font-family:inherit}
+  button.wbstep{background:var(--panel2); color:var(--ink); border:1px solid var(--line);
+    border-radius:8px; padding:5px 9px; cursor:pointer; font-size:13px; line-height:1}
+  button.wbstep:hover{border-color:var(--accent)}
+  button.wbstep:disabled{opacity:.4; cursor:default}
+  .wbtog{display:flex; align-items:center; gap:6px; margin:6px 0; cursor:pointer; user-select:none}
+  .wbcap{font-size:11px; color:var(--muted); margin-top:2px}
+  .wbcap b{color:var(--ink)}
+  .wbspin{display:inline-block; width:10px; height:10px; border:2px solid var(--line);
+    border-top-color:var(--accent); border-radius:50%; animation:wbspin .7s linear infinite;
+    vertical-align:-1px; margin-left:4px}
+  @keyframes wbspin{to{transform:rotate(360deg)}}
+  #wb-row-b.hidden{display:none}
+
+  /* swipe compare: second map + draggable divider live over #map */
+  #wb-compare-map{position:absolute; inset:0; z-index:2}
+  #wb-swipe{position:absolute; top:0; bottom:0; width:0; z-index:3; cursor:ew-resize;
+    border-left:2px solid #fff; box-shadow:0 0 0 1px #0006}
+  #wb-swipe .knob{position:absolute; top:50%; left:-15px; transform:translateY(-50%);
+    width:28px; height:28px; border-radius:50%; background:#fff; color:#111;
+    display:flex; align-items:center; justify-content:center; font-size:14px; box-shadow:0 1px 4px #0007}
+  .wb-swipe-label{position:absolute; top:8px; z-index:3; background:rgba(16,18,24,.85);
+    border:1px solid var(--line); border-radius:6px; padding:3px 7px; font-size:11px; color:var(--ink)}
+  .wb-swipe-label.a{left:10px} .wb-swipe-label.b{right:10px}
 
   .seclbl{font-size:11px; text-transform:uppercase; letter-spacing:.6px; color:var(--muted);
     margin:16px 0 6px}
@@ -170,9 +198,20 @@
 
       <div class="seclbl">Imagery</div>
       <div class="srcgrid" id="srcgrid"></div>
-      <div class="waybackrow hidden" id="waybackrow">
-        <span id="wbYear">–</span>
-        <input type="range" id="wbSlider" min="0" max="0" value="0" step="1" />
+      <div class="wbpanel hidden" id="waybackrow">
+        <div class="wbrow">
+          <button class="wbstep" id="wbPrev" title="Older capture">‹</button>
+          <select id="wbSelect" disabled><option>loading…</option></select>
+          <button class="wbstep" id="wbNext" title="Newer capture">›</button>
+        </div>
+        <label class="wbtog"><input type="checkbox" id="wbLocal"> only dates with new imagery here</label>
+        <div class="wbcap" id="wbCap">Acquired: <b id="wbCapDate">–</b></div>
+        <label class="wbtog"><input type="checkbox" id="wbCompare"> ⇆ compare two dates (swipe)</label>
+        <div class="wbrow hidden" id="wb-row-b">
+          <button class="wbstep" id="wbPrevB" title="Older">‹</button>
+          <select id="wbSelectB"></select>
+          <button class="wbstep" id="wbNextB" title="Newer">›</button>
+        </div>
       </div>
       <div style="margin-top:8px;display:flex;gap:8px">
         <a class="btn wide" id="gmapsLink" target="_blank" rel="noopener">Google Maps ↗</a>
@@ -230,9 +269,12 @@
   </div>
 </div>
 
-<script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+<script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"
+  integrity="sha384-SYKAG6cglRMN0RVvhNeBY0r3FYKNOJtznwA0v7B5Vp9tr31xAHsZC0DqkQ/pZDmj"
+  crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
 // ============================================================ embedded sample
+const DATASET_ID = '__DATASET_ID__';
 const POINTS = [__POINTS__];
 </script>
 <script src="app.js"></script>

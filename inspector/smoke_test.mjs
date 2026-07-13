@@ -64,7 +64,9 @@ console.log('basemap tile requests:', tileOK);
 console.log('JS errors:', errors.length ? errors : 'none');
 const pass = nPts === 846 && cModerate === '1' && cSevere === '1'
   && payload.length === 2 && payload.every(r => r.labeler === 'TEST')
-  && errors.filter(e => !/Failed to load|net::ERR/.test(e)).length === 0;
+  // Ignore the optional gee_layers.json fetch: over file:// it logs a scheme
+  // error, over http a 404 — neither is an app fault.
+  && errors.filter(e => !/Failed to load|net::ERR|URL scheme .* not supported|gee_layers\.json/.test(e)).length === 0;
 console.log(pass ? '\n✅ SMOKE TEST PASSED' : '\n❌ SMOKE TEST FAILED');
 await browser.close();
 process.exit(pass ? 0 : 1);

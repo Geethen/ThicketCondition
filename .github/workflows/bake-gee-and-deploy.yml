@@ -1,0 +1,93 @@
+# Build + deploy the inspector to GitHub Pages, and (optionally) re-bake the
+# Earth Engine S2 tile manifest so those layers stay fresh.
+#
+# Deploy: every push touching inspector/** rebuilds index.html and publishes the
+# inspector/ folder to Pages. Pages must be set to the "GitHub Actions" source
+# (Settings → Pages → Source = GitHub Actions) for this to serve.
+#
+# Bake (optional): Earth Engine getMapId tile URLs are temporary, so a weekly
+# schedule re-bakes gee_layers.json. The service-account key lives ONLY in the
+# EE_SA_KEY_JSON secret — written to the runner, used by the bake, never committed
+# or shipped to the page. Only the resulting keyless tile URLs reach the site. If
+# the secret is absent the bake is skipped and the site deploys without EE layers.
+#
+# Secret setup (one time, for the EE layers):
+#   1. EE-registered service account + JSON key
+#      (https://developers.google.com/earth-engine/guides/service_account),
+#      registered with the EE project (ee-gsingh).
+#   2. Settings → Secrets and variables → Actions:
+#        EE_SA_KEY_JSON = <full contents of the key .json>
+#        EE_SA_EMAIL    = <service-account email>   (optional; derived from key)
+#
+# NOTE: secrets are NOT exposed to workflows triggered by fork pull requests,
+# which is why this triggers on push/schedule/dispatch only — never on PR.
+
+name: Deploy inspector to Pages
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 5 * * 1'        # weekly, Monday 05:00 UTC — refresh EE tile tokens
+  push:
+    branches: [main]
+    paths:
+      - 'inspector/**'
+      - 'analysis/results/sample_points.csv'   # points are embedded at build time
+      - '.github/workflows/bake-gee-and-deploy.yml'
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Never run two Pages deploys at once; let a newer push cancel an in-flight one.
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Build index.html (embed points, inline app.js)
+        run: python inspector/build.py
+
+      - name: Install Earth Engine API
+        run: pip install earthengine-api
+
+      - name: Bake S2 tile manifest (optional — needs EE_SA_KEY_JSON)
+        env:
+          EE_SA_KEY_JSON: ${{ secrets.EE_SA_KEY_JSON }}
+          EE_SA_EMAIL: ${{ secrets.EE_SA_EMAIL }}
+          EE_PROJECT: ee-gsingh
+        run: |
+          if [ -z "$EE_SA_KEY_JSON" ]; then
+            echo "::notice::EE_SA_KEY_JSON not set — deploying without EE layers (Wayback + other basemaps still work)"
+            exit 0
+          fi
+          python inspector/bake_gee_layers.py
+
+      - name: Prepare Pages artifact
+        run: |
+          mkdir -p _site
+          cp inspector/index.html _site/index.html
+          [ -f inspector/gee_layers.json ] && cp inspector/gee_layers.json _site/ || true
+          touch _site/.nojekyll     # serve files as-is, no Jekyll processing
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - name: Deploy to GitHub Pages
+        id: deploy
+        uses: actions/deploy-pages@v4

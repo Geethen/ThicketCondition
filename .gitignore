@@ -17,6 +17,11 @@ venv/
 .env
 .env.*
 
+# Earth Engine service-account key — NEVER commit; used only locally / as a CI secret
+*sa*.json
+gee_service_account*.json
+ee-service-account*.json
+
 # OS/editor noise
 Thumbs.db
 .DS_Store
@@ -29,3 +34,5 @@ inspector/node_modules/
 inspector/package-lock.json
 inspector/preview.png
 inspector/shot.mjs
+# Baked EE tile manifest holds temporary, account-tied tokens — regenerated in CI
+inspector/gee_layers.json
