@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+<title>Thicket Condition Inspector</title>
+<link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" />
+<style>
+  :root{
+    --bg:#0f1115; --panel:#171a21; --panel2:#1e222b; --line:#2a2f3a;
+    --ink:#e8eaed; --muted:#9aa2af; --accent:#4f8cff;
+    --intact:#0a7d34; --moderate:#e0a400; --severe:#c0392b;
+    --unsure:#7a828f; --nott:#5b6472;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%;margin:0}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:var(--bg); color:var(--ink); overflow:hidden;
+  }
+  #app{display:flex; height:100vh; width:100vw}
+  /* ---- map ---- */
+  #mapwrap{position:relative; flex:1 1 auto; min-width:0}
+  #map{position:absolute; inset:0}
+  .maplibregl-ctrl-attrib{font-size:10px}
+  /* ---- side panel ---- */
+  #panel{
+    width:380px; flex:0 0 380px; background:var(--panel);
+    border-left:1px solid var(--line); display:flex; flex-direction:column;
+    height:100%; z-index:5;
+  }
+  #panel h1{font-size:15px; margin:0; font-weight:600; letter-spacing:.2px}
+  #panel .sub{font-size:11px; color:var(--muted); margin-top:2px}
+  .phead{padding:14px 16px; border-bottom:1px solid var(--line); background:var(--panel2)}
+  .pbody{overflow-y:auto; flex:1 1 auto; padding:0 16px 16px}
+  .pfoot{padding:12px 16px; border-top:1px solid var(--line); background:var(--panel2);
+         display:flex; gap:8px; flex-wrap:wrap}
+
+  /* progress */
+  .prog{display:flex; gap:6px; margin-top:10px}
+  .chip{flex:1; text-align:center; padding:6px 4px; border-radius:8px; background:#0c0e13;
+        border:1px solid var(--line); font-size:11px}
+  .chip b{display:block; font-size:16px; line-height:1.1; margin-top:2px}
+  .chip.intact b{color:var(--intact)} .chip.moderate b{color:var(--moderate)}
+  .chip.severe b{color:var(--severe)} .chip.all b{color:var(--accent)}
+
+  /* nav */
+  .navrow{display:flex; align-items:center; gap:8px; margin:14px 0 6px}
+  .navrow .idlbl{font-size:13px; color:var(--muted); flex:1}
+  .navrow .idlbl b{color:var(--ink)}
+  button.nav{background:var(--panel2); color:var(--ink); border:1px solid var(--line);
+    border-radius:8px; padding:6px 10px; cursor:pointer; font-size:13px}
+  button.nav:hover{border-color:var(--accent)}
+  button.nav:disabled{opacity:.4; cursor:default}
+
+  .metarow{display:flex; justify-content:space-between; font-size:12px; padding:5px 0;
+    border-bottom:1px dashed var(--line)}
+  .metarow span:first-child{color:var(--muted)}
+  .pill{display:inline-block; padding:2px 8px; border-radius:999px; font-size:11px; font-weight:600;
+    color:#fff}
+  .pill.intact{background:var(--intact)} .pill.moderate{background:var(--moderate)}
+  .pill.severe{background:var(--severe)}
+
+  /* imagery source buttons */
+  .srcgrid{display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-top:8px}
+  .srcbtn{background:var(--panel2); border:1px solid var(--line); color:var(--ink);
+    padding:8px 6px; border-radius:8px; cursor:pointer; font-size:12px; text-align:left}
+  .srcbtn.active{border-color:var(--accent); background:#16233d}
+  .srcbtn small{display:block; color:var(--muted); font-size:10px; margin-top:2px}
+
+  .waybackrow{display:flex; align-items:center; gap:8px; margin-top:8px; font-size:12px; color:var(--muted)}
+  .waybackrow input[type=range]{flex:1}
+  .waybackrow.hidden{display:none}
+
+  .seclbl{font-size:11px; text-transform:uppercase; letter-spacing:.6px; color:var(--muted);
+    margin:16px 0 6px}
+
+  /* label buttons */
+  .lblgrid{display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px}
+  .lblbtn{border:2px solid var(--line); background:var(--panel2); color:var(--ink);
+    padding:12px 6px; border-radius:10px; cursor:pointer; font-size:13px; font-weight:600;
+    display:flex; flex-direction:column; align-items:center; gap:4px; transition:.12s}
+  .lblbtn .dot{width:14px; height:14px; border-radius:50%}
+  .lblbtn:hover{border-color:#3a4150}
+  .lblbtn.sel-intact{background:var(--intact); border-color:var(--intact); color:#fff}
+  .lblbtn.sel-moderate{background:var(--moderate); border-color:var(--moderate); color:#101010}
+  .lblbtn.sel-severe{background:var(--severe); border-color:var(--severe); color:#fff}
+  .lblbtn.sel-notthicket{background:var(--nott); border-color:var(--nott); color:#fff}
+  .lblbtn.sel-unsure{background:var(--unsure); border-color:var(--unsure); color:#fff}
+  .lblgrid2{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:8px}
+
+  textarea.note{width:100%; margin-top:8px; background:#0c0e13; color:var(--ink);
+    border:1px solid var(--line); border-radius:8px; padding:8px; font-size:12px; resize:vertical;
+    min-height:44px; font-family:inherit}
+
+  .btn{border:1px solid var(--line); background:var(--panel2); color:var(--ink);
+    border-radius:8px; padding:8px 12px; cursor:pointer; font-size:12px}
+  .btn:hover{border-color:var(--accent)}
+  .btn.primary{background:var(--accent); border-color:var(--accent); color:#fff}
+  .btn.wide{flex:1}
+
+  .toast{position:absolute; bottom:16px; left:50%; transform:translateX(-50%);
+    background:#0c0e13; border:1px solid var(--line); padding:8px 14px; border-radius:8px;
+    font-size:12px; opacity:0; transition:.3s; pointer-events:none; z-index:20}
+  .toast.show{opacity:1}
+
+  /* legend on map */
+  .legend{position:absolute; top:10px; left:10px; background:rgba(16,18,24,.88);
+    border:1px solid var(--line); border-radius:8px; padding:8px 10px; font-size:11px; z-index:4}
+  .legend div{display:flex; align-items:center; gap:6px; margin:2px 0}
+  .legend .sw{width:11px; height:11px; border-radius:50%; border:1px solid #0008}
+  .legend .filt{margin-top:6px; padding-top:6px; border-top:1px solid var(--line); color:var(--muted)}
+  .legend label{cursor:pointer; user-select:none}
+
+  #intro{position:absolute; inset:0; background:rgba(9,11,15,.94); z-index:50;
+    display:flex; align-items:center; justify-content:center}
+  #introbox{max-width:520px; background:var(--panel); border:1px solid var(--line);
+    border-radius:14px; padding:26px 28px; margin:16px}
+  #introbox h2{margin:0 0 6px} #introbox p{color:var(--muted); font-size:13px; line-height:1.55}
+  #introbox ol{color:var(--muted); font-size:13px; line-height:1.6; padding-left:18px}
+  #introbox .who{margin:14px 0}
+  #introbox input{width:100%; background:#0c0e13; color:var(--ink); border:1px solid var(--line);
+    border-radius:8px; padding:9px 10px; font-size:13px}
+  .hidden{display:none !important}
+  kbd{background:#0c0e13; border:1px solid var(--line); border-bottom-width:2px; border-radius:5px;
+    padding:1px 5px; font-size:11px; font-family:inherit}
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="mapwrap">
+    <div id="map"></div>
+    <div class="legend">
+      <div><span class="sw" style="background:var(--intact)"></span>Intact stratum</div>
+      <div><span class="sw" style="background:var(--moderate)"></span>Moderate stratum</div>
+      <div><span class="sw" style="background:var(--severe)"></span>Severe stratum</div>
+      <div class="filt">
+        <label><input type="checkbox" id="hideLabeled"> hide labeled</label>
+      </div>
+    </div>
+    <div class="toast" id="toast"></div>
+  </div>
+
+  <div id="panel">
+    <div class="phead">
+      <h1>Thicket Condition Inspector</h1>
+      <div class="sub">South African solid thicket · reference labeling</div>
+      <div class="prog">
+        <div class="chip all">labeled<b id="c_all">0</b></div>
+        <div class="chip intact">intact<b id="c_intact">0</b></div>
+        <div class="chip moderate">moderate<b id="c_moderate">0</b></div>
+        <div class="chip severe">severe<b id="c_severe">0</b></div>
+      </div>
+    </div>
+
+    <div class="pbody">
+      <div class="navrow">
+        <button class="nav" id="prevBtn">‹ Prev</button>
+        <div class="idlbl">Point <b id="curId">–</b> / <span id="totId">0</span>
+          <span id="curStratum"></span></div>
+        <button class="nav" id="nextBtn">Next ›</button>
+      </div>
+      <div style="display:flex;gap:8px;margin-bottom:8px">
+        <button class="btn wide" id="nextUnlabeled">Jump to next unlabeled →</button>
+      </div>
+
+      <div class="metarow"><span>Coordinates</span><span id="mCoord">–</span></div>
+      <div class="metarow"><span>Map stratum (model)</span><span id="mStratum">–</span></div>
+      <div class="metarow"><span>Your label</span><span id="mLabel">–</span></div>
+
+      <div class="seclbl">Imagery</div>
+      <div class="srcgrid" id="srcgrid"></div>
+      <div class="waybackrow hidden" id="waybackrow">
+        <span id="wbYear">–</span>
+        <input type="range" id="wbSlider" min="0" max="0" value="0" step="1" />
+      </div>
+      <div style="margin-top:8px;display:flex;gap:8px">
+        <a class="btn wide" id="gmapsLink" target="_blank" rel="noopener">Google Maps ↗</a>
+        <a class="btn wide" id="gearthLink" target="_blank" rel="noopener">Google Earth ↗</a>
+      </div>
+
+      <div class="seclbl">Condition at this point</div>
+      <div class="lblgrid">
+        <button class="lblbtn" data-lbl="intact"><span class="dot" style="background:var(--intact)"></span>Intact</button>
+        <button class="lblbtn" data-lbl="moderate"><span class="dot" style="background:var(--moderate)"></span>Moderate</button>
+        <button class="lblbtn" data-lbl="severe"><span class="dot" style="background:var(--severe)"></span>Severe</button>
+      </div>
+      <div class="lblgrid2">
+        <button class="lblbtn" data-lbl="notthicket"><span class="dot" style="background:var(--nott)"></span>Not thicket / transformed</button>
+        <button class="lblbtn" data-lbl="unsure"><span class="dot" style="background:var(--unsure)"></span>Unsure</button>
+      </div>
+      <textarea class="note" id="note" placeholder="Optional note (species, edge effect, why unsure…)"></textarea>
+
+      <div class="seclbl">Guidance</div>
+      <div style="font-size:12px;color:var(--muted);line-height:1.5">
+        <b style="color:var(--intact)">Intact</b>: dense, continuous canopy of woody thicket.<br>
+        <b style="color:var(--moderate)">Moderate</b>: patchy / thinned canopy, visible bare ground between clumps, browse lines.<br>
+        <b style="color:var(--severe)">Severe</b>: mostly bare/eroded, sparse remnant bush, ephemeral herbaceous.<br>
+        Use <b>Not thicket</b> for cultivation, plantation, urban, water, or clearly non-thicket vegetation.
+      </div>
+    </div>
+
+    <div class="pfoot">
+      <button class="btn primary wide" id="downloadBtn">⬇ Download labels</button>
+      <button class="btn wide" id="uploadBtn">⬆ Upload / resume</button>
+      <input type="file" id="uploadInput" accept=".json,.csv" class="hidden" />
+      <button class="btn" id="helpBtn">?</button>
+    </div>
+  </div>
+</div>
+
+<div id="intro">
+  <div id="introbox">
+    <h2>Thicket Condition Inspector</h2>
+    <p>You're helping build reference data for a map of South African thicket condition.
+       For each sample point, look at the imagery and record whether the thicket is
+       <b>intact</b>, <b>moderate</b>, or <b>severely</b> degraded.</p>
+    <ol>
+      <li>Click a point (or use <kbd>Next ›</kbd>) — the map zooms to it.</li>
+      <li>Switch imagery sources & Wayback dates to judge canopy cover.</li>
+      <li>Press a condition button, or keys <kbd>1</kbd> intact <kbd>2</kbd> moderate <kbd>3</kbd> severe <kbd>4</kbd> not-thicket <kbd>5</kbd> unsure.</li>
+      <li>Your work is auto-saved in this browser. <b>Download</b> the file when done and send it back.</li>
+      <li>Returning? Click <b>Upload / resume</b> to continue from a saved file.</li>
+    </ol>
+    <div class="who">
+      <label style="font-size:12px;color:var(--muted)">Your name / initials (stored with each label)</label>
+      <input id="labelerName" placeholder="e.g. SJ" />
+    </div>
+    <button class="btn primary" id="startBtn" style="width:100%;padding:11px">Start labeling</button>
+  </div>
+</div>
+
+<script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+<script>
+// ============================================================ embedded sample
+const POINTS = [__POINTS__];
+</script>
+<script src="app.js"></script>
+</body>
+</html>

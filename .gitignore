@@ -20,3 +20,12 @@ venv/
 # OS/editor noise
 Thumbs.db
 .DS_Store
+
+# Large exported rasters (do not commit)
+*.tif
+
+# Inspector dev-only artifacts (index.html is the built, committed output)
+inspector/node_modules/
+inspector/package-lock.json
+inspector/preview.png
+inspector/shot.mjs
