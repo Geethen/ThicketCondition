@@ -1,0 +1,873 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Thicket Condition · P(intact) Threshold Sensitivity</title>
+<style>
+  :root {
+    /* neutrals biased warm-green (the thicket accent) */
+    --plane:        #f7f8f5;
+    --surface:      #fcfdfb;
+    --surface-2:    #f1f4ee;
+    --ink:          #10140f;
+    --ink-2:        #4c534a;
+    --muted:        #868d80;
+    --grid:         #e4e7dd;
+    --axis:         #c4c9bb;
+    --border:       rgba(16,20,15,0.10);
+    --accent:       #0a7d34;   /* intact green (from steph.js) */
+    --accent-soft:  #0a7d34;
+    /* categorical (validated default palette, light) */
+    --s-acc:        #256abf;   /* overall accuracy — blue  */
+    --s-f1:         #1baf7a;   /* F1 — aqua                */
+    --s-you:        #eb6834;   /* Youden's J — orange      */
+    --s-sens:       #4a3aa7;   /* sensitivity — violet     */
+    --s-spec:       #e34948;   /* specificity — red        */
+    --seq:          #0a7d34;   /* area — sequential green   */
+    --seq-fill:     rgba(10,125,52,0.12);
+    --good:         #0ca30c;
+    --shadow:       0 1px 2px rgba(16,20,15,.04), 0 8px 28px rgba(16,20,15,.06);
+    --radius:       14px;
+    --mono: ui-monospace, "Cascadia Code", "SF Mono", Menlo, Consolas, monospace;
+    --sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --plane:      #0c0d0b;
+      --surface:    #17190f;
+      --surface-2:  #1e2117;
+      --ink:        #f3f5ef;
+      --ink-2:      #c2c8ba;
+      --muted:      #8a9081;
+      --grid:       #262a1f;
+      --axis:       #363a2d;
+      --border:     rgba(243,245,239,0.10);
+      --accent:     #35b45f;
+      --s-acc:      #3987e5;
+      --s-f1:       #199e70;
+      --s-you:      #d95926;
+      --s-sens:     #9085e9;
+      --s-spec:     #e66767;
+      --seq:        #35b45f;
+      --seq-fill:   rgba(53,180,95,0.16);
+      --good:       #0ca30c;
+      --shadow:     0 1px 2px rgba(0,0,0,.4), 0 10px 30px rgba(0,0,0,.5);
+    }
+  }
+  :root[data-theme="light"] {
+    --plane:#f7f8f5;--surface:#fcfdfb;--surface-2:#f1f4ee;--ink:#10140f;--ink-2:#4c534a;
+    --muted:#868d80;--grid:#e4e7dd;--axis:#c4c9bb;--border:rgba(16,20,15,0.10);
+    --accent:#0a7d34;--s-acc:#256abf;--s-f1:#1baf7a;--s-you:#eb6834;--s-sens:#4a3aa7;
+    --s-spec:#e34948;--seq:#0a7d34;--seq-fill:rgba(10,125,52,0.12);--good:#0ca30c;
+    --shadow:0 1px 2px rgba(16,20,15,.04), 0 8px 28px rgba(16,20,15,.06);
+  }
+  :root[data-theme="dark"] {
+    --plane:#0c0d0b;--surface:#17190f;--surface-2:#1e2117;--ink:#f3f5ef;--ink-2:#c2c8ba;
+    --muted:#8a9081;--grid:#262a1f;--axis:#363a2d;--border:rgba(243,245,239,0.10);
+    --accent:#35b45f;--s-acc:#3987e5;--s-f1:#199e70;--s-you:#d95926;--s-sens:#9085e9;
+    --s-spec:#e66767;--seq:#35b45f;--seq-fill:rgba(53,180,95,0.16);--good:#0ca30c;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 30px rgba(0,0,0,.5);
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--plane); color: var(--ink);
+    font-family: var(--sans);
+    -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+    line-height: 1.5;
+  }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 40px 24px 72px; }
+
+  /* ---------- header ---------- */
+  header { margin-bottom: 28px; }
+  .eyebrow {
+    font-size: 12px; letter-spacing: .09em; text-transform: uppercase;
+    color: var(--accent); font-weight: 650; margin: 0 0 10px;
+  }
+  h1 {
+    font-size: clamp(22px, 3.4vw, 30px); line-height: 1.15; margin: 0 0 8px;
+    font-weight: 680; letter-spacing: -0.01em; text-wrap: balance;
+  }
+  .sub { color: var(--ink-2); font-size: 15px; max-width: 68ch; margin: 0; }
+  .meta-line {
+    margin-top: 14px; font-size: 12.5px; color: var(--muted);
+    display: flex; flex-wrap: wrap; gap: 6px 18px;
+  }
+  .meta-line b { color: var(--ink-2); font-weight: 600; }
+
+  /* ---------- headline / KPI band ---------- */
+  .headline {
+    display: grid; grid-template-columns: 1.15fr 1fr 1fr 1fr; gap: 1px;
+    background: var(--border); border: 1px solid var(--border);
+    border-radius: var(--radius); overflow: hidden; margin: 24px 0 30px;
+    box-shadow: var(--shadow);
+  }
+  .cell { background: var(--surface); padding: 20px 22px; }
+  .cell.hero { background: var(--surface); }
+  .cell .k-label {
+    font-size: 11.5px; letter-spacing: .05em; text-transform: uppercase;
+    color: var(--muted); margin: 0 0 8px; font-weight: 600;
+  }
+  .hero-val {
+    font-size: clamp(38px, 6vw, 52px); font-weight: 700; line-height: 1;
+    letter-spacing: -0.02em; color: var(--accent);
+  }
+  .hero-sub { font-size: 12.5px; color: var(--ink-2); margin-top: 8px; }
+  .k-val { font-size: 27px; font-weight: 660; letter-spacing: -0.01em; }
+  .k-val .unit { font-size: 14px; color: var(--muted); font-weight: 500; margin-left: 3px; }
+  .k-foot { font-size: 12px; color: var(--muted); margin-top: 7px; }
+
+  /* ---------- chart panels ---------- */
+  .panel {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 22px 24px 18px; margin-bottom: 26px;
+    box-shadow: var(--shadow);
+  }
+  .panel-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 6px; flex-wrap: wrap; }
+  .panel h2 { font-size: 16.5px; margin: 0 0 3px; font-weight: 640; letter-spacing: -0.005em; }
+  .panel .desc { font-size: 13px; color: var(--ink-2); margin: 0; max-width: 62ch; }
+  .legend { display: flex; flex-wrap: wrap; gap: 6px 16px; align-items: center; margin: 10px 0 4px; }
+  .lg { display: inline-flex; align-items: center; gap: 7px; font-size: 12.5px; color: var(--ink-2); cursor: default; }
+  .lg .key { width: 16px; height: 3px; border-radius: 2px; flex: none; }
+  .lg .dotk { width: 9px; height: 9px; border-radius: 50%; flex: none; }
+
+  .chart-host { position: relative; width: 100%; }
+  svg { display: block; width: 100%; height: auto; overflow: visible; }
+  .axis-label { fill: var(--muted); font-size: 11px; font-family: var(--sans); }
+  .tick text { fill: var(--muted); font-size: 10.5px; font-variant-numeric: tabular-nums; }
+  .tick line { stroke: var(--grid); stroke-width: 1; }
+  .axis-title { fill: var(--ink-2); font-size: 11.5px; font-weight: 550; }
+  .baseline { stroke: var(--axis); stroke-width: 1; }
+  .ideal-line { stroke: var(--accent); stroke-width: 1.4; stroke-dasharray: 4 3; opacity: .85; }
+  .ideal-band { fill: var(--accent); opacity: .05; }
+  .ideal-tag {
+    fill: var(--accent); font-size: 11px; font-weight: 640;
+    font-family: var(--sans); font-variant-numeric: tabular-nums;
+  }
+
+  /* tooltip */
+  .tt {
+    position: absolute; pointer-events: none; z-index: 5; opacity: 0;
+    transition: opacity .09s; background: var(--surface); color: var(--ink);
+    border: 1px solid var(--border); border-radius: 9px; padding: 9px 11px;
+    box-shadow: var(--shadow); font-size: 12px; min-width: 132px;
+  }
+  .tt .tt-x { font-size: 11px; color: var(--muted); margin-bottom: 6px; font-variant-numeric: tabular-nums; }
+  .tt-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 1.5px 0; }
+  .tt-row .name { display: inline-flex; align-items: center; gap: 6px; color: var(--ink-2); }
+  .tt-row .name i { width: 12px; height: 2.5px; border-radius: 2px; display: inline-block; }
+  .tt-row .v { font-weight: 640; font-variant-numeric: tabular-nums; }
+  .crosshair { stroke: var(--axis); stroke-width: 1; stroke-dasharray: 3 3; opacity: 0; }
+  .focus-dot { opacity: 0; }
+
+  /* table toggle */
+  .tools { display: flex; gap: 8px; align-items: center; }
+  .btn {
+    font: inherit; font-size: 12.5px; color: var(--ink-2); background: var(--surface-2);
+    border: 1px solid var(--border); border-radius: 8px; padding: 5px 11px; cursor: pointer;
+  }
+  .btn:hover { color: var(--ink); }
+  .btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  details.tablewrap { margin-top: 12px; }
+  details.tablewrap summary { font-size: 12.5px; color: var(--muted); cursor: pointer; list-style: none; padding: 4px 0; }
+  details.tablewrap summary::-webkit-details-marker { display: none; }
+  details.tablewrap summary::before { content: "▸ "; }
+  details.tablewrap[open] summary::before { content: "▾ "; }
+  .tbl-scroll { overflow-x: auto; margin-top: 8px; }
+  table { border-collapse: collapse; width: 100%; font-size: 12px; font-variant-numeric: tabular-nums; }
+  th, td { text-align: right; padding: 5px 10px; border-bottom: 1px solid var(--grid); white-space: nowrap; }
+  th:first-child, td:first-child { text-align: left; }
+  thead th { color: var(--muted); font-weight: 600; border-bottom: 1px solid var(--axis); position: sticky; top: 0; background: var(--surface); }
+  tr.hl td { background: var(--surface-2); font-weight: 600; }
+
+  /* notes */
+  .notes { font-size: 12.5px; color: var(--ink-2); }
+  .notes h3 { font-size: 13px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); margin: 0 0 10px; }
+  .notes ul { margin: 0; padding-left: 18px; }
+  .notes li { margin-bottom: 7px; }
+  .notes code { font-family: var(--mono); font-size: 11.5px; background: var(--surface-2); padding: 1px 5px; border-radius: 4px; }
+  .foot { margin-top: 26px; font-size: 11.5px; color: var(--muted); border-top: 1px solid var(--border); padding-top: 14px; }
+  a { color: var(--accent); }
+  .theme-toggle {
+    position: fixed; top: 14px; right: 14px; z-index: 20;
+    background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+    padding: 6px 10px; font: inherit; font-size: 12px; color: var(--ink-2); cursor: pointer;
+    box-shadow: var(--shadow);
+  }
+  @media (max-width: 720px) {
+    .headline { grid-template-columns: 1fr 1fr; }
+    .cell.hero { grid-column: 1 / -1; }
+  }
+  /* ---------- part 2 ---------- */
+  .divider { margin: 46px 0 22px; padding-top: 26px; border-top: 2px solid var(--border); }
+  .divider-eyebrow {
+    font-size: 12px; letter-spacing: .09em; text-transform: uppercase;
+    color: var(--accent); font-weight: 650;
+  }
+  .divider-h { font-size: clamp(19px, 2.6vw, 24px); margin: 8px 0 8px; font-weight: 680;
+    letter-spacing: -0.01em; text-wrap: balance; }
+  .divider-sub { color: var(--ink-2); font-size: 14.5px; max-width: 70ch; margin: 0; }
+
+  .callout {
+    background: var(--surface-2); border: 1px solid var(--border); border-left: 3px solid var(--accent);
+    border-radius: 8px; padding: 12px 14px; font-size: 13px; color: var(--ink-2); margin-bottom: 14px;
+  }
+  .callout b { color: var(--ink); }
+
+  .refbars { display: flex; flex-direction: column; gap: 9px; margin-top: 4px; }
+  .refbar { display: grid; grid-template-columns: 108px 1fr auto; align-items: center; gap: 12px; font-size: 12.5px; }
+  .refbar .rl { color: var(--ink-2); }
+  .refbar .rt { position: relative; height: 20px; background: var(--surface-2); border-radius: 5px; overflow: hidden; }
+  .refbar .rf { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 5px; }
+  .refbar .rv { color: var(--ink-2); font-variant-numeric: tabular-nums; min-width: 44px; text-align: right; }
+  .refbar.excluded .rl { color: var(--muted); }
+  .refbar .tag { font-size: 10px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); margin-left: 6px; }
+
+  table.mt { border-collapse: collapse; width: 100%; font-size: 12.5px; font-variant-numeric: tabular-nums; }
+  table.mt th, table.mt td { text-align: right; padding: 7px 12px; border-bottom: 1px solid var(--grid); white-space: nowrap; }
+  table.mt th:first-child, table.mt td:first-child { text-align: left; }
+  table.mt thead th { color: var(--muted); font-weight: 600; border-bottom: 1px solid var(--axis); }
+  table.mt tr.best td { background: var(--surface-2); }
+  table.mt .chip { display: inline-block; padding: 1px 7px; border-radius: 20px; font-size: 11px; font-weight: 600;
+    background: color-mix(in srgb, var(--accent) 16%, transparent); color: var(--accent); }
+
+  .verdict { border-left: 3px solid var(--accent); }
+  .verdict h3 { font-size: 13px; text-transform: uppercase; letter-spacing: .05em; color: var(--accent); margin: 0 0 12px; }
+  .verdict .big { font-size: 15px; color: var(--ink); font-weight: 600; margin: 0 0 12px; line-height: 1.45; }
+  .verdict .big code, .verdict p code { font-family: var(--mono); font-size: 13px; background: var(--surface-2); padding: 1px 6px; border-radius: 5px; color: var(--accent); font-weight: 600; }
+  .verdict p { font-size: 13.5px; color: var(--ink-2); margin: 0 0 9px; }
+  .verdict ul { margin: 4px 0 0; padding-left: 18px; font-size: 13.5px; color: var(--ink-2); }
+  .verdict li { margin-bottom: 6px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; animation: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<button class="theme-toggle" id="themeToggle" aria-label="Toggle light/dark theme">◐ Theme</button>
+
+<div class="wrap">
+  <header>
+    <p class="eyebrow">Thicket Ecological Condition · Random Forest</p>
+    <h1>Detecting intact thicket: threshold selection &amp; band combination</h1>
+    <p class="sub">
+      The per-EFG Random Forest outputs a probability that each thicket pixel is
+      <b>intact</b>. <b>Part 1</b> sweeps a threshold&nbsp;τ on P(intact) to find where
+      classification quality peaks and how the mapped intact area responds. <b>Part 2</b> asks
+      which threshold-selection method to use, and whether combining all three probability
+      bands — via hand-crafted rules and symbolic regression — beats P(intact) alone.
+      All accuracy is spatially cross-validated (out-of-fold).
+    </p>
+    <div class="meta-line" id="metaLine"></div>
+  </header>
+
+  <section class="headline" id="headline"></section>
+
+  <!-- Chart A: accuracy vs threshold -->
+  <section class="panel">
+    <div class="panel-head">
+      <div>
+        <h2>Accuracy versus threshold</h2>
+        <p class="desc">Spatially cross-validated (out-of-fold) metrics for the binary
+          intact / not-intact decision as τ moves from 0 to 1. The chosen threshold maximises
+          Youden's&nbsp;J (sensitivity + specificity − 1).</p>
+      </div>
+      <div class="tools">
+        <button class="btn" id="tableBtnA" aria-expanded="false">Table</button>
+      </div>
+    </div>
+    <div class="legend" id="legendA"></div>
+    <div class="chart-host" id="hostA"><div class="tt" id="ttA"></div></div>
+    <details class="tablewrap" id="tableA"><summary>Data table</summary><div class="tbl-scroll" id="tblA"></div></details>
+  </section>
+
+  <!-- Chart B: area vs threshold -->
+  <section class="panel">
+    <div class="panel-head">
+      <div>
+        <h2>Mapped intact area versus threshold</h2>
+        <p class="desc">Total area classified as intact across the solid-thicket EFGs
+          (arid, valley, mesic) at 30&nbsp;m, computed from the full-model P(intact) surface.
+          Higher τ is stricter, so less area qualifies.</p>
+      </div>
+      <div class="tools">
+        <button class="btn" id="tableBtnB" aria-expanded="false">Table</button>
+      </div>
+    </div>
+    <div class="legend" id="legendB"></div>
+    <div class="chart-host" id="hostB"><div class="tt" id="ttB"></div></div>
+    <details class="tablewrap" id="tableB"><summary>Data table</summary><div class="tbl-scroll" id="tblB"></div></details>
+  </section>
+
+  <!-- ============ PART 2: method comparison + band combination ============ -->
+  <div class="divider" id="part2">
+    <span class="divider-eyebrow">Part 2</span>
+    <h2 class="divider-h">Which method, and can the three bands do better?</h2>
+    <p class="divider-sub">Two follow-up questions: (1) which threshold-selection rule from the
+      remote-sensing literature should choose τ, and (2) whether combining
+      <b>p_intact</b>, <b>p_moderate</b> and <b>p_severe</b> beats thresholding p_intact alone.
+      Everything here is scored by <b>held-out</b> intact-class F1 on an independent set of
+      spatial blocks.</p>
+  </div>
+
+  <!-- reference data composition -->
+  <section class="panel">
+    <div class="panel-head">
+      <div>
+        <h2>Reference data</h2>
+        <p class="desc">The training labels span the condition gradient plus two excluded
+          classes. Only intact / moderate / severe are modelled; transformed is handled by the
+          land-cover mask and bontveld is dropped.</p>
+      </div>
+    </div>
+    <div id="refdataBars" class="refbars"></div>
+  </section>
+
+  <!-- threshold-method comparison -->
+  <section class="panel">
+    <div class="panel-head">
+      <div>
+        <h2>Threshold-selection methods compared</h2>
+        <p class="desc">Operating points chosen by the common remote-sensing criteria on the
+          p_intact score. Liu et&nbsp;al. (2005) and Freeman &amp; Moisen (2008) recommend max-Kappa
+          or Youden's&nbsp;J / max-TSS; max overall accuracy is prevalence-biased.</p>
+      </div>
+    </div>
+    <div id="methodNote" class="callout"></div>
+    <div class="tbl-scroll"><div id="methodTable"></div></div>
+  </section>
+
+  <!-- band-combination leaderboard -->
+  <section class="panel">
+    <div class="panel-head">
+      <div>
+        <h2>Optimising intact detection across all three bands</h2>
+        <p class="desc">Held-out intact F1 for each decision rule — the baseline single-band
+          threshold, hand-crafted combinations, and the best formula found by symbolic
+          regression (PySR). Longer bar = better. The dashed line is the p_intact baseline.</p>
+      </div>
+      <div class="tools"><button class="btn" id="tableBtnR" aria-expanded="false">Table</button></div>
+    </div>
+    <div class="chart-host" id="hostRules"><div class="tt" id="ttRules"></div></div>
+    <details class="tablewrap" id="tableR"><summary>Data table</summary><div class="tbl-scroll" id="tblR"></div></details>
+  </section>
+
+  <!-- PySR pareto front -->
+  <section class="panel">
+    <div class="panel-head">
+      <div>
+        <h2>Symbolic-regression Pareto front</h2>
+        <p class="desc">Each point is a candidate formula in (p_i, p_m, p_s) found by PySR,
+          plotted by complexity against held-out F1. Training error keeps falling with
+          complexity, but held-out F1 does not improve — the extra terms fit noise, not signal.</p>
+      </div>
+    </div>
+    <div class="legend" id="legendP"></div>
+    <div class="chart-host" id="hostPareto"><div class="tt" id="ttPareto"></div></div>
+  </section>
+
+  <!-- verdict -->
+  <section class="panel verdict" id="verdict"></section>
+
+  <section class="panel notes">
+    <h3>Method</h3>
+    <ul id="methodList"></ul>
+  </section>
+
+  <div class="foot" id="foot"></div>
+</div>
+
+<script id="DATA" type="application/json">
+{"summary":{"n_points":2083,"n_intact":727,"n_not_intact":1356,"efg_counts":{"1":1270,"2":622,"3":191},"roc_auc":0.947372,"ideal_threshold_youden":{"threshold":0.48,"youden_J":0.752682,"f1":0.83871,"overall_accuracy":0.887182,"recall":0.84044,"specificity":0.912242,"balanced_accuracy":0.876341},"ideal_threshold_f1":{"threshold":0.48,"youden_J":0.752682,"f1":0.83871,"overall_accuracy":0.887182,"recall":0.84044,"specificity":0.912242,"balanced_accuracy":0.876341},"ideal_threshold_overall_accuracy":{"threshold":0.52,"youden_J":0.74012,"f1":0.834869,"overall_accuracy":0.888142,"recall":0.810179,"specificity":0.929941,"balanced_accuracy":0.87006},"total_valid_area_km2":19106.293,"intact_area_at_ideal_km2":4417.705,"k_folds":5,"block_deg":0.2,"year":2022,"elapsed_sec":44.4},"threshold_accuracy":{"thresholds":[0.0,0.01,0.02,0.03,0.04,0.05,0.06,0.07,0.08,0.09,0.1,0.11,0.12,0.13,0.14,0.15,0.16,0.17,0.18,0.19,0.2,0.21,0.22,0.23,0.24,0.25,0.26,0.27,0.28,0.29,0.3,0.31,0.32,0.33,0.34,0.35,0.36,0.37,0.38,0.39,0.4,0.41,0.42,0.43,0.44,0.45,0.46,0.47,0.48,0.49,0.5,0.51,0.52,0.53,0.54,0.55,0.56,0.57,0.58,0.59,0.6,0.61,0.62,0.63,0.64,0.65,0.66,0.67,0.68,0.69,0.7,0.71,0.72,0.73,0.74,0.75,0.76,0.77,0.78,0.79,0.8,0.81,0.82,0.83,0.84,0.85,0.86,0.87,0.88,0.89,0.9,0.91,0.92,0.93,0.94,0.95,0.96,0.97,0.98,0.99,1.0],"overall_accuracy":[0.349016,0.349016,0.355737,0.381181,0.409986,0.440711,0.467115,0.495919,0.518963,0.537206,0.555929,0.576092,0.598656,0.62218,0.641863,0.665386,0.68459,0.702832,0.722036,0.738358,0.75084,0.763322,0.775804,0.786846,0.794047,0.801248,0.807009,0.81181,0.819971,0.822372,0.828133,0.832933,0.837734,0.842055,0.843495,0.846855,0.851656,0.856457,0.857897,0.861738,0.864138,0.866539,0.867499,0.8723,0.8747,0.87758,0.881901,0.884301,0.887182,0.887662,0.885262,0.886702,0.888142,0.886222,0.886702,0.885262,0.883341,0.882381,0.880941,0.87758,0.87326,0.87278,0.868939,0.865098,0.862218,0.858377,0.855497,0.852136,0.849256,0.844935,0.840614,0.838214,0.833413,0.831973,0.825252,0.819491,0.815651,0.81037,0.803649,0.799328,0.791647,0.784926,0.780605,0.773404,0.766203,0.759482,0.7518,0.742199,0.734037,0.725876,0.716755,0.706193,0.698032,0.692271,0.683149,0.668747,0.660106,0.652424,0.650984,0.650984,0.650984],"precision":[0.349016,0.349016,0.351377,0.360615,0.371677,0.384249,0.395754,0.409116,0.420474,0.429923,0.44,0.451493,0.465042,0.48008,0.493506,0.510638,0.525622,0.540663,0.557543,0.5728,0.585526,0.598651,0.612652,0.625555,0.634234,0.643974,0.652011,0.659069,0.671206,0.677259,0.68731,0.694758,0.702815,0.711253,0.716757,0.726164,0.735892,0.747113,0.752638,0.760999,0.768116,0.776138,0.782228,0.792884,0.802597,0.809711,0.821095,0.829268,0.836986,0.844755,0.844633,0.853237,0.861111,0.862426,0.871407,0.874233,0.875776,0.881329,0.886914,0.893333,0.897084,0.901042,0.903915,0.905455,0.907407,0.912214,0.917647,0.918164,0.927536,0.927966,0.934066,0.939189,0.94186,0.949881,0.957179,0.958225,0.96477,0.966292,0.967647,0.969605,0.968051,0.969697,0.972028,0.973978,0.97619,0.987069,0.986111,0.989691,0.988701,0.9875,0.992806,0.991453,1.0,1.0,1.0,1.0,1.0,1.0,0.0,0.0,0.0],"recall":[1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,0.998624,0.998624,0.997249,0.994498,0.993122,0.990371,0.98762,0.98762,0.986245,0.984869,0.979367,0.976616,0.97249,0.969739,0.968363,0.962861,0.958735,0.954608,0.949106,0.938102,0.931224,0.929849,0.927098,0.921596,0.911967,0.900963,0.896836,0.889959,0.883081,0.88033,0.874828,0.86795,0.859697,0.858322,0.850069,0.848693,0.845942,0.841816,0.84044,0.830812,0.822558,0.815681,0.810179,0.801926,0.792297,0.784044,0.775791,0.766162,0.755158,0.737276,0.719395,0.713893,0.698762,0.685007,0.674003,0.657497,0.643741,0.632737,0.616231,0.602476,0.584594,0.57359,0.557084,0.547455,0.522696,0.504814,0.489684,0.473177,0.452545,0.43879,0.416781,0.396149,0.382393,0.360385,0.338377,0.314993,0.292985,0.264099,0.240715,0.217331,0.189821,0.15956,0.134801,0.118294,0.09216,0.050894,0.026135,0.004127,0.0,0.0,0.0],"specificity":[0.0,0.0,0.010324,0.04941,0.093658,0.140855,0.181416,0.225664,0.261062,0.289086,0.318584,0.349558,0.384956,0.422566,0.45354,0.49115,0.522124,0.550147,0.580383,0.606195,0.628319,0.648968,0.670354,0.688791,0.70059,0.714602,0.725664,0.735251,0.750737,0.760324,0.772861,0.780973,0.789823,0.79941,0.806785,0.817847,0.827434,0.838496,0.844395,0.85177,0.858407,0.865782,0.871681,0.879794,0.887906,0.893068,0.90118,0.90708,0.912242,0.918142,0.918879,0.924779,0.929941,0.931416,0.937316,0.939528,0.941003,0.94469,0.948378,0.952802,0.955752,0.957965,0.960177,0.961652,0.963127,0.966077,0.969027,0.969764,0.974189,0.974926,0.977876,0.980088,0.981563,0.984513,0.987463,0.988201,0.990413,0.99115,0.991888,0.992625,0.992625,0.993363,0.9941,0.994838,0.995575,0.997788,0.997788,0.998525,0.998525,0.998525,0.999263,0.999263,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0],"f1":[0.517438,0.517438,0.520029,0.530077,0.541931,0.555174,0.567083,0.580671,0.59202,0.601323,0.610854,0.621842,0.634296,0.647559,0.659361,0.673842,0.686097,0.698783,0.71237,0.72433,0.732887,0.74229,0.751728,0.760518,0.766467,0.771775,0.776169,0.779775,0.786325,0.786621,0.790888,0.795294,0.799526,0.802876,0.802663,0.804174,0.808431,0.812304,0.812658,0.816327,0.818006,0.819481,0.819135,0.824306,0.825651,0.828744,0.833333,0.835495,0.83871,0.837725,0.833449,0.834037,0.834869,0.831076,0.829971,0.826686,0.822757,0.81972,0.81575,0.807837,0.798473,0.796623,0.788208,0.779953,0.773481,0.764189,0.756669,0.749186,0.740496,0.730609,0.71912,0.712212,0.700086,0.69459,0.676157,0.661261,0.649635,0.635272,0.616682,0.604167,0.582692,0.5625,0.548865,0.526104,0.502554,0.477581,0.45175,0.416938,0.387168,0.356257,0.318707,0.274882,0.237576,0.211562,0.168766,0.096859,0.050938,0.008219,0.0,0.0,0.0],"balanced_accuracy":[0.5,0.5,0.505162,0.524705,0.546829,0.570428,0.590708,0.612832,0.630531,0.644543,0.658604,0.674091,0.691102,0.708532,0.723331,0.740761,0.754872,0.768884,0.783314,0.795532,0.803843,0.812792,0.821422,0.829265,0.834477,0.838731,0.842199,0.844929,0.849922,0.849213,0.852043,0.855411,0.85846,0.860503,0.859376,0.859405,0.862135,0.864227,0.863738,0.86605,0.866618,0.866866,0.865689,0.869058,0.868987,0.870881,0.873561,0.874448,0.876341,0.874477,0.870719,0.87023,0.87006,0.866671,0.864806,0.861786,0.858397,0.855426,0.851768,0.845039,0.837573,0.835929,0.82947,0.823329,0.818565,0.811787,0.806384,0.801251,0.79521,0.788701,0.781235,0.776839,0.769324,0.765984,0.75508,0.746507,0.740048,0.732164,0.722216,0.715707,0.704703,0.694756,0.688247,0.677611,0.666976,0.65639,0.645386,0.631312,0.61962,0.607928,0.594542,0.579411,0.5674,0.559147,0.54608,0.525447,0.513067,0.502063,0.5,0.5,0.5],"youden_J":[0.0,0.0,0.010324,0.04941,0.093658,0.140855,0.181416,0.225664,0.261062,0.289086,0.317209,0.348182,0.382205,0.417064,0.446662,0.481522,0.509744,0.537768,0.566628,0.591064,0.607686,0.625584,0.642844,0.658529,0.668953,0.677463,0.684398,0.689859,0.699843,0.698426,0.704086,0.710822,0.716921,0.721006,0.718752,0.718809,0.72427,0.728454,0.727476,0.7321,0.733235,0.733732,0.731379,0.738115,0.737974,0.741761,0.747122,0.748895,0.752682,0.748953,0.741438,0.74046,0.74012,0.733342,0.729613,0.723572,0.716794,0.710853,0.703536,0.690079,0.675147,0.671857,0.658939,0.646659,0.63713,0.623573,0.612768,0.602501,0.59042,0.577402,0.56247,0.553679,0.538647,0.531969,0.510159,0.493015,0.480097,0.464328,0.444433,0.431415,0.409407,0.389511,0.376494,0.355223,0.333952,0.312781,0.290772,0.262624,0.23924,0.215857,0.189084,0.158822,0.134801,0.118294,0.09216,0.050894,0.026135,0.004127,0.0,0.0,0.0],"ideal":{"by_youden":{"threshold":0.48,"youden_J":0.752682,"f1":0.83871,"overall_accuracy":0.887182,"recall":0.84044,"specificity":0.912242,"balanced_accuracy":0.876341},"by_f1":{"threshold":0.48,"youden_J":0.752682,"f1":0.83871,"overall_accuracy":0.887182,"recall":0.84044,"specificity":0.912242,"balanced_accuracy":0.876341},"by_overall_accuracy":{"threshold":0.52,"youden_J":0.74012,"f1":0.834869,"overall_accuracy":0.888142,"recall":0.810179,"specificity":0.929941,"balanced_accuracy":0.87006}},"roc_auc":0.947372,"n_points":2083,"n_intact":727,"n_not_intact":1356},"threshold_area":{"thresholds":[0.0,0.01,0.02,0.03,0.04,0.05,0.06,0.07,0.08,0.09,0.1,0.11,0.12,0.13,0.14,0.15,0.16,0.17,0.18,0.19,0.2,0.21,0.22,0.23,0.24,0.25,0.26,0.27,0.28,0.29,0.3,0.31,0.32,0.33,0.34,0.35,0.36,0.37,0.38,0.39,0.4,0.41,0.42,0.43,0.44,0.45,0.46,0.47,0.48,0.49,0.5,0.51,0.52,0.53,0.54,0.55,0.56,0.57,0.58,0.59,0.6,0.61,0.62,0.63,0.64,0.65,0.66,0.67,0.68,0.69,0.7,0.71,0.72,0.73,0.74,0.75,0.76,0.77,0.78,0.79,0.8,0.81,0.82,0.83,0.84,0.85,0.86,0.87,0.88,0.89,0.9,0.91,0.92,0.93,0.94,0.95,0.96,0.97,0.98,0.99,1.0],"area_km2":[19106.293,19099.3383,18929.0819,18575.1978,18140.1783,17679.4523,17184.5263,16620.3722,16002.128,15356.8924,14667.2686,13920.0575,13133.6873,12360.3661,11638.3845,10989.1214,10420.0643,9922.2399,9490.1788,9110.7094,8774.855,8479.112,8210.4917,7966.5032,7741.9435,7531.9881,7334.3761,7149.7251,6972.3101,6806.2525,6646.7546,6493.5417,6347.7013,6205.7531,6068.7003,5935.9084,5805.949,5676.8963,5554.4943,5432.2155,5311.1279,5192.6769,5077.3187,4963.3205,4850.061,4739.3117,4630.6545,4523.2657,4417.705,4313.3161,4210.3778,4106.5695,4005.5764,3906.0464,3806.7732,3708.008,3611.5284,3515.4793,3419.4831,3325.5928,3231.9744,3138.6062,3047.7302,2956.4496,2866.4314,2776.8221,2688.7295,2599.8957,2508.9333,2420.2943,2329.9953,2239.8932,2148.6903,2055.0646,1962.0007,1867.0989,1772.9344,1677.4109,1578.7504,1480.3565,1380.5861,1282.7686,1182.2006,1081.1866,981.2057,880.9918,780.364,681.2907,580.4187,478.9406,377.2602,278.1244,186.0773,111.694,63.1129,38.5427,22.6437,9.2605,0.0083,0.0,0.0],"total_valid_area_km2":19106.293,"area_scale_m":100},"generated_on":"2026-07-13","generated_by":"sensitivity_analysis.py"}
+</script>
+
+<script id="SYMBOLIC" type="application/json">
+{"n":2083,"n_intact":727,"sampling":{"scale_m":10,"tileScale":4},"split":{"train_folds":[0,1,2],"test_folds":[3,4],"n_train":1379,"n_test":704},"roc_auc":0.9475,"methods":[{"method":"Youden's J (max TSS)","threshold":0.485,"f1":0.841598,"youden_J":0.756369,"kappa":0.756852,"accuracy":0.889582,"recall":0.84044,"specificity":0.915929},{"method":"Max F1 (intact)","threshold":0.485,"f1":0.841598,"youden_J":0.756369,"kappa":0.756852,"accuracy":0.889582,"recall":0.84044,"specificity":0.915929},{"method":"Max Cohen\u2019s \u03ba","threshold":0.485,"f1":0.841598,"youden_J":0.756369,"kappa":0.756852,"accuracy":0.889582,"recall":0.84044,"specificity":0.915929},{"method":"Max overall accuracy","threshold":0.485,"f1":0.841598,"youden_J":0.756369,"kappa":0.756852,"accuracy":0.889582,"recall":0.84044,"specificity":0.915929},{"method":"Sensitivity = specificity","threshold":0.415,"f1":0.818004,"youden_J":0.730443,"kappa":0.712486,"accuracy":0.866059,"recall":0.862448,"specificity":0.867994}],"consensus_threshold":0.485,"rules":[{"rule":"p_i / (p_i + p_m)","test_f1":0.86729,"test_auc":0.919274,"threshold":0.5961,"kind":"crafted"},{"rule":"p_i - max(p_m, p_s)","test_f1":0.861423,"test_auc":0.94351,"threshold":0.1563,"kind":"crafted"},{"rule":"p_intact (baseline)","test_f1":0.859779,"test_auc":0.94787,"threshold":0.4877,"kind":"baseline"},{"rule":"2*p_i - 1","test_f1":0.859779,"test_auc":0.94787,"threshold":-0.0246,"kind":"crafted"},{"rule":"PySR best: p_i - 1*0.038304944","test_f1":0.859779,"test_auc":0.9475,"threshold":0.4494,"kind":"pysr"},{"rule":"p_i - 0.5*p_s","test_f1":0.854015,"test_auc":0.949682,"threshold":0.3966,"kind":"crafted"},{"rule":"p_i / p_s        ","test_f1":0.835355,"test_auc":0.945991,"threshold":2.5156,"kind":"crafted"},{"rule":"p_i * (p_m / p_s)","test_f1":0.816529,"test_auc":0.870666,"threshold":0.8109,"kind":"crafted"}],"baseline_test_f1":0.859779,"pareto":[{"complexity":1,"test_f1":0.859779,"train_f1":0.831683,"mse":0.09501616,"equation":"p_i"},{"complexity":3,"test_f1":0.859779,"train_f1":0.831683,"mse":0.0935489,"equation":"p_i - 1*0.038304944"},{"complexity":4,"test_f1":0.859779,"train_f1":0.830769,"mse":0.09067149,"equation":"(p_i - 1*(-0.13611296))**2"},{"complexity":5,"test_f1":0.854015,"train_f1":0.829483,"mse":0.08752629,"equation":"p_i*(1.1365379 - p_s)"},{"complexity":6,"test_f1":0.821732,"train_f1":0.826396,"mse":0.08533661,"equation":"Piecewise((0.0137739247183932/p_s**2, p_i > 0.0137739247183932/p_s**2), (p_i, True))"},{"complexity":7,"test_f1":0.835664,"train_f1":0.830149,"mse":0.0823199,"equation":"p_i*Piecewise((1.1245421, 0.14659716/p_s > 1.1245421), (0.14659716/p_s, True))"},{"complexity":8,"test_f1":0.84007,"train_f1":0.828175,"mse":0.08166392,"equation":"p_i*Piecewise((0.0337869763362756/p_s**2, 0.0337869763362756/p_s**2 < 1.1108563), (1.1108563, True))"},{"complexity":9,"test_f1":0.826162,"train_f1":0.826943,"mse":0.08140314,"equation":"p_i*Piecewise((p_i*p_m/p_s, p_i*p_m/p_s < 1.1321253), (1.1321253, True))"},{"complexity":10,"test_f1":0.82735,"train_f1":0.825953,"mse":0.08100772,"equation":"Piecewise((p_i**2*p_m/p_s, p_i > p_i**2*p_m/p_s), (p_i, True))*1.1250293"},{"complexity":11,"test_f1":0.82735,"train_f1":0.826446,"mse":0.08100231,"equation":"p_i*Piecewise((1.0124058, p_i*p_m/p_s > 1.0124058), (p_i*p_m/p_s, True))*1.1131066"},{"complexity":12,"test_f1":0.859259,"train_f1":0.832765,"mse":0.080737315,"equation":"Piecewise((0.69969976, p_i**2*p_m**2/p_s**2 > 0.69969976), (p_i**2*p_m**2/p_s**2, True))*1.5988977*p_i"},{"complexity":13,"test_f1":0.853432,"train_f1":0.826636,"mse":0.08064877,"equation":"Piecewise((p_i, ITE(p_i < p_i**2*p_m**2/p_s**2, p_i < p_i**4*p_m**4/p_s**4, p_i < p_i**2)), (Piecewise((p_i**4*p_m**4/p_s**4, p_i < p_i**2*p_m**2/p_s**2), (p_i**2, True)), True))*1.1250293"},{"complexity":14,"test_f1":0.845878,"train_f1":0.828729,"mse":0.080498256,"equation":"Piecewise((0.9998048, ITE(p_i*p_m/p_s > 0.90322727, 1.1432086768958*p_i > 0.9998048, p_i*(-p_i*p_m/p_s - 0.1659821)**2 > 0.9998048)), (p_i*(-Piecewise((0.90322727, p_i*p_m/p_s > 0.90322727), (p_i*p_m/p_s, True)) - 0.1659821)**2, True))"},{"complexity":16,"test_f1":0.845878,"train_f1":0.828729,"mse":0.08049311,"equation":"Piecewise((0.9346179, ITE(p_i*p_m/p_s < 0.90029424, p_i*(p_i*p_m/p_s + 0.13373242)**2 > 0.9346179, 1.06921113359076*p_i > 0.9346179)), (p_i*(Piecewise((p_i*p_m/p_s, p_i*p_m/p_s < 0.90029424), (0.90029424, True)) - 1*(-0.13373242))**2, True))*1.0701412"}],"headline":{"baseline_p_intact_test_f1":0.859779,"baseline_test_auc":0.94787,"best_symbolic_test_f1":0.859779,"best_symbolic_equation":"p_i","overall_best_rule":"p_i / (p_i + p_m)","overall_best_test_f1":0.86729,"overall_best_test_auc":0.919274,"overall_best_threshold":0.5961463937227556,"delta_f1_vs_baseline":0.007511,"conclusion":"Combining the three probability bands yields at most a marginal held-out F1 gain over thresholding p_intact alone; the PySR Pareto front shows MSE improves only ~15% from complexity 1->16 and those gains do not translate to better held-out intact F1."},"refdata":{"intact":751,"moderate":633,"severe":820,"transformed":778,"bontveld":96,"modelled":["intact","moderate","severe"],"excluded":["transformed","bontveld"]}}
+</script>
+
+<script>
+"use strict";
+const DATA = JSON.parse(document.getElementById('DATA').textContent);
+const SYM = JSON.parse(document.getElementById('SYMBOLIC').textContent);
+
+/* ---------------- theme toggle ---------------- */
+(function(){
+  const btn = document.getElementById('themeToggle');
+  const root = document.documentElement;
+  btn.addEventListener('click', () => {
+    const cur = root.getAttribute('data-theme')
+      || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    const next = cur === 'dark' ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    setTimeout(renderAll, 0);
+  });
+  matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => setTimeout(renderAll, 0));
+})();
+
+const cssv = (n) => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const fmt = (x, d=3) => (x==null || Number.isNaN(x)) ? '–' : Number(x).toFixed(d);
+const fmtInt = (x) => x==null ? '–' : Math.round(x).toLocaleString('en-US');
+const fmtArea = (x) => x==null ? '–' : Number(x).toLocaleString('en-US', {maximumFractionDigits:0});
+const NS = 'http://www.w3.org/2000/svg';
+const el = (t, a={}) => { const e=document.createElementNS(NS,t); for(const k in a) e.setAttribute(k,a[k]); return e; };
+
+/* ---------------- header + KPIs ---------------- */
+function renderHeader(){
+  const s = DATA.summary;
+  const iy = s.ideal_threshold_youden;
+  document.getElementById('metaLine').innerHTML =
+    `<span><b>${fmtInt(s.n_points)}</b> validation points</span>` +
+    `<span><b>${fmtInt(s.n_intact)}</b> intact · <b>${fmtInt(s.n_not_intact)}</b> not-intact</span>` +
+    `<span><b>${s.k_folds}</b>-fold spatial CV · ${s.block_deg}° blocks</span>` +
+    `<span>EFGs: arid ${s.efg_counts['1']||0} · valley ${s.efg_counts['2']||0} · mesic ${s.efg_counts['3']||0}</span>` +
+    `<span>ROC&nbsp;AUC <b>${fmt(s.roc_auc,3)}</b></span>`;
+
+  const cells = [
+    {cls:'cell hero', html:
+      `<p class="k-label">Selected threshold&nbsp;τ (max Youden's J)</p>
+       <div class="hero-val">${fmt(iy.threshold,2)}</div>
+       <div class="hero-sub">J = ${fmt(iy.youden_J,3)} · balanced acc. ${fmt(iy.balanced_accuracy,3)}</div>`},
+    {cls:'cell', html:
+      `<p class="k-label">Overall accuracy @ τ</p>
+       <div class="k-val">${fmt(iy.overall_accuracy*100,1)}<span class="unit">%</span></div>
+       <div class="k-foot">at τ = ${fmt(iy.threshold,2)}</div>`},
+    {cls:'cell', html:
+      `<p class="k-label">Sensitivity · Specificity</p>
+       <div class="k-val">${fmt(iy.recall*100,0)}<span class="unit">/</span>${fmt(iy.specificity*100,0)}<span class="unit">%</span></div>
+       <div class="k-foot">true intact / true not-intact</div>`},
+    {cls:'cell', html:
+      `<p class="k-label">Intact area @ τ</p>
+       <div class="k-val">${fmtArea(s.intact_area_at_ideal_km2)}<span class="unit">km²</span></div>
+       <div class="k-foot">of ${fmtArea(s.total_valid_area_km2)} km² mapped</div>`},
+  ];
+  document.getElementById('headline').innerHTML = cells.map(c=>`<div class="${c.cls}">${c.html}</div>`).join('');
+}
+
+/* ---------------- generic line-chart engine ---------------- */
+function lineChart(host, ttEl, opts){
+  host.querySelectorAll('svg').forEach(s=>s.remove());
+  const W = host.clientWidth || 900, H = opts.height || 340;
+  const m = {t: 16, r: 18, b: 40, l: 54};
+  const iw = W - m.l - m.r, ih = H - m.t - m.b;
+  const xs = opts.x, series = opts.series;
+  const xmin = 0, xmax = 1;
+  const ymin = opts.ymin, ymax = opts.ymax;
+  const X = v => m.l + (v - xmin)/(xmax-xmin)*iw;
+  const Y = v => m.t + ih - (v - ymin)/(ymax-ymin)*ih;
+
+  const svg = el('svg', {viewBox:`0 0 ${W} ${H}`, role:'img', 'aria-label':opts.aria||''});
+  host.insertBefore(svg, ttEl);
+
+  // gridlines + y ticks
+  opts.yticks.forEach(t=>{
+    svg.appendChild(el('line',{x1:m.l,y1:Y(t),x2:m.l+iw,y2:Y(t),stroke:cssv('--grid'),'stroke-width':1}));
+    const tx = el('text',{x:m.l-9,y:Y(t)+3.5,'text-anchor':'end'}); tx.setAttribute('class','tick');
+    tx.textContent = opts.yfmt ? opts.yfmt(t) : t; svg.appendChild(tx);
+  });
+  // x ticks
+  opts.xticks.forEach(t=>{
+    const xx = X(t);
+    svg.appendChild(el('line',{x1:xx,y1:m.t+ih,x2:xx,y2:m.t+ih+5,stroke:cssv('--axis'),'stroke-width':1}));
+    const tx = el('text',{x:xx,y:m.t+ih+18,'text-anchor':'middle'}); tx.setAttribute('class','tick');
+    tx.textContent = t.toFixed(1); svg.appendChild(tx);
+  });
+  // baseline
+  svg.appendChild(el('line',{x1:m.l,y1:m.t+ih,x2:m.l+iw,y2:m.t+ih,class:'baseline'}));
+  // axis titles
+  const xt = el('text',{x:m.l+iw/2,y:H-4,'text-anchor':'middle'}); xt.setAttribute('class','axis-title');
+  xt.textContent = opts.xtitle; svg.appendChild(xt);
+  const ytg = el('text',{x:0,y:0,'text-anchor':'middle',transform:`translate(14,${m.t+ih/2}) rotate(-90)`});
+  ytg.setAttribute('class','axis-title'); ytg.textContent = opts.ytitle; svg.appendChild(ytg);
+
+  // ideal threshold marker
+  if (opts.ideal != null){
+    const xi = X(opts.ideal);
+    svg.appendChild(el('line',{x1:xi,y1:m.t,x2:xi,y2:m.t+ih,class:'ideal-line'}));
+    const tag = el('text',{x:xi+5,y:m.t+11,'text-anchor':'start'}); tag.setAttribute('class','ideal-tag');
+    tag.textContent = `τ* ${opts.ideal.toFixed(2)}`; svg.appendChild(tag);
+  }
+
+  // area fill (single-series option)
+  if (opts.fill){
+    const s = series[0];
+    let d = `M ${X(xs[0])} ${Y(ymin)} `;
+    xs.forEach((xv,i)=>{ d += `L ${X(xv)} ${Y(s.values[i])} `; });
+    d += `L ${X(xs[xs.length-1])} ${Y(ymin)} Z`;
+    svg.appendChild(el('path',{d, fill:cssv(s.fill), stroke:'none'}));
+  }
+
+  // lines
+  series.forEach(s=>{
+    let d = '';
+    xs.forEach((xv,i)=>{
+      const yv = s.values[i]; if (yv==null) return;
+      d += (d===''?'M':'L') + ` ${X(xv)} ${Y(yv)} `;
+    });
+    svg.appendChild(el('path',{d, fill:'none', stroke:cssv(s.color), 'stroke-width':2, 'stroke-linejoin':'round','stroke-linecap':'round'}));
+  });
+
+  // end labels for line charts (selective)
+  if (opts.endLabels){
+    series.forEach(s=>{
+      const lastIdx = xs.length-1; const yv = s.values[lastIdx];
+      if (yv==null) return;
+      const t = el('text',{x:X(xs[lastIdx])+6, y:Y(yv)+3, 'text-anchor':'start'});
+      t.setAttribute('class','tick'); t.setAttribute('fill', cssv('--ink-2'));
+      t.textContent = s.short; svg.appendChild(t);
+    });
+  }
+
+  // crosshair + focus dots
+  const cross = el('line',{class:'crosshair', y1:m.t, y2:m.t+ih});
+  svg.appendChild(cross);
+  const dots = series.map(s=>{
+    const g = el('circle',{r:4, fill:cssv(s.color), stroke:cssv('--surface'), 'stroke-width':2, class:'focus-dot'});
+    svg.appendChild(g); return g;
+  });
+  const overlay = el('rect',{x:m.l,y:m.t,width:iw,height:ih,fill:'transparent'});
+  svg.appendChild(overlay);
+
+  function snap(clientX){
+    const r = svg.getBoundingClientRect();
+    const px = (clientX - r.left)/r.width*W;
+    let xv = xmin + (px - m.l)/iw*(xmax-xmin);
+    xv = Math.max(xmin, Math.min(xmax, xv));
+    // nearest index
+    let bi=0, bd=Infinity;
+    xs.forEach((v,i)=>{ const dd=Math.abs(v-xv); if(dd<bd){bd=dd;bi=i;} });
+    return bi;
+  }
+  function show(clientX){
+    const i = snap(clientX);
+    const xv = xs[i];
+    cross.setAttribute('x1', X(xv)); cross.setAttribute('x2', X(xv)); cross.style.opacity=1;
+    let rows='';
+    series.forEach((s,si)=>{
+      const yv = s.values[i];
+      if (yv==null){ dots[si].style.opacity=0; return; }
+      dots[si].setAttribute('cx', X(xv)); dots[si].setAttribute('cy', Y(yv)); dots[si].style.opacity=1;
+      const rr = document.createElement('div'); rr.className='tt-row';
+      const nm = document.createElement('span'); nm.className='name';
+      const ic = document.createElement('i'); ic.style.background=cssv(s.color); nm.appendChild(ic);
+      nm.appendChild(document.createTextNode(s.name));
+      const vv = document.createElement('span'); vv.className='v'; vv.textContent = opts.ttfmt(yv);
+      rr.appendChild(nm); rr.appendChild(vv); rows += rr.outerHTML;
+    });
+    ttEl.innerHTML = `<div class="tt-x">τ = ${xv.toFixed(2)}</div>` + rows;
+    ttEl.style.opacity=1;
+    const r = svg.getBoundingClientRect();
+    let left = X(xv)/W*r.width + 14;
+    if (left + 150 > r.width) left = X(xv)/W*r.width - 150;
+    ttEl.style.left = Math.max(2,left)+'px';
+    ttEl.style.top = (m.t+8)+'px';
+  }
+  function hide(){ cross.style.opacity=0; dots.forEach(d=>d.style.opacity=0); ttEl.style.opacity=0; }
+  overlay.addEventListener('pointermove', e=>show(e.clientX));
+  overlay.addEventListener('pointerleave', hide);
+}
+
+/* ---------------- render chart A ---------------- */
+function renderA(){
+  const ta = DATA.threshold_accuracy;
+  const host = document.getElementById('hostA'), tt = document.getElementById('ttA');
+  const seriesDefs = [
+    {key:'overall_accuracy', name:'Overall accuracy', short:'Acc', color:'--s-acc'},
+    {key:'f1',               name:'F1 (intact)',      short:'F1',  color:'--s-f1'},
+    {key:'youden_J',         name:"Youden's J",       short:'J',   color:'--s-you'},
+    {key:'recall',           name:'Sensitivity',      short:'Sens',color:'--s-sens'},
+    {key:'specificity',      name:'Specificity',      short:'Spec',color:'--s-spec'},
+  ];
+  const series = seriesDefs.map(d=>({...d, values: ta[d.key]}));
+  // legend
+  document.getElementById('legendA').innerHTML = series.map(s=>
+    `<span class="lg"><span class="key" style="background:${cssv(s.color)}"></span>${s.name}</span>`).join('')
+    + `<span class="lg"><span style="width:16px;height:0;border-top:1.4px dashed ${cssv('--accent')};display:inline-block"></span>selected τ*</span>`;
+  lineChart(host, tt, {
+    x: ta.thresholds, series, height: 360,
+    ymin: 0, ymax: 1, yticks:[0,0.2,0.4,0.6,0.8,1.0], xticks:[0,0.2,0.4,0.6,0.8,1.0],
+    yfmt: v=>v.toFixed(1), xtitle:'Threshold τ on P(intact)', ytitle:'Metric value',
+    ttfmt: v=>v.toFixed(3), ideal: DATA.summary.ideal_threshold_youden.threshold,
+    endLabels:false, aria:'Accuracy metrics versus threshold'
+  });
+  // table
+  buildTableA(ta);
+}
+
+function buildTableA(ta){
+  const idxStep = 5; // every 0.05
+  const cols = ['τ','Overall acc','Precision','Recall','Specificity','F1',"Youden J"];
+  const keys = ['overall_accuracy','precision','recall','specificity','f1','youden_J'];
+  const idealT = DATA.summary.ideal_threshold_youden.threshold;
+  let h = '<table><thead><tr>' + cols.map(c=>`<th>${c}</th>`).join('') + '</tr></thead><tbody>';
+  ta.thresholds.forEach((t,i)=>{
+    if (i % idxStep !== 0 && Math.abs(t-idealT)>1e-9) return;
+    const hl = Math.abs(t-idealT)<1e-9 ? ' class="hl"' : '';
+    h += `<tr${hl}><td>${t.toFixed(2)}</td>` + keys.map(k=>`<td>${fmt(ta[k][i],3)}</td>`).join('') + '</tr>';
+  });
+  h += '</tbody></table>';
+  document.getElementById('tblA').innerHTML = h;
+}
+
+/* ---------------- render chart B ---------------- */
+function renderB(){
+  const tb = DATA.threshold_area;
+  const host = document.getElementById('hostB'), tt = document.getElementById('ttB');
+  const maxA = Math.max(...tb.area_km2.filter(v=>v!=null));
+  const ymax = niceCeil(maxA);
+  const series = [{key:'area', name:'Intact area', short:'', color:'--seq', fill:'--seq-fill', values: tb.area_km2}];
+  document.getElementById('legendB').innerHTML =
+    `<span class="lg"><span class="key" style="background:${cssv('--seq')}"></span>Area classified intact (km²)</span>`
+    + `<span class="lg"><span style="width:16px;height:0;border-top:1.4px dashed ${cssv('--accent')};display:inline-block"></span>selected τ*</span>`;
+  const yt = [0,0.25,0.5,0.75,1.0].map(f=>Math.round(f*ymax));
+  lineChart(host, tt, {
+    x: tb.thresholds, series, height: 320, fill:true,
+    ymin: 0, ymax, yticks: yt, xticks:[0,0.2,0.4,0.6,0.8,1.0],
+    yfmt: v=>fmtArea(v), xtitle:'Threshold τ on P(intact)', ytitle:'Area (km²)',
+    ttfmt: v=>fmtArea(v)+' km²', ideal: DATA.summary.ideal_threshold_youden.threshold,
+    endLabels:false, aria:'Mapped intact area versus threshold'
+  });
+  buildTableB(tb);
+}
+function niceCeil(x){
+  const p = Math.pow(10, Math.floor(Math.log10(x)));
+  return Math.ceil(x/p)*p;
+}
+function buildTableB(tb){
+  const idealT = DATA.summary.ideal_threshold_youden.threshold;
+  let h = '<table><thead><tr><th>τ</th><th>Intact area (km²)</th><th>% of mapped</th></tr></thead><tbody>';
+  const total = tb.total_valid_area_km2;
+  tb.thresholds.forEach((t,i)=>{
+    if (i % 5 !== 0 && Math.abs(t-idealT)>1e-9) return;
+    const hl = Math.abs(t-idealT)<1e-9 ? ' class="hl"' : '';
+    const a = tb.area_km2[i];
+    const pct = (a!=null && total) ? (a/total*100).toFixed(1)+'%' : '–';
+    h += `<tr${hl}><td>${t.toFixed(2)}</td><td>${fmtArea(a)}</td><td>${pct}</td></tr>`;
+  });
+  h += '</tbody></table>';
+  document.getElementById('tblB').innerHTML = h;
+}
+
+/* ---------------- method notes + foot ---------------- */
+function renderNotes(){
+  const s = DATA.summary;
+  const iy = s.ideal_threshold_youden, if1 = s.ideal_threshold_f1, ioa = s.ideal_threshold_overall_accuracy;
+  const items = [
+    `<b>Model.</b> Three per-EFG <code>smileRandomForest</code> classifiers (arid / valley / mesic), 300 trees, seed 123, bag fraction 0.632, MULTIPROBABILITY output — matching the source pipeline. Predictors are the 64 Google Satellite Embedding bands (${DATA.summary.year||2022}).`,
+    `<b>P(intact).</b> The first class probability. A pixel is mapped "intact" when P(intact) ≥ τ; the binary problem is intact vs. {moderate, severe}.`,
+    `<b>Spatial cross-validation.</b> Points assigned to ${s.block_deg}°×${s.block_deg}° spatial blocks; whole blocks held out across ${s.k_folds} folds so neighbouring points never leak between train and test. Each metric is computed on out-of-fold predictions across all ${fmtInt(s.n_points)} points.`,
+    `<b>Threshold selection.</b> τ* = <b>${fmt(iy.threshold,2)}</b> maximises Youden's J (${fmt(iy.youden_J,3)}). For reference, max-F1 is at τ = ${fmt(if1.threshold,2)} (F1 ${fmt(if1.f1,3)}) and max overall-accuracy at τ = ${fmt(ioa.threshold,2)} (${fmt(ioa.overall_accuracy*100,1)}%).`,
+    `<b>Area.</b> Computed from the full-model (all-points) P(intact) surface — the deployed 30 m surface sampled at ${DATA.threshold_area.area_scale_m||100} m for tractability — via an area-weighted histogram of P(intact). The surface is masked to valid solid thicket, so the reduction counts exactly the mappable area; the curve is resolved at 0.01 from a single reduction.`
+  ];
+  document.getElementById('methodList').innerHTML = items.map(t=>`<li>${t}</li>`).join('');
+  document.getElementById('foot').innerHTML =
+    `Generated ${DATA.generated_on||''} · Earth Engine (project ee-gsingh) · ` +
+    `analysis over the Eastern Cape thicket AOI · elapsed ${s.elapsed_sec||'?'}s. ` +
+    `Metrics are out-of-fold; area is from the deployed full-model surface.`;
+}
+
+/* ================= PART 2 renderers ================= */
+
+/* reference-data composition bars */
+function renderRefdata(){
+  const rd = SYM.refdata;
+  const order = [['intact','Intact','--s-f1',true],['moderate','Moderate','--s-you',true],
+                 ['severe','Severe','--s-spec',true],['transformed','Transformed','--muted',false],
+                 ['bontveld','Bontveld','--muted',false]];
+  const max = Math.max(...order.map(o=>rd[o[0]]||0));
+  const host = document.getElementById('refdataBars');
+  host.innerHTML = order.map(([k,label,col,modelled])=>{
+    const v = rd[k]||0; const w = (v/max*100).toFixed(1);
+    const tag = modelled ? '' : '<span class="tag">excluded</span>';
+    return `<div class="refbar${modelled?'':' excluded'}">
+      <span class="rl">${label}${tag}</span>
+      <span class="rt"><span class="rf" style="width:${w}%;background:${cssv(col)};${modelled?'':'opacity:.5'}"></span></span>
+      <span class="rv">${fmtInt(v)}</span></div>`;
+  }).join('');
+}
+
+/* threshold-method comparison table */
+function renderMethods(){
+  document.getElementById('methodNote').innerHTML =
+    `All balanced criteria converge on <b>τ ≈ ${fmt(SYM.consensus_threshold,3)}</b> on p_intact — a
+     reassuring sign the operating point is robust to the choice of method. Only the
+     sensitivity=specificity rule differs, trading toward higher recall.`;
+  const cols = ['Method','τ','F1','Youden J','Kappa','Overall acc','Sens','Spec'];
+  const keys = ['f1','youden_J','kappa','accuracy','recall','specificity'];
+  let h = '<table class="mt"><thead><tr>' + cols.map(c=>`<th>${c}</th>`).join('') + '</tr></thead><tbody>';
+  SYM.methods.forEach((m,i)=>{
+    const best = (i===0) ? ' class="best"' : '';
+    const chip = (i===0) ? ' <span class="chip">selected</span>' : '';
+    h += `<tr${best}><td>${m.method}${chip}</td><td>${fmt(m.threshold,3)}</td>` +
+      keys.map(k=>`<td>${fmt(m[k],3)}</td>`).join('') + '</tr>';
+  });
+  h += '</tbody></table>';
+  document.getElementById('methodTable').innerHTML = h;
+}
+
+/* band-combination leaderboard — horizontal bars of held-out F1 */
+function renderRules(){
+  const host = document.getElementById('hostRules'), tt = document.getElementById('ttRules');
+  host.querySelectorAll('svg').forEach(s=>s.remove());
+  const rules = SYM.rules.slice();
+  const base = SYM.baseline_test_f1;
+  const W = host.clientWidth || 900;
+  const rowH = 30, padT = 8, padB = 34, padL = 210, padR = 54;
+  const H = padT + padB + rules.length*rowH;
+  // x-domain zoom to make small differences visible
+  const vals = rules.map(r=>r.test_f1);
+  const lo = Math.max(0, Math.floor((Math.min(...vals, base)-0.02)*100)/100);
+  const hi = Math.min(1, Math.ceil((Math.max(...vals, base)+0.01)*100)/100);
+  const X = v => padL + (v-lo)/(hi-lo)*(W-padL-padR);
+  const svg = el('svg',{viewBox:`0 0 ${W} ${H}`, role:'img','aria-label':'Held-out intact F1 by decision rule'});
+  host.insertBefore(svg, tt);
+  // x gridlines
+  const xticks = []; for(let t=lo; t<=hi+1e-9; t+=0.02) xticks.push(Math.round(t*100)/100);
+  xticks.forEach(t=>{
+    svg.appendChild(el('line',{x1:X(t),y1:padT,x2:X(t),y2:H-padB,stroke:cssv('--grid'),'stroke-width':1}));
+    const tx=el('text',{x:X(t),y:H-padB+16,'text-anchor':'middle'}); tx.setAttribute('class','tick');
+    tx.textContent=t.toFixed(2); svg.appendChild(tx);
+  });
+  // baseline line
+  svg.appendChild(el('line',{x1:X(base),y1:padT-2,x2:X(base),y2:H-padB,stroke:cssv('--accent'),
+    'stroke-width':1.4,'stroke-dasharray':'4 3'}));
+  const bl=el('text',{x:X(base),y:padT-6,'text-anchor':'middle'}); bl.setAttribute('class','ideal-tag');
+  bl.textContent='baseline'; svg.appendChild(bl);
+  // bars
+  const colorFor = (k)=> k==='baseline' ? '--muted' : (k==='pysr' ? '--s-violet' : '--seq');
+  rules.forEach((r,i)=>{
+    const y = padT + i*rowH + 4, bh = rowH-10;
+    const isBest = i===0;
+    const col = r.kind==='baseline' ? cssv('--muted') : (r.kind==='pysr' ? cssv('--s-sens') : cssv('--seq'));
+    const x0 = X(lo);
+    svg.appendChild(el('rect',{x:x0,y,width:Math.max(0,X(r.test_f1)-x0),height:bh,rx:4,
+      fill:col, opacity: isBest?1:0.82}));
+    // rule label (left)
+    const lab=el('text',{x:padL-10,y:y+bh/2+4,'text-anchor':'end'}); lab.setAttribute('class','tick');
+    lab.setAttribute('fill', isBest?cssv('--ink'):cssv('--ink-2'));
+    if(isBest) lab.setAttribute('font-weight','650');
+    lab.textContent = r.rule.length>34 ? r.rule.slice(0,33)+'…' : r.rule; svg.appendChild(lab);
+    // value (right of bar)
+    const vv=el('text',{x:X(r.test_f1)+7,y:y+bh/2+4,'text-anchor':'start'}); vv.setAttribute('class','tick');
+    vv.setAttribute('fill',cssv('--ink-2')); vv.setAttribute('font-weight','600');
+    vv.textContent=r.test_f1.toFixed(3); svg.appendChild(vv);
+    // hover hit area
+    const hit=el('rect',{x:0,y:y-3,width:W,height:rowH,fill:'transparent'});
+    hit.addEventListener('pointermove',(e)=>{
+      const rect=svg.getBoundingClientRect();
+      tt.innerHTML=`<div class="tt-x">${r.rule}</div>`+
+        `<div class="tt-row"><span class="name">held-out F1</span><span class="v">${r.test_f1.toFixed(3)}</span></div>`+
+        `<div class="tt-row"><span class="name">ROC AUC</span><span class="v">${r.test_auc!=null?r.test_auc.toFixed(3):'–'}</span></div>`+
+        `<div class="tt-row"><span class="name">threshold</span><span class="v">${r.threshold.toFixed(3)}</span></div>`;
+      tt.style.opacity=1;
+      let left = (e.clientX-rect.left)+14; if(left+170>rect.width) left-=184;
+      tt.style.left=Math.max(2,left)+'px'; tt.style.top=(y)+'px';
+    });
+    hit.addEventListener('pointerleave',()=>tt.style.opacity=0);
+    svg.appendChild(hit);
+  });
+  // x title
+  const xt=el('text',{x:padL+(W-padL-padR)/2,y:H-4,'text-anchor':'middle'}); xt.setAttribute('class','axis-title');
+  xt.textContent='Held-out intact-class F1'; svg.appendChild(xt);
+  buildTableR();
+}
+function buildTableR(){
+  let h='<table class="mt"><thead><tr><th>Decision rule</th><th>Held-out F1</th><th>ROC AUC</th><th>Threshold</th></tr></thead><tbody>';
+  SYM.rules.forEach((r,i)=>{
+    const best=i===0?' class="best"':'';
+    h+=`<tr${best}><td>${r.rule}</td><td>${r.test_f1.toFixed(3)}</td><td>${r.test_auc!=null?r.test_auc.toFixed(3):'–'}</td><td>${r.threshold.toFixed(3)}</td></tr>`;
+  });
+  h+='</tbody></table>'; document.getElementById('tblR').innerHTML=h;
+}
+
+/* PySR Pareto front: complexity vs held-out F1 (and train F1) */
+function renderPareto(){
+  const host=document.getElementById('hostPareto'), tt=document.getElementById('ttPareto');
+  host.querySelectorAll('svg').forEach(s=>s.remove());
+  const pts=SYM.pareto.slice().sort((a,b)=>a.complexity-b.complexity);
+  const W=host.clientWidth||900, H=320, m={t:16,r:18,b:42,l:52};
+  const iw=W-m.l-m.r, ih=H-m.t-m.b;
+  const cx=pts.map(p=>p.complexity); const xmin=Math.min(...cx), xmax=Math.max(...cx);
+  const allF=pts.flatMap(p=>[p.test_f1,p.train_f1].filter(v=>v!=null));
+  const ymin=Math.max(0,Math.floor((Math.min(...allF)-0.01)*100)/100);
+  const ymax=Math.min(1,Math.ceil((Math.max(...allF)+0.01)*100)/100);
+  const X=v=>m.l+(v-xmin)/(xmax-xmin)*iw, Y=v=>m.t+ih-(v-ymin)/(ymax-ymin)*ih;
+  const svg=el('svg',{viewBox:`0 0 ${W} ${H}`,role:'img','aria-label':'PySR Pareto front'});
+  host.insertBefore(svg,tt);
+  const yts=[]; for(let t=ymin;t<=ymax+1e-9;t+=0.02) yts.push(Math.round(t*100)/100);
+  yts.forEach(t=>{ svg.appendChild(el('line',{x1:m.l,y1:Y(t),x2:m.l+iw,y2:Y(t),stroke:cssv('--grid'),'stroke-width':1}));
+    const tx=el('text',{x:m.l-9,y:Y(t)+3.5,'text-anchor':'end'}); tx.setAttribute('class','tick'); tx.textContent=t.toFixed(2); svg.appendChild(tx); });
+  cx.filter((v,i)=>cx.indexOf(v)===i).forEach(t=>{ const xx=X(t);
+    const tx=el('text',{x:xx,y:m.t+ih+16,'text-anchor':'middle'}); tx.setAttribute('class','tick'); tx.textContent=t; svg.appendChild(tx); });
+  svg.appendChild(el('line',{x1:m.l,y1:m.t+ih,x2:m.l+iw,y2:m.t+ih,class:'baseline'}));
+  const xt=el('text',{x:m.l+iw/2,y:H-4,'text-anchor':'middle'}); xt.setAttribute('class','axis-title'); xt.textContent='Formula complexity'; svg.appendChild(xt);
+  const ytg=el('text',{x:0,y:0,'text-anchor':'middle',transform:`translate(13,${m.t+ih/2}) rotate(-90)`}); ytg.setAttribute('class','axis-title'); ytg.textContent='F1'; svg.appendChild(ytg);
+  // baseline (p_intact) held-out F1 as reference line
+  const baseF=SYM.baseline_test_f1;
+  svg.appendChild(el('line',{x1:m.l,y1:Y(baseF),x2:m.l+iw,y2:Y(baseF),stroke:cssv('--accent'),'stroke-width':1.2,'stroke-dasharray':'4 3',opacity:0.8}));
+  // train F1 line (context, muted)
+  const drawLine=(key,color,wdraw)=>{ let d=''; pts.forEach(p=>{ if(p[key]==null)return; d+=(d===''?'M':'L')+` ${X(p.complexity)} ${Y(p[key])} `; });
+    svg.appendChild(el('path',{d,fill:'none',stroke:cssv(color),'stroke-width':wdraw||2,'stroke-linejoin':'round','stroke-linecap':'round'})); };
+  drawLine('train_f1','--muted',1.6);
+  drawLine('test_f1','--s-acc',2);
+  // dots on test F1
+  pts.forEach(p=>{ const c=el('circle',{cx:X(p.complexity),cy:Y(p.test_f1),r:4,fill:cssv('--s-acc'),stroke:cssv('--surface'),'stroke-width':2});
+    const hit=el('circle',{cx:X(p.complexity),cy:Y(p.test_f1),r:13,fill:'transparent'});
+    hit.addEventListener('pointermove',(e)=>{ const rect=svg.getBoundingClientRect();
+      tt.innerHTML=`<div class="tt-x">complexity ${p.complexity}</div>`+
+        `<div class="tt-row"><span class="name"><i style="background:${cssv('--s-acc')}"></i>held-out F1</span><span class="v">${p.test_f1.toFixed(3)}</span></div>`+
+        `<div class="tt-row"><span class="name"><i style="background:${cssv('--muted')}"></i>train F1</span><span class="v">${p.train_f1!=null?p.train_f1.toFixed(3):'–'}</span></div>`+
+        `<div class="tt-row"><span class="name">MSE</span><span class="v">${p.mse!=null?p.mse.toFixed(4):'–'}</span></div>`+
+        `<div style="margin-top:6px;font-family:${cssv('--mono')||'monospace'};font-size:11px;color:${cssv('--ink-2')};max-width:230px;word-break:break-word">${p.equation}</div>`;
+      tt.style.opacity=1; let left=X(p.complexity)/W*rect.width+14; if(left+200>rect.width) left-=214;
+      tt.style.left=Math.max(2,left)+'px'; tt.style.top=(Y(p.test_f1)/H*rect.height-10)+'px'; });
+    hit.addEventListener('pointerleave',()=>tt.style.opacity=0);
+    svg.appendChild(c); svg.appendChild(hit); });
+  document.getElementById('legendP').innerHTML =
+    `<span class="lg"><span class="key" style="background:${cssv('--s-acc')}"></span>Held-out F1</span>`+
+    `<span class="lg"><span class="key" style="background:${cssv('--muted')}"></span>Train F1</span>`+
+    `<span class="lg"><span style="width:16px;height:0;border-top:1.4px dashed ${cssv('--accent')};display:inline-block"></span>p_intact baseline</span>`;
+}
+
+/* verdict */
+function renderVerdict(){
+  const h=SYM.headline;
+  const delta=(h.delta_f1_vs_baseline!=null?h.delta_f1_vs_baseline:0);
+  const best=h.overall_best_rule, bestF1=h.overall_best_test_f1, baseF1=h.baseline_p_intact_test_f1;
+  document.getElementById('verdict').innerHTML =
+    `<h3>Verdict</h3>
+     <p class="big">Keep the single-band rule: <code>p_intact ≥ ${fmt(SYM.consensus_threshold,3)}</code>.
+        Combining all three probability bands does not reliably improve intact detection.</p>
+     <p>The best rule found — <code>${best}</code> — reaches held-out F1 <b>${fmt(bestF1,3)}</b> versus
+        <b>${fmt(baseF1,3)}</b> for plain p_intact, a gain of just <b>${(delta>=0?'+':'')}${fmt(delta,3)}</b>
+        that sits within run-to-run noise. Symbolic regression drove training error down with terms like
+        <code>p_i·(p_m/p_s)</code>, but none of that carried over to the held-out blocks.</p>
+     <ul>
+       <li><b>Which method?</b> Youden's J, max-F1, max-Kappa and max overall accuracy all select
+           τ ≈ ${fmt(SYM.consensus_threshold,3)} here; Youden's J / max-Kappa are the literature-preferred choices.</li>
+       <li><b>Do the other bands help?</b> Marginally at most. The only rule that edges out the baseline is the
+           intact-vs-moderate ratio <code>p_i/(p_i+p_m)</code>, which ignores p_severe.</li>
+       <li><b>To deploy in Earth Engine:</b> threshold the existing <code>p_intact</code> band at
+           ${fmt(SYM.consensus_threshold,3)} — no band arithmetic required.</li>
+     </ul>`;
+}
+
+/* ---------------- table toggles ---------------- */
+function wireToggle(btnId, detId){
+  const btn = document.getElementById(btnId), det = document.getElementById(detId);
+  if(!btn||!det) return;
+  btn.addEventListener('click', ()=>{ det.open = !det.open; btn.setAttribute('aria-expanded', det.open); });
+}
+
+function renderAll(){
+  renderHeader(); renderA(); renderB(); renderNotes();
+  renderRefdata(); renderMethods(); renderRules(); renderPareto(); renderVerdict();
+}
+wireToggle('tableBtnA','tableA'); wireToggle('tableBtnB','tableB'); wireToggle('tableBtnR','tableR');
+renderAll();
+let rt; addEventListener('resize', ()=>{ clearTimeout(rt); rt=setTimeout(()=>{ renderA(); renderB(); renderRules(); renderPareto(); }, 150); });
+</script>
+</body>
+</html>

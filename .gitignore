@@ -1,0 +1,22 @@
+# Local authentication and notebooks
+gee_auth.ipynb
+.ipynb_checkpoints/
+
+# Runtime logs and generated checkpoints
+*.log
+analysis/outputs/
+
+# Python caches and virtual environments
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+
+# Local environment files
+.env
+.env.*
+
+# OS/editor noise
+Thumbs.db
+.DS_Store

@@ -1,0 +1,44 @@
+{
+  "n_points": 2083,
+  "n_intact": 727,
+  "n_not_intact": 1356,
+  "efg_counts": {
+    "1": 1270,
+    "2": 622,
+    "3": 191
+  },
+  "roc_auc": 0.947372,
+  "ideal_threshold_youden": {
+    "threshold": 0.48,
+    "youden_J": 0.752682,
+    "f1": 0.83871,
+    "overall_accuracy": 0.887182,
+    "recall": 0.84044,
+    "specificity": 0.912242,
+    "balanced_accuracy": 0.876341
+  },
+  "ideal_threshold_f1": {
+    "threshold": 0.48,
+    "youden_J": 0.752682,
+    "f1": 0.83871,
+    "overall_accuracy": 0.887182,
+    "recall": 0.84044,
+    "specificity": 0.912242,
+    "balanced_accuracy": 0.876341
+  },
+  "ideal_threshold_overall_accuracy": {
+    "threshold": 0.52,
+    "youden_J": 0.74012,
+    "f1": 0.834869,
+    "overall_accuracy": 0.888142,
+    "recall": 0.810179,
+    "specificity": 0.929941,
+    "balanced_accuracy": 0.87006
+  },
+  "total_valid_area_km2": 19106.293,
+  "intact_area_at_ideal_km2": 4417.705,
+  "k_folds": 5,
+  "block_deg": 0.2,
+  "year": 2022,
+  "elapsed_sec": 44.4
+}
