@@ -1,0 +1,12 @@
+{
+  "block_deg": 0.2,
+  "block_km_ew": 18.6,
+  "residual_effective_range_km": 1.5030000000000001,
+  "label_effective_range_km": 4.206,
+  "residual_nugget_ratio": 0.0,
+  "residual_structured": true,
+  "label_structured": true,
+  "block_adequate_vs_residual": true,
+  "block_over_range_ratio": 12.38,
+  "verdict": "Residual autocorrelation effective range = 1.5 km. CV block = 18.6 km (0.2 deg). Block >= residual range -> block size is ADEQUATE (little leakage expected)."
+}

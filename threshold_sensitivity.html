@@ -24,6 +24,7 @@
     --s-you:        #eb6834;   /* Youden's J — orange      */
     --s-sens:       #4a3aa7;   /* sensitivity — violet     */
     --s-spec:       #e34948;   /* specificity — red        */
+    --s-label:      #8a5a2b;   /* variogram label curve     */
     --seq:          #0a7d34;   /* area — sequential green   */
     --seq-fill:     rgba(10,125,52,0.12);
     --good:         #0ca30c;
@@ -49,6 +50,7 @@
       --s-you:      #d95926;
       --s-sens:     #9085e9;
       --s-spec:     #e66767;
+      --s-label:    #c28b54;
       --seq:        #35b45f;
       --seq-fill:   rgba(53,180,95,0.16);
       --good:       #0ca30c;
@@ -59,14 +61,14 @@
     --plane:#f7f8f5;--surface:#fcfdfb;--surface-2:#f1f4ee;--ink:#10140f;--ink-2:#4c534a;
     --muted:#868d80;--grid:#e4e7dd;--axis:#c4c9bb;--border:rgba(16,20,15,0.10);
     --accent:#0a7d34;--s-acc:#256abf;--s-f1:#1baf7a;--s-you:#eb6834;--s-sens:#4a3aa7;
-    --s-spec:#e34948;--seq:#0a7d34;--seq-fill:rgba(10,125,52,0.12);--good:#0ca30c;
+    --s-spec:#e34948;--s-label:#8a5a2b;--seq:#0a7d34;--seq-fill:rgba(10,125,52,0.12);--good:#0ca30c;
     --shadow:0 1px 2px rgba(16,20,15,.04), 0 8px 28px rgba(16,20,15,.06);
   }
   :root[data-theme="dark"] {
     --plane:#0c0d0b;--surface:#17190f;--surface-2:#1e2117;--ink:#f3f5ef;--ink-2:#c2c8ba;
     --muted:#8a9081;--grid:#262a1f;--axis:#363a2d;--border:rgba(243,245,239,0.10);
     --accent:#35b45f;--s-acc:#3987e5;--s-f1:#199e70;--s-you:#d95926;--s-sens:#9085e9;
-    --s-spec:#e66767;--seq:#35b45f;--seq-fill:rgba(53,180,95,0.16);--good:#0ca30c;
+    --s-spec:#e66767;--s-label:#c28b54;--seq:#35b45f;--seq-fill:rgba(53,180,95,0.16);--good:#0ca30c;
     --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 30px rgba(0,0,0,.5);
   }
 
@@ -198,6 +200,7 @@
   @media (max-width: 720px) {
     .headline { grid-template-columns: 1fr 1fr; }
     .cell.hero { grid-column: 1 / -1; }
+    .stat-grid { grid-template-columns: 1fr 1fr; }
   }
   /* ---------- part 2 ---------- */
   .divider { margin: 46px 0 22px; padding-top: 26px; border-top: 2px solid var(--border); }
@@ -232,6 +235,13 @@
   table.mt .chip { display: inline-block; padding: 1px 7px; border-radius: 20px; font-size: 11px; font-weight: 600;
     background: color-mix(in srgb, var(--accent) 16%, transparent); color: var(--accent); }
 
+  .stat-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1px;
+    background: var(--border); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin: 14px 0; }
+  .stat { background: var(--surface-2); padding: 12px 14px; }
+  .stat .sl { font-size: 10.5px; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); font-weight: 650; margin-bottom: 5px; }
+  .stat .sv { font-size: 20px; font-weight: 680; color: var(--ink); font-variant-numeric: tabular-nums; }
+  .stat .sf { font-size: 11.5px; color: var(--muted); margin-top: 3px; }
+
   .verdict { border-left: 3px solid var(--accent); }
   .verdict h3 { font-size: 13px; text-transform: uppercase; letter-spacing: .05em; color: var(--accent); margin: 0 0 12px; }
   .verdict .big { font-size: 15px; color: var(--ink); font-weight: 600; margin: 0 0 12px; line-height: 1.45; }
@@ -259,6 +269,8 @@
       classification quality peaks and how the mapped intact area responds. <b>Part 2</b> asks
       which threshold-selection method to use, and whether combining all three probability
       bands — via hand-crafted rules and symbolic regression — beats P(intact) alone.
+      <b>Part 3</b> repeats the sweep one-vs-rest for the moderate and severe classes too.
+      <b>Part 4</b> checks whether the spatial CV block is large enough using an empirical variogram.
       All accuracy is spatially cross-validated (out-of-fold).
     </p>
     <div class="meta-line" id="metaLine"></div>
@@ -372,6 +384,84 @@
   <!-- verdict -->
   <section class="panel verdict" id="verdict"></section>
 
+  <!-- ============ PART 3: all three condition classes ============ -->
+  <div class="divider" id="part3">
+    <span class="divider-eyebrow">Part 3</span>
+    <h2 class="divider-h">Ideal thresholds for all three condition classes</h2>
+    <p class="divider-sub">The same threshold sweep applied one-vs-rest to each condition
+      class. For class&nbsp;C the positive label is <b>C&nbsp;vs&nbsp;the&nbsp;rest</b> and the
+      score is that class's probability band (<b>p_intact</b>, <b>p_moderate</b> or
+      <b>p_severe</b>). Accuracy is the same spatial out-of-fold CV; area is each class's
+      full-model probability surface. Intact reproduces Part&nbsp;1 exactly as a check.</p>
+  </div>
+
+  <!-- per-class summary table -->
+  <section class="panel">
+    <div class="panel-head">
+      <div>
+        <h2>Per-class ideal thresholds</h2>
+        <p class="desc">Operating point at max Youden's&nbsp;J for each class, with ROC&nbsp;AUC
+          (class separability) and the mapped area that qualifies at that threshold. Moderate is
+          the hard middle class — lower AUC and a much flatter optimum.</p>
+      </div>
+    </div>
+    <div class="tbl-scroll"><div id="allClassTable"></div></div>
+    <div id="allClassNote" class="callout"></div>
+  </section>
+
+  <!-- Youden J vs tau, three classes overlaid -->
+  <section class="panel">
+    <div class="panel-head">
+      <div>
+        <h2>Youden's J versus threshold, by class</h2>
+        <p class="desc">Each curve is one class's J across τ; the dashed marker on each is its
+          own τ*. A sharp peak means a well-defined threshold; a flat plateau (moderate) means
+          the exact value matters little.</p>
+      </div>
+    </div>
+    <div class="legend" id="legendJ"></div>
+    <div class="chart-host" id="hostJ"><div class="tt" id="ttJ"></div></div>
+  </section>
+
+  <!-- area vs tau, three classes overlaid -->
+  <section class="panel">
+    <div class="panel-head">
+      <div>
+        <h2>Mapped area versus threshold, by class</h2>
+        <p class="desc">Area assigned to each class as its own τ tightens. These are
+          independent one-vs-rest surfaces, so at low τ they overlap and need not sum to the
+          total mappable area (19,106&nbsp;km²).</p>
+      </div>
+    </div>
+    <div class="legend" id="legendAllArea"></div>
+    <div class="chart-host" id="hostAllArea"><div class="tt" id="ttAllArea"></div></div>
+  </section>
+
+  <!-- ============ PART 4: variogram block-size check ============ -->
+  <div class="divider" id="part4">
+    <span class="divider-eyebrow">Part 4</span>
+    <h2 class="divider-h">Is the 0.2° spatial CV block large enough?</h2>
+    <p class="divider-sub">Block cross-validation should use blocks at least as large as the
+      range of spatial autocorrelation. The decisive check is the out-of-fold residual
+      variogram: structure left after the Random Forest has fit the 64 Google embedding bands.</p>
+  </div>
+
+  <section class="panel verdict" id="variogramVerdict"></section>
+
+  <section class="panel">
+    <div class="panel-head">
+      <div>
+        <h2>Empirical variogram and fitted range</h2>
+        <p class="desc">Short-lag semivariance at the 2,083 training points, using geodesic
+          distances and 2 km bins. Dots are empirical bins; lines are fitted exponential
+          variograms. The vertical marker is the 0.2° CV block width, about 18.6 km east-west
+          at the AOI latitude.</p>
+      </div>
+    </div>
+    <div class="legend" id="legendV"></div>
+    <div class="chart-host" id="hostVariogram"><div class="tt" id="ttVariogram"></div></div>
+  </section>
+
   <section class="panel notes">
     <h3>Method</h3>
     <ul id="methodList"></ul>
@@ -388,10 +478,20 @@
 {"n":2083,"n_intact":727,"sampling":{"scale_m":10,"tileScale":4},"split":{"train_folds":[0,1,2],"test_folds":[3,4],"n_train":1379,"n_test":704},"roc_auc":0.9475,"methods":[{"method":"Youden's J (max TSS)","threshold":0.485,"f1":0.841598,"youden_J":0.756369,"kappa":0.756852,"accuracy":0.889582,"recall":0.84044,"specificity":0.915929},{"method":"Max F1 (intact)","threshold":0.485,"f1":0.841598,"youden_J":0.756369,"kappa":0.756852,"accuracy":0.889582,"recall":0.84044,"specificity":0.915929},{"method":"Max Cohen\u2019s \u03ba","threshold":0.485,"f1":0.841598,"youden_J":0.756369,"kappa":0.756852,"accuracy":0.889582,"recall":0.84044,"specificity":0.915929},{"method":"Max overall accuracy","threshold":0.485,"f1":0.841598,"youden_J":0.756369,"kappa":0.756852,"accuracy":0.889582,"recall":0.84044,"specificity":0.915929},{"method":"Sensitivity = specificity","threshold":0.415,"f1":0.818004,"youden_J":0.730443,"kappa":0.712486,"accuracy":0.866059,"recall":0.862448,"specificity":0.867994}],"consensus_threshold":0.485,"rules":[{"rule":"p_i / (p_i + p_m)","test_f1":0.86729,"test_auc":0.919274,"threshold":0.5961,"kind":"crafted"},{"rule":"p_i - max(p_m, p_s)","test_f1":0.861423,"test_auc":0.94351,"threshold":0.1563,"kind":"crafted"},{"rule":"p_intact (baseline)","test_f1":0.859779,"test_auc":0.94787,"threshold":0.4877,"kind":"baseline"},{"rule":"2*p_i - 1","test_f1":0.859779,"test_auc":0.94787,"threshold":-0.0246,"kind":"crafted"},{"rule":"PySR best: p_i - 1*0.038304944","test_f1":0.859779,"test_auc":0.9475,"threshold":0.4494,"kind":"pysr"},{"rule":"p_i - 0.5*p_s","test_f1":0.854015,"test_auc":0.949682,"threshold":0.3966,"kind":"crafted"},{"rule":"p_i / p_s        ","test_f1":0.835355,"test_auc":0.945991,"threshold":2.5156,"kind":"crafted"},{"rule":"p_i * (p_m / p_s)","test_f1":0.816529,"test_auc":0.870666,"threshold":0.8109,"kind":"crafted"}],"baseline_test_f1":0.859779,"pareto":[{"complexity":1,"test_f1":0.859779,"train_f1":0.831683,"mse":0.09501616,"equation":"p_i"},{"complexity":3,"test_f1":0.859779,"train_f1":0.831683,"mse":0.0935489,"equation":"p_i - 1*0.038304944"},{"complexity":4,"test_f1":0.859779,"train_f1":0.830769,"mse":0.09067149,"equation":"(p_i - 1*(-0.13611296))**2"},{"complexity":5,"test_f1":0.854015,"train_f1":0.829483,"mse":0.08752629,"equation":"p_i*(1.1365379 - p_s)"},{"complexity":6,"test_f1":0.821732,"train_f1":0.826396,"mse":0.08533661,"equation":"Piecewise((0.0137739247183932/p_s**2, p_i > 0.0137739247183932/p_s**2), (p_i, True))"},{"complexity":7,"test_f1":0.835664,"train_f1":0.830149,"mse":0.0823199,"equation":"p_i*Piecewise((1.1245421, 0.14659716/p_s > 1.1245421), (0.14659716/p_s, True))"},{"complexity":8,"test_f1":0.84007,"train_f1":0.828175,"mse":0.08166392,"equation":"p_i*Piecewise((0.0337869763362756/p_s**2, 0.0337869763362756/p_s**2 < 1.1108563), (1.1108563, True))"},{"complexity":9,"test_f1":0.826162,"train_f1":0.826943,"mse":0.08140314,"equation":"p_i*Piecewise((p_i*p_m/p_s, p_i*p_m/p_s < 1.1321253), (1.1321253, True))"},{"complexity":10,"test_f1":0.82735,"train_f1":0.825953,"mse":0.08100772,"equation":"Piecewise((p_i**2*p_m/p_s, p_i > p_i**2*p_m/p_s), (p_i, True))*1.1250293"},{"complexity":11,"test_f1":0.82735,"train_f1":0.826446,"mse":0.08100231,"equation":"p_i*Piecewise((1.0124058, p_i*p_m/p_s > 1.0124058), (p_i*p_m/p_s, True))*1.1131066"},{"complexity":12,"test_f1":0.859259,"train_f1":0.832765,"mse":0.080737315,"equation":"Piecewise((0.69969976, p_i**2*p_m**2/p_s**2 > 0.69969976), (p_i**2*p_m**2/p_s**2, True))*1.5988977*p_i"},{"complexity":13,"test_f1":0.853432,"train_f1":0.826636,"mse":0.08064877,"equation":"Piecewise((p_i, ITE(p_i < p_i**2*p_m**2/p_s**2, p_i < p_i**4*p_m**4/p_s**4, p_i < p_i**2)), (Piecewise((p_i**4*p_m**4/p_s**4, p_i < p_i**2*p_m**2/p_s**2), (p_i**2, True)), True))*1.1250293"},{"complexity":14,"test_f1":0.845878,"train_f1":0.828729,"mse":0.080498256,"equation":"Piecewise((0.9998048, ITE(p_i*p_m/p_s > 0.90322727, 1.1432086768958*p_i > 0.9998048, p_i*(-p_i*p_m/p_s - 0.1659821)**2 > 0.9998048)), (p_i*(-Piecewise((0.90322727, p_i*p_m/p_s > 0.90322727), (p_i*p_m/p_s, True)) - 0.1659821)**2, True))"},{"complexity":16,"test_f1":0.845878,"train_f1":0.828729,"mse":0.08049311,"equation":"Piecewise((0.9346179, ITE(p_i*p_m/p_s < 0.90029424, p_i*(p_i*p_m/p_s + 0.13373242)**2 > 0.9346179, 1.06921113359076*p_i > 0.9346179)), (p_i*(Piecewise((p_i*p_m/p_s, p_i*p_m/p_s < 0.90029424), (0.90029424, True)) - 1*(-0.13373242))**2, True))*1.0701412"}],"headline":{"baseline_p_intact_test_f1":0.859779,"baseline_test_auc":0.94787,"best_symbolic_test_f1":0.859779,"best_symbolic_equation":"p_i","overall_best_rule":"p_i / (p_i + p_m)","overall_best_test_f1":0.86729,"overall_best_test_auc":0.919274,"overall_best_threshold":0.5961463937227556,"delta_f1_vs_baseline":0.007511,"conclusion":"Combining the three probability bands yields at most a marginal held-out F1 gain over thresholding p_intact alone; the PySR Pareto front shows MSE improves only ~15% from complexity 1->16 and those gains do not translate to better held-out intact F1."},"refdata":{"intact":751,"moderate":633,"severe":820,"transformed":778,"bontveld":96,"modelled":["intact","moderate","severe"],"excluded":["transformed","bontveld"]}}
 </script>
 
+<script id="ALLCLASSES" type="application/json">
+{"classes":{"intact":{"prob_band":"p_intact","positive_class":0,"n_positive":727,"n_negative":1356,"prevalence":0.349,"roc_auc":0.947372,"ideal":{"by_youden":{"threshold":0.48,"youden_J":0.752682,"f1":0.83871,"overall_accuracy":0.887182,"recall":0.84044,"specificity":0.912242,"precision":0.836986,"balanced_accuracy":0.876341},"by_f1":{"threshold":0.48,"youden_J":0.752682,"f1":0.83871,"overall_accuracy":0.887182,"recall":0.84044,"specificity":0.912242,"precision":0.836986,"balanced_accuracy":0.876341},"by_overall_accuracy":{"threshold":0.52,"youden_J":0.74012,"f1":0.834869,"overall_accuracy":0.888142,"recall":0.810179,"specificity":0.929941,"precision":0.861111,"balanced_accuracy":0.87006}},"thresholds":[0.0,0.01,0.02,0.03,0.04,0.05,0.06,0.07,0.08,0.09,0.1,0.11,0.12,0.13,0.14,0.15,0.16,0.17,0.18,0.19,0.2,0.21,0.22,0.23,0.24,0.25,0.26,0.27,0.28,0.29,0.3,0.31,0.32,0.33,0.34,0.35,0.36,0.37,0.38,0.39,0.4,0.41,0.42,0.43,0.44,0.45,0.46,0.47,0.48,0.49,0.5,0.51,0.52,0.53,0.54,0.55,0.56,0.57,0.58,0.59,0.6,0.61,0.62,0.63,0.64,0.65,0.66,0.67,0.68,0.69,0.7,0.71,0.72,0.73,0.74,0.75,0.76,0.77,0.78,0.79,0.8,0.81,0.82,0.83,0.84,0.85,0.86,0.87,0.88,0.89,0.9,0.91,0.92,0.93,0.94,0.95,0.96,0.97,0.98,0.99,1.0],"youden_J":[0.0,0.0,0.010324,0.04941,0.093658,0.140855,0.181416,0.225664,0.261062,0.289086,0.317209,0.348182,0.382205,0.417064,0.446662,0.481522,0.509744,0.537768,0.566628,0.591064,0.607686,0.625584,0.642844,0.658529,0.668953,0.677463,0.684398,0.689859,0.699843,0.698426,0.704086,0.710822,0.716921,0.721006,0.718752,0.718809,0.72427,0.728454,0.727476,0.7321,0.733235,0.733732,0.731379,0.738115,0.737974,0.741761,0.747122,0.748895,0.752682,0.748953,0.741438,0.74046,0.74012,0.733342,0.729613,0.723572,0.716794,0.710853,0.703536,0.690079,0.675147,0.671857,0.658939,0.646659,0.63713,0.623573,0.612768,0.602501,0.59042,0.577402,0.56247,0.553679,0.538647,0.531969,0.510159,0.493015,0.480097,0.464328,0.444433,0.431415,0.409407,0.389511,0.376494,0.355223,0.333952,0.312781,0.290772,0.262624,0.23924,0.215857,0.189084,0.158822,0.134801,0.118294,0.09216,0.050894,0.026135,0.004127,0.0,0.0,0.0],"f1":[0.517438,0.517438,0.520029,0.530077,0.541931,0.555174,0.567083,0.580671,0.59202,0.601323,0.610854,0.621842,0.634296,0.647559,0.659361,0.673842,0.686097,0.698783,0.71237,0.72433,0.732887,0.74229,0.751728,0.760518,0.766467,0.771775,0.776169,0.779775,0.786325,0.786621,0.790888,0.795294,0.799526,0.802876,0.802663,0.804174,0.808431,0.812304,0.812658,0.816327,0.818006,0.819481,0.819135,0.824306,0.825651,0.828744,0.833333,0.835495,0.83871,0.837725,0.833449,0.834037,0.834869,0.831076,0.829971,0.826686,0.822757,0.81972,0.81575,0.807837,0.798473,0.796623,0.788208,0.779953,0.773481,0.764189,0.756669,0.749186,0.740496,0.730609,0.71912,0.712212,0.700086,0.69459,0.676157,0.661261,0.649635,0.635272,0.616682,0.604167,0.582692,0.5625,0.548865,0.526104,0.502554,0.477581,0.45175,0.416938,0.387168,0.356257,0.318707,0.274882,0.237576,0.211562,0.168766,0.096859,0.050938,0.008219,0.0,0.0,0.0],"recall":[1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,0.998624,0.998624,0.997249,0.994498,0.993122,0.990371,0.98762,0.98762,0.986245,0.984869,0.979367,0.976616,0.97249,0.969739,0.968363,0.962861,0.958735,0.954608,0.949106,0.938102,0.931224,0.929849,0.927098,0.921596,0.911967,0.900963,0.896836,0.889959,0.883081,0.88033,0.874828,0.86795,0.859697,0.858322,0.850069,0.848693,0.845942,0.841816,0.84044,0.830812,0.822558,0.815681,0.810179,0.801926,0.792297,0.784044,0.775791,0.766162,0.755158,0.737276,0.719395,0.713893,0.698762,0.685007,0.674003,0.657497,0.643741,0.632737,0.616231,0.602476,0.584594,0.57359,0.557084,0.547455,0.522696,0.504814,0.489684,0.473177,0.452545,0.43879,0.416781,0.396149,0.382393,0.360385,0.338377,0.314993,0.292985,0.264099,0.240715,0.217331,0.189821,0.15956,0.134801,0.118294,0.09216,0.050894,0.026135,0.004127,0.0,0.0,0.0],"specificity":[0.0,0.0,0.010324,0.04941,0.093658,0.140855,0.181416,0.225664,0.261062,0.289086,0.318584,0.349558,0.384956,0.422566,0.45354,0.49115,0.522124,0.550147,0.580383,0.606195,0.628319,0.648968,0.670354,0.688791,0.70059,0.714602,0.725664,0.735251,0.750737,0.760324,0.772861,0.780973,0.789823,0.79941,0.806785,0.817847,0.827434,0.838496,0.844395,0.85177,0.858407,0.865782,0.871681,0.879794,0.887906,0.893068,0.90118,0.90708,0.912242,0.918142,0.918879,0.924779,0.929941,0.931416,0.937316,0.939528,0.941003,0.94469,0.948378,0.952802,0.955752,0.957965,0.960177,0.961652,0.963127,0.966077,0.969027,0.969764,0.974189,0.974926,0.977876,0.980088,0.981563,0.984513,0.987463,0.988201,0.990413,0.99115,0.991888,0.992625,0.992625,0.993363,0.9941,0.994838,0.995575,0.997788,0.997788,0.998525,0.998525,0.998525,0.999263,0.999263,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0],"overall_accuracy":[0.349016,0.349016,0.355737,0.381181,0.409986,0.440711,0.467115,0.495919,0.518963,0.537206,0.555929,0.576092,0.598656,0.62218,0.641863,0.665386,0.68459,0.702832,0.722036,0.738358,0.75084,0.763322,0.775804,0.786846,0.794047,0.801248,0.807009,0.81181,0.819971,0.822372,0.828133,0.832933,0.837734,0.842055,0.843495,0.846855,0.851656,0.856457,0.857897,0.861738,0.864138,0.866539,0.867499,0.8723,0.8747,0.87758,0.881901,0.884301,0.887182,0.887662,0.885262,0.886702,0.888142,0.886222,0.886702,0.885262,0.883341,0.882381,0.880941,0.87758,0.87326,0.87278,0.868939,0.865098,0.862218,0.858377,0.855497,0.852136,0.849256,0.844935,0.840614,0.838214,0.833413,0.831973,0.825252,0.819491,0.815651,0.81037,0.803649,0.799328,0.791647,0.784926,0.780605,0.773404,0.766203,0.759482,0.7518,0.742199,0.734037,0.725876,0.716755,0.706193,0.698032,0.692271,0.683149,0.668747,0.660106,0.652424,0.650984,0.650984,0.650984],"area_km2":[19106.293,19099.3383,18929.0819,18575.1978,18140.1783,17679.4523,17184.5263,16620.3722,16002.128,15356.8924,14667.2686,13920.0575,13133.6873,12360.3661,11638.3845,10989.1214,10420.0643,9922.2399,9490.1788,9110.7094,8774.855,8479.112,8210.4917,7966.5032,7741.9435,7531.9881,7334.3761,7149.7251,6972.3101,6806.2525,6646.7546,6493.5417,6347.7013,6205.7531,6068.7003,5935.9084,5805.949,5676.8963,5554.4943,5432.2155,5311.1279,5192.6769,5077.3187,4963.3205,4850.061,4739.3117,4630.6545,4523.2657,4417.705,4313.3161,4210.3778,4106.5695,4005.5764,3906.0464,3806.7732,3708.008,3611.5284,3515.4793,3419.4831,3325.5928,3231.9744,3138.6062,3047.7302,2956.4496,2866.4314,2776.8221,2688.7295,2599.8957,2508.9333,2420.2943,2329.9953,2239.8932,2148.6903,2055.0646,1962.0007,1867.0989,1772.9344,1677.4109,1578.7504,1480.3565,1380.5861,1282.7686,1182.2006,1081.1866,981.2057,880.9918,780.364,681.2907,580.4187,478.9406,377.2602,278.1244,186.0773,111.694,63.1129,38.5427,22.6437,9.2605,0.0083,0.0,0.0],"area_at_ideal_km2":4417.705,"total_valid_area_km2":19106.293,"area_scale_m":100},"moderate":{"prob_band":"p_moderate","positive_class":1,"n_positive":622,"n_negative":1461,"prevalence":0.2986,"roc_auc":0.824353,"ideal":{"by_youden":{"threshold":0.25,"youden_J":0.519934,"f1":0.649334,"overall_accuracy":0.734518,"recall":0.823151,"specificity":0.696783,"precision":0.536126,"balanced_accuracy":0.759967},"by_f1":{"threshold":0.28,"youden_J":0.518867,"f1":0.652949,"overall_accuracy":0.757081,"recall":0.765273,"specificity":0.753593,"precision":0.569378,"balanced_accuracy":0.759433},"by_overall_accuracy":{"threshold":0.33,"youden_J":0.469058,"f1":0.62645,"overall_accuracy":0.768123,"recall":0.651125,"specificity":0.817933,"precision":0.603577,"balanced_accuracy":0.734529}},"thresholds":[0.0,0.01,0.02,0.03,0.04,0.05,0.06,0.07,0.08,0.09,0.1,0.11,0.12,0.13,0.14,0.15,0.16,0.17,0.18,0.19,0.2,0.21,0.22,0.23,0.24,0.25,0.26,0.27,0.28,0.29,0.3,0.31,0.32,0.33,0.34,0.35,0.36,0.37,0.38,0.39,0.4,0.41,0.42,0.43,0.44,0.45,0.46,0.47,0.48,0.49,0.5,0.51,0.52,0.53,0.54,0.55,0.56,0.57,0.58,0.59,0.6,0.61,0.62,0.63,0.64,0.65,0.66,0.67,0.68,0.69,0.7,0.71,0.72,0.73,0.74,0.75,0.76,0.77,0.78,0.79,0.8,0.81,0.82,0.83,0.84,0.85,0.86,0.87,0.88,0.89,0.9,0.91,0.92,0.93,0.94,0.95,0.96,0.97,0.98,0.99,1.0],"youden_J":[0.0,0.0,0.017112,0.057495,0.112252,0.159925,0.210337,0.264171,0.293125,0.328924,0.355586,0.381086,0.40388,0.42096,0.43527,0.447081,0.46416,0.467726,0.474029,0.501821,0.502617,0.50892,0.513616,0.513281,0.511339,0.519934,0.516145,0.518517,0.518867,0.507963,0.503044,0.490118,0.471446,0.469058,0.443749,0.433561,0.406643,0.386603,0.365432,0.342653,0.309543,0.300279,0.275415,0.259751,0.255995,0.258462,0.250152,0.232913,0.220465,0.199087,0.193516,0.178537,0.16749,0.156204,0.138041,0.125387,0.111808,0.093885,0.080068,0.064436,0.061667,0.055204,0.053118,0.045764,0.037009,0.031263,0.028493,0.024355,0.021824,0.018608,0.017,0.015393,0.013785,0.008962,0.005746,0.004139,0.000923,0.001608,0.001608,0.001608,0.001608,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"f1":[0.459889,0.459889,0.464179,0.474628,0.489571,0.503241,0.518611,0.536163,0.546018,0.558837,0.568773,0.578646,0.587949,0.595156,0.601413,0.606776,0.614741,0.616693,0.620054,0.634283,0.635482,0.639487,0.642857,0.643594,0.643521,0.649334,0.648473,0.651475,0.652949,0.647848,0.645954,0.638643,0.627362,0.62645,0.60966,0.602762,0.583333,0.568007,0.551181,0.532258,0.50369,0.493359,0.468627,0.451807,0.444215,0.443743,0.433012,0.413943,0.397321,0.371722,0.360234,0.337349,0.321078,0.302879,0.276215,0.255541,0.232,0.203804,0.175978,0.148148,0.140805,0.123167,0.115556,0.101644,0.079389,0.067692,0.059006,0.05,0.043956,0.037795,0.0347,0.031596,0.028481,0.019078,0.012759,0.009585,0.003205,0.00321,0.00321,0.00321,0.00321,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"recall":[1.0,1.0,1.0,1.0,1.0,0.998392,0.996785,0.995177,0.991961,0.988746,0.983923,0.975884,0.972669,0.967846,0.958199,0.950161,0.945338,0.932476,0.919614,0.913183,0.895498,0.882637,0.868167,0.85209,0.834405,0.823151,0.802251,0.78135,0.765273,0.737942,0.71865,0.696141,0.667203,0.651125,0.618971,0.596463,0.562701,0.533762,0.506431,0.477492,0.438907,0.418006,0.384244,0.361736,0.345659,0.339228,0.324759,0.305466,0.286174,0.262058,0.247588,0.22508,0.210611,0.194534,0.173633,0.157556,0.139871,0.120579,0.101286,0.083601,0.078778,0.067524,0.062701,0.054662,0.041801,0.03537,0.030547,0.025723,0.022508,0.019293,0.017685,0.016077,0.014469,0.009646,0.006431,0.004823,0.001608,0.001608,0.001608,0.001608,0.001608,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"specificity":[0.0,0.0,0.017112,0.057495,0.112252,0.161533,0.213552,0.268994,0.301164,0.340178,0.371663,0.405202,0.431211,0.453114,0.47707,0.49692,0.518823,0.53525,0.554415,0.588638,0.607118,0.626283,0.645448,0.661191,0.676934,0.696783,0.713895,0.737166,0.753593,0.770021,0.784394,0.793977,0.804244,0.817933,0.824778,0.837098,0.843943,0.852841,0.859001,0.865161,0.870637,0.882272,0.89117,0.898015,0.910335,0.919233,0.925394,0.927447,0.934292,0.937029,0.945927,0.953457,0.956879,0.96167,0.964408,0.96783,0.971937,0.973306,0.978782,0.980835,0.982888,0.98768,0.990418,0.991102,0.995209,0.995893,0.997947,0.998631,0.999316,0.999316,0.999316,0.999316,0.999316,0.999316,0.999316,0.999316,0.999316,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0],"overall_accuracy":[0.298608,0.298608,0.31061,0.338934,0.37734,0.411426,0.447432,0.485838,0.507441,0.533845,0.554489,0.575612,0.592895,0.606817,0.620739,0.632261,0.646183,0.653865,0.663466,0.68555,0.693231,0.702832,0.711954,0.718195,0.723956,0.734518,0.740278,0.75036,0.757081,0.760442,0.764762,0.764762,0.763322,0.768123,0.763322,0.765242,0.759962,0.757561,0.753721,0.7494,0.741719,0.743639,0.739798,0.737878,0.741719,0.746039,0.746039,0.741719,0.740759,0.735478,0.737398,0.735958,0.734037,0.732597,0.728277,0.725876,0.723476,0.718675,0.716755,0.712914,0.712914,0.712914,0.713394,0.711474,0.710514,0.709073,0.709073,0.708113,0.707633,0.706673,0.706193,0.705713,0.705233,0.703793,0.702832,0.702352,0.701392,0.701872,0.701872,0.701872,0.701872,0.701392,0.701392,0.701392,0.701392,0.701392,0.701392,0.701392,0.701392,0.701392,0.701392,0.701392,0.701392,0.701392,0.701392,0.701392,0.701392,0.701392,0.701392,0.701392,0.701392],"area_km2":[19106.293,19099.8546,18975.1243,18762.0091,18448.3153,18067.2277,17671.4004,17272.497,16874.69,16466.018,16047.2073,15630.675,15225.063,14831.8506,14451.4689,14081.9712,13722.7425,13371.9714,13027.0873,12687.867,12359.0903,12030.428,11708.7115,11390.518,11071.6928,10752.6331,10437.0337,10118.4906,9798.8116,9474.7453,9148.8186,8819.7387,8490.0026,8159.1048,7826.0432,7493.4496,7161.4531,6835.0442,6505.5217,6179.242,5857.8932,5543.0247,5228.4723,4916.3121,4609.2854,4313.369,4026.8607,3746.1176,3472.6166,3207.0288,2952.4099,2705.9175,2470.0849,2245.9529,2031.9254,1825.6908,1635.7674,1457.8444,1290.7126,1136.5811,997.5635,869.4681,752.6768,650.0956,559.1452,478.594,407.7114,345.2617,291.049,245.4374,205.7274,171.8664,143.3428,119.1309,98.4258,81.2315,66.9983,54.954,45.265,36.6389,29.9571,24.4192,19.8565,16.151,12.9293,10.2242,8.0854,6.3457,4.6389,3.4227,2.5566,1.8154,0.9822,0.2496,0.0083,0.0,0.0,0.0,0.0,0.0,0.0],"area_at_ideal_km2":10752.6331,"total_valid_area_km2":19106.293,"area_scale_m":100},"severe":{"prob_band":"p_severe","positive_class":2,"n_positive":734,"n_negative":1349,"prevalence":0.3524,"roc_auc":0.950038,"ideal":{"by_youden":{"threshold":0.36,"youden_J":0.751405,"f1":0.82933,"overall_accuracy":0.870379,"recall":0.893733,"specificity":0.857672,"precision":0.773585,"balanced_accuracy":0.875703},"by_f1":{"threshold":0.48,"youden_J":0.738722,"f1":0.834502,"overall_accuracy":0.886702,"recall":0.810627,"specificity":0.928095,"precision":0.859827,"balanced_accuracy":0.869361},"by_overall_accuracy":{"threshold":0.53,"youden_J":0.724556,"f1":0.829339,"overall_accuracy":0.887182,"recall":0.777929,"specificity":0.946627,"precision":0.888025,"balanced_accuracy":0.862278}},"thresholds":[0.0,0.01,0.02,0.03,0.04,0.05,0.06,0.07,0.08,0.09,0.1,0.11,0.12,0.13,0.14,0.15,0.16,0.17,0.18,0.19,0.2,0.21,0.22,0.23,0.24,0.25,0.26,0.27,0.28,0.29,0.3,0.31,0.32,0.33,0.34,0.35,0.36,0.37,0.38,0.39,0.4,0.41,0.42,0.43,0.44,0.45,0.46,0.47,0.48,0.49,0.5,0.51,0.52,0.53,0.54,0.55,0.56,0.57,0.58,0.59,0.6,0.61,0.62,0.63,0.64,0.65,0.66,0.67,0.68,0.69,0.7,0.71,0.72,0.73,0.74,0.75,0.76,0.77,0.78,0.79,0.8,0.81,0.82,0.83,0.84,0.85,0.86,0.87,0.88,0.89,0.9,0.91,0.92,0.93,0.94,0.95,0.96,0.97,0.98,0.99,1.0],"youden_J":[0.0,0.0,0.018532,0.060786,0.088955,0.131208,0.17791,0.217198,0.255745,0.302446,0.339871,0.382986,0.429688,0.475026,0.513794,0.553943,0.576182,0.600144,0.618676,0.635225,0.6556,0.677218,0.685732,0.696711,0.703123,0.712379,0.722877,0.726443,0.729769,0.738904,0.740367,0.743813,0.744914,0.74824,0.747599,0.750925,0.751405,0.744213,0.741969,0.744793,0.744653,0.749962,0.744873,0.747097,0.745594,0.739143,0.742849,0.73788,0.738722,0.733512,0.730407,0.72656,0.724697,0.724556,0.710311,0.70386,0.701996,0.696046,0.690095,0.680058,0.67559,0.65862,0.645737,0.633596,0.626403,0.610796,0.599275,0.593325,0.576475,0.566317,0.544018,0.525686,0.520476,0.510318,0.500782,0.49409,0.490243,0.480706,0.472031,0.464598,0.450974,0.432762,0.413067,0.393372,0.37504,0.349275,0.330321,0.305177,0.268392,0.235695,0.200272,0.1703,0.126703,0.099455,0.064033,0.031335,0.014986,0.008174,0.0,0.0,0.0],"f1":[0.521122,0.521122,0.525788,0.536746,0.544308,0.556061,0.569655,0.581616,0.593851,0.609381,0.622128,0.637833,0.655885,0.674376,0.690944,0.70936,0.72,0.731906,0.741353,0.750131,0.761345,0.773493,0.778693,0.785714,0.790068,0.796117,0.802768,0.805831,0.808461,0.814727,0.816817,0.819891,0.821232,0.824108,0.82514,0.828105,0.82933,0.826004,0.825723,0.828887,0.829941,0.834104,0.832,0.833667,0.834008,0.831063,0.833903,0.832066,0.834502,0.831921,0.830725,0.828919,0.828181,0.829339,0.820513,0.817172,0.816357,0.812874,0.809344,0.803042,0.800613,0.789147,0.780297,0.771902,0.767145,0.755842,0.74736,0.743044,0.73029,0.722408,0.704681,0.689655,0.685217,0.676599,0.66843,0.662522,0.658908,0.65045,0.642402,0.635531,0.622921,0.605263,0.585878,0.565891,0.546706,0.518593,0.496933,0.467641,0.423201,0.381477,0.333712,0.291036,0.224909,0.180917,0.120359,0.060766,0.02953,0.016216,0.0,0.0,0.0],"recall":[1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,0.995913,0.99455,0.99455,0.993188,0.982289,0.980926,0.980926,0.978202,0.978202,0.975477,0.97139,0.970027,0.96594,0.959128,0.953678,0.949591,0.948229,0.941417,0.93733,0.934605,0.926431,0.920981,0.916894,0.912807,0.90327,0.899183,0.893733,0.882834,0.874659,0.867847,0.861035,0.859673,0.850136,0.850136,0.841962,0.831063,0.831063,0.820163,0.810627,0.802452,0.79564,0.788828,0.784741,0.777929,0.762943,0.752044,0.747956,0.739782,0.731608,0.719346,0.711172,0.69346,0.679837,0.666213,0.655313,0.638965,0.626703,0.618529,0.599455,0.588556,0.564033,0.544959,0.536785,0.525886,0.516349,0.508174,0.501362,0.491826,0.480926,0.472752,0.459128,0.438692,0.418256,0.39782,0.378747,0.351499,0.331063,0.305177,0.268392,0.235695,0.200272,0.1703,0.126703,0.099455,0.064033,0.031335,0.014986,0.008174,0.0,0.0,0.0],"specificity":[0.0,0.0,0.018532,0.060786,0.088955,0.131208,0.17791,0.217198,0.255745,0.302446,0.343958,0.388436,0.435137,0.481838,0.531505,0.573017,0.595256,0.621942,0.640474,0.659748,0.684211,0.707191,0.719792,0.737583,0.749444,0.762787,0.774648,0.785026,0.792439,0.804299,0.813936,0.822832,0.828021,0.835434,0.844329,0.851742,0.857672,0.861379,0.867309,0.876946,0.883617,0.890289,0.894737,0.896961,0.903632,0.90808,0.911787,0.917717,0.928095,0.93106,0.934766,0.937732,0.939956,0.946627,0.947368,0.951816,0.95404,0.956264,0.958488,0.960712,0.964418,0.965159,0.965901,0.967383,0.97109,0.971831,0.972572,0.974796,0.97702,0.977761,0.979985,0.980726,0.983692,0.984433,0.984433,0.985915,0.988881,0.988881,0.991105,0.991846,0.991846,0.99407,0.994811,0.995552,0.996294,0.997776,0.999259,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0],"overall_accuracy":[0.352376,0.352376,0.364378,0.391743,0.409986,0.43735,0.467595,0.493039,0.518003,0.548248,0.573692,0.602016,0.632261,0.662026,0.69035,0.716755,0.731157,0.74748,0.759482,0.771003,0.785406,0.799808,0.806529,0.815651,0.821411,0.828613,0.835814,0.840134,0.843495,0.850216,0.853577,0.857417,0.859337,0.862698,0.865098,0.868459,0.870379,0.868939,0.869899,0.87374,0.87566,0.879501,0.879021,0.880461,0.881901,0.880941,0.883341,0.883341,0.886702,0.885742,0.885742,0.885262,0.885262,0.887182,0.882381,0.881421,0.881421,0.879981,0.878541,0.87566,0.87518,0.869419,0.865098,0.861258,0.859818,0.854537,0.850696,0.849256,0.843975,0.840614,0.833413,0.827172,0.826212,0.822852,0.819491,0.817571,0.817091,0.81373,0.81133,0.808929,0.804129,0.798368,0.791647,0.784926,0.778685,0.770043,0.763802,0.755161,0.742199,0.730677,0.718195,0.707633,0.692271,0.682669,0.670187,0.658665,0.652904,0.650504,0.647624,0.647624,0.647624],"area_km2":[19106.293,19106.2847,19078.0789,19015.8739,18804.7024,18487.7919,18153.908,17809.344,17448.4757,17068.9404,16668.5752,16248.5514,15811.3799,15369.1432,14926.7602,14493.7121,14079.5903,13682.9584,13306.8796,12951.5661,12616.8349,12306.0868,12009.916,11729.894,11463.0721,11206.6617,10964.0155,10729.7234,10504.7103,10287.7685,10079.423,9879.2933,9684.1493,9496.5783,9313.6351,9136.8176,8964.9755,8798.4126,8635.8263,8475.7962,8319.3908,8166.9375,8016.81,7869.6993,7724.1933,7581.2782,7440.4365,7303.8304,7165.1258,7028.9661,6893.5818,6760.1339,6624.8693,6493.2509,6358.7385,6225.4958,6092.3254,5961.9199,5831.2425,5702.4739,5574.2071,5442.5403,5313.1972,5182.4354,5050.173,4918.5263,4782.9439,4646.343,4509.5281,4369.1171,4226.7404,4081.0923,3935.5705,3786.9588,3635.737,3482.379,3328.1832,3169.1156,3007.0949,2841.4927,2669.8568,2495.4287,2319.3862,2140.0884,1960.2495,1785.1505,1616.7326,1452.5949,1293.1965,1135.4579,977.5249,822.0384,668.4306,515.9668,371.6691,240.2885,133.3786,56.7419,6.4635,0.0,0.0],"area_at_ideal_km2":8964.9755,"total_valid_area_km2":19106.293,"area_scale_m":100}},"order":["intact","moderate","severe"],"n_points":2083,"generated_on":"2026-07-13"}
+</script>
+
+<script id="VARIOGRAM" type="application/json">
+{"block_deg":0.2,"block_km_ew":18.6,"aoi_km":[467.8,193.7],"n_points":2083,"max_lag_km":253.2,"summary":{"residual_effective_range_km":1.503,"label_effective_range_km":4.206,"block_over_range_ratio":12.38,"block_adequate_vs_residual":true},"variables":{"intact_indicator":{"label":"Intact label","color":"--s-label","centers_km":[1,3,5,7,9,11,13,15,17,19,21,23,25,27,29,32.5,40,50,60,70,80,90,100,110,120,130,140,150,160,170,180,190,200,210,220,230,240],"semivariance":[0.153507,0.221651,0.229977,0.233727,0.220087,0.221958,0.232858,0.227676,0.245606,0.227692,0.228809,0.242648,0.241194,0.257873,0.217847,0.225642,0.234376,0.221249,0.22084,0.227913,0.219049,0.220999,0.230268,0.212987,0.214383,0.22668,0.244581,0.238226,0.231451,0.246962,0.22482,0.218264,0.243182,0.245615,0.23659,0.217273,0.237364],"fit":{"nugget":0.082597,"partial_sill":0.145536,"range_param_km":1.402,"effective_range_km":4.206}},"oof_residual":{"label":"OOF residual","color":"--s-acc","centers_km":[1,3,5,7,9,11,13,15,17,19,21,23,25,27,29,32.5,40,50,60,70,80,90,100,110,120,130,140,150,160,170,180,190,200,210,220,230,240],"semivariance":[0.076982,0.09076,0.100054,0.099409,0.109324,0.102239,0.098241,0.101275,0.105259,0.100328,0.090453,0.096618,0.093564,0.103879,0.096048,0.090704,0.094738,0.085285,0.088607,0.093961,0.092044,0.088435,0.09779,0.090805,0.091418,0.091327,0.084649,0.090067,0.095226,0.088945,0.086991,0.091009,0.085476,0.090915,0.113438,0.104712,0.113729],"fit":{"nugget":0,"partial_sill":0.09222,"range_param_km":0.501,"effective_range_km":1.503}}}}
+</script>
+
 <script>
 "use strict";
 const DATA = JSON.parse(document.getElementById('DATA').textContent);
 const SYM = JSON.parse(document.getElementById('SYMBOLIC').textContent);
+const ALL = JSON.parse(document.getElementById('ALLCLASSES').textContent);
+const VARIOGRAM = JSON.parse(document.getElementById('VARIOGRAM').textContent);
 
 /* ---------------- theme toggle ---------------- */
 (function(){
@@ -488,6 +588,14 @@ function lineChart(host, ttEl, opts){
     svg.appendChild(el('line',{x1:xi,y1:m.t,x2:xi,y2:m.t+ih,class:'ideal-line'}));
     const tag = el('text',{x:xi+5,y:m.t+11,'text-anchor':'start'}); tag.setAttribute('class','ideal-tag');
     tag.textContent = `τ* ${opts.ideal.toFixed(2)}`; svg.appendChild(tag);
+  }
+  // multiple per-class ideal markers (coloured, dashed, no text to avoid clutter)
+  if (opts.idealMarks){
+    opts.idealMarks.forEach(mk=>{
+      const xi = X(mk.tau);
+      svg.appendChild(el('line',{x1:xi,y1:m.t,x2:xi,y2:m.t+ih,
+        stroke:cssv(mk.color),'stroke-width':1.2,'stroke-dasharray':'3 3','opacity':0.7}));
+    });
   }
 
   // area fill (single-series option)
@@ -854,6 +962,183 @@ function renderVerdict(){
      </ul>`;
 }
 
+/* ---------------- Part 3: all three condition classes ---------------- */
+const CLASS_COLOR = {intact:'--accent', moderate:'--s-you', severe:'--s-spec'};
+const CLASS_LABEL = {intact:'Intact', moderate:'Moderate', severe:'Severe'};
+
+function renderAllClassTable(){
+  const order = ALL.order;
+  const cols = ['Class','Score band','n (pos)','ROC AUC','τ*','Youden J','F1','Sensitivity','Specificity','Area @ τ* (km²)'];
+  let h = '<table><thead><tr>' + cols.map(c=>`<th>${c}</th>`).join('') + '</tr></thead><tbody>';
+  order.forEach(name=>{
+    const c = ALL.classes[name], yj = c.ideal.by_youden;
+    const sw = `<span style="display:inline-block;width:9px;height:9px;border-radius:2px;background:${cssv(CLASS_COLOR[name])};margin-right:7px;vertical-align:middle"></span>`;
+    h += `<tr><td>${sw}${CLASS_LABEL[name]}</td>`
+      + `<td><code>${c.prob_band}</code></td>`
+      + `<td>${fmtInt(c.n_positive)}</td>`
+      + `<td>${fmt(c.roc_auc,3)}</td>`
+      + `<td><b>${fmt(yj.threshold,2)}</b></td>`
+      + `<td>${fmt(yj.youden_J,3)}</td>`
+      + `<td>${fmt(yj.f1,3)}</td>`
+      + `<td>${fmt(yj.recall,3)}</td>`
+      + `<td>${fmt(yj.specificity,3)}</td>`
+      + `<td>${fmtArea(c.area_at_ideal_km2)}</td></tr>`;
+  });
+  h += '</tbody></table>';
+  document.getElementById('allClassTable').innerHTML = h;
+
+  const mod = ALL.classes.moderate, sev = ALL.classes.severe;
+  document.getElementById('allClassNote').innerHTML =
+    `<b>Read it this way.</b> Intact and severe separate well (AUC ${fmt(ALL.classes.intact.roc_auc,2)} / ${fmt(sev.roc_auc,2)}) and give crisp thresholds. `
+    + `<b>Moderate is intrinsically ambiguous</b> — AUC just ${fmt(mod.roc_auc,2)} and its J curve is flat, so treat τ ≈ ${fmt(mod.ideal.by_youden.threshold,2)} as a soft choice, not a precise cut. `
+    + `Severe's max-F1 sits higher (τ = ${fmt(sev.ideal.by_f1.threshold,2)}) than its max-J (τ = ${fmt(sev.ideal.by_youden.threshold,2)}): use the lower value for a sensitive alert map, the higher for a precise one.`;
+}
+
+function renderAllClassJ(){
+  const host = document.getElementById('hostJ'), tt = document.getElementById('ttJ');
+  const xs = ALL.classes.intact.thresholds;
+  const series = ALL.order.map(name=>({
+    key:name, name:CLASS_LABEL[name], short:CLASS_LABEL[name][0],
+    color:CLASS_COLOR[name], values: ALL.classes[name].youden_J}));
+  document.getElementById('legendJ').innerHTML = ALL.order.map(name=>{
+    const c = ALL.classes[name];
+    return `<span class="lg"><span class="key" style="background:${cssv(CLASS_COLOR[name])}"></span>${CLASS_LABEL[name]} · τ* ${fmt(c.ideal.by_youden.threshold,2)}</span>`;
+  }).join('');
+  // per-class ideal markers: draw all three (lineChart supports one; pass none and add manually)
+  lineChart(host, tt, {
+    x: xs, series, height: 340,
+    ymin: 0, ymax: 1, yticks:[0,0.2,0.4,0.6,0.8,1.0], xticks:[0,0.2,0.4,0.6,0.8,1.0],
+    yfmt: v=>v.toFixed(1), xtitle:'Threshold τ on the class probability', ytitle:"Youden's J",
+    ttfmt: v=>v.toFixed(3), ideal: null, endLabels:true, aria:"Youden's J versus threshold for each class",
+    idealMarks: ALL.order.map(name=>({tau: ALL.classes[name].ideal.by_youden.threshold, color: CLASS_COLOR[name]}))
+  });
+}
+
+function renderAllClassArea(){
+  const host = document.getElementById('hostAllArea'), tt = document.getElementById('ttAllArea');
+  const xs = ALL.classes.intact.thresholds;
+  const series = ALL.order.map(name=>({
+    key:name, name:CLASS_LABEL[name], short:CLASS_LABEL[name][0],
+    color:CLASS_COLOR[name], values: ALL.classes[name].area_km2}));
+  const maxA = Math.max(...ALL.order.flatMap(n=>ALL.classes[n].area_km2.filter(v=>v!=null)));
+  const ymax = niceCeil(maxA);
+  const yt = [0,0.25,0.5,0.75,1.0].map(f=>Math.round(f*ymax));
+  document.getElementById('legendAllArea').innerHTML = ALL.order.map(name=>{
+    const c = ALL.classes[name];
+    return `<span class="lg"><span class="key" style="background:${cssv(CLASS_COLOR[name])}"></span>${CLASS_LABEL[name]} · ${fmtArea(c.area_at_ideal_km2)} km² @ τ*</span>`;
+  }).join('');
+  lineChart(host, tt, {
+    x: xs, series, height: 320,
+    ymin: 0, ymax, yticks: yt, xticks:[0,0.2,0.4,0.6,0.8,1.0],
+    yfmt: v=>fmtArea(v), xtitle:'Threshold τ on the class probability', ytitle:'Area (km²)',
+    ttfmt: v=>fmtArea(v)+' km²', ideal: null, endLabels:true, aria:'Mapped area versus threshold for each class',
+    idealMarks: ALL.order.map(name=>({tau: ALL.classes[name].ideal.by_youden.threshold, color: CLASS_COLOR[name]}))
+  });
+}
+
+/* ---------------- Part 4: variogram CV block-size check ---------------- */
+function renderVariogramVerdict(){
+  const v = VARIOGRAM, s = v.summary;
+  document.getElementById('variogramVerdict').innerHTML =
+    `<h3>CV design check</h3>
+     <p class="big">Yes: the ${fmt(v.block_deg,1)}° block is more than adequate for spatial CV.
+       It is about <code>${fmt(v.block_km_ew,1)} km</code> east-west, versus an OOF residual
+       autocorrelation range of only <code>${fmt(s.residual_effective_range_km,1)} km</code>.</p>
+     <div class="stat-grid">
+       <div class="stat"><div class="sl">CV block width</div><div class="sv">${fmt(v.block_km_ew,1)} km</div><div class="sf">0.2° E-W at AOI latitude</div></div>
+       <div class="stat"><div class="sl">Residual range</div><div class="sv">${fmt(s.residual_effective_range_km,1)} km</div><div class="sf">leakage-relevant structure</div></div>
+       <div class="stat"><div class="sl">Label range</div><div class="sv">${fmt(s.label_effective_range_km,1)} km</div><div class="sf">raw intact condition</div></div>
+       <div class="stat"><div class="sl">Block / residual</div><div class="sv">${fmt(s.block_over_range_ratio,1)}x</div><div class="sf">comfortably above range</div></div>
+     </div>
+     <p>The residual variogram is almost flat after the Random Forest fits the 64 Google embedding bands:
+       the remaining errors have little short-lag spatial structure for a larger block to remove.</p>
+     <ul>
+       <li>The residual effective range is about ${fmt(s.residual_effective_range_km,1)} km, and the label itself reaches its effective range by about ${fmt(s.label_effective_range_km,1)} km.</li>
+       <li>Roberts et al. (2017) block-CV guidance says the block should be at least the autocorrelation range; ${fmt(v.block_km_ew,1)} km exceeds that by ${fmt(s.block_over_range_ratio,1)}x for residuals.</li>
+       <li>The caveat is scope: this is isotropic and pooled across the AOI and all three EFGs, but short-lag dependence is the relevant leakage test.</li>
+     </ul>`;
+}
+
+function renderVariogramChart(){
+  const host = document.getElementById('hostVariogram'), tt = document.getElementById('ttVariogram');
+  host.querySelectorAll('svg').forEach(s=>s.remove());
+  const vars = [VARIOGRAM.variables.oof_residual, VARIOGRAM.variables.intact_indicator];
+  const maxX = 30;
+  const W = host.clientWidth || 900, H = 340, m = {t:16,r:20,b:42,l:58};
+  const iw = W - m.l - m.r, ih = H - m.t - m.b;
+  const shortVals = vars.flatMap(v => v.centers_km.map((x,i)=>x<=maxX ? v.semivariance[i] : null).filter(x=>x!=null));
+  const ymax = Math.ceil(Math.max(...shortVals) * 120) / 100;
+  const X = x => m.l + x / maxX * iw;
+  const Y = y => m.t + ih - y / ymax * ih;
+  const svg = el('svg', {viewBox:`0 0 ${W} ${H}`, role:'img', 'aria-label':'Empirical variogram by distance'});
+  host.insertBefore(svg, tt);
+
+  const yticks = [0, 0.05, 0.10, 0.15, 0.20, 0.25, 0.30].filter(t=>t<=ymax+1e-9);
+  yticks.forEach(t=>{
+    svg.appendChild(el('line',{x1:m.l,y1:Y(t),x2:m.l+iw,y2:Y(t),stroke:cssv('--grid'),'stroke-width':1}));
+    const tx = el('text',{x:m.l-9,y:Y(t)+3.5,'text-anchor':'end'}); tx.setAttribute('class','tick'); tx.textContent = t.toFixed(2); svg.appendChild(tx);
+  });
+  [0,5,10,15,20,25,30].forEach(t=>{
+    const xx = X(t);
+    svg.appendChild(el('line',{x1:xx,y1:m.t+ih,x2:xx,y2:m.t+ih+5,stroke:cssv('--axis'),'stroke-width':1}));
+    const tx = el('text',{x:xx,y:m.t+ih+18,'text-anchor':'middle'}); tx.setAttribute('class','tick'); tx.textContent = t; svg.appendChild(tx);
+  });
+  svg.appendChild(el('line',{x1:m.l,y1:m.t+ih,x2:m.l+iw,y2:m.t+ih,class:'baseline'}));
+  const xt = el('text',{x:m.l+iw/2,y:H-4,'text-anchor':'middle'}); xt.setAttribute('class','axis-title'); xt.textContent = 'Lag distance (km)'; svg.appendChild(xt);
+  const ytg = el('text',{x:0,y:0,'text-anchor':'middle',transform:`translate(14,${m.t+ih/2}) rotate(-90)`});
+  ytg.setAttribute('class','axis-title'); ytg.textContent = 'Semivariance'; svg.appendChild(ytg);
+
+  const blockX = X(VARIOGRAM.block_km_ew);
+  svg.appendChild(el('line',{x1:blockX,y1:m.t,x2:blockX,y2:m.t+ih,stroke:cssv('--accent'),'stroke-width':1.4,'stroke-dasharray':'4 3'}));
+  const blockTag = el('text',{x:blockX+5,y:m.t+12,'text-anchor':'start'}); blockTag.setAttribute('class','ideal-tag'); blockTag.textContent = '0.2° block'; svg.appendChild(blockTag);
+
+  vars.forEach(v=>{
+    const col = cssv(v.color);
+    const fit = v.fit;
+    let d = '';
+    for(let x=0; x<=maxX+1e-9; x+=0.5){
+      const y = fit.nugget + fit.partial_sill * (1 - Math.exp(-x / fit.range_param_km));
+      d += (d===''?'M':'L') + ` ${X(x)} ${Y(y)} `;
+    }
+    svg.appendChild(el('path',{d,fill:'none',stroke:col,'stroke-width':2,'stroke-linejoin':'round','stroke-linecap':'round'}));
+    v.centers_km.forEach((x,i)=>{
+      if(x > maxX) return;
+      svg.appendChild(el('circle',{cx:X(x),cy:Y(v.semivariance[i]),r:3.5,fill:col,stroke:cssv('--surface'),'stroke-width':1.5,opacity:0.9}));
+    });
+    const rx = Math.min(fit.effective_range_km, maxX);
+    svg.appendChild(el('line',{x1:X(rx),y1:m.t+ih-7,x2:X(rx),y2:m.t+ih,stroke:col,'stroke-width':1.2}));
+  });
+
+  const overlay = el('rect',{x:m.l,y:m.t,width:iw,height:ih,fill:'transparent'});
+  overlay.addEventListener('pointermove', e=>{
+    const rect = svg.getBoundingClientRect();
+    const px = (e.clientX - rect.left) / rect.width * W;
+    const lag = Math.max(0, Math.min(maxX, (px - m.l) / iw * maxX));
+    const nearest = vars.map(v=>{
+      let bi = 0, bd = Infinity;
+      v.centers_km.forEach((x,i)=>{ if(x>maxX) return; const dd = Math.abs(x-lag); if(dd<bd){bd=dd;bi=i;} });
+      return {v, x:v.centers_km[bi], y:v.semivariance[bi]};
+    });
+    tt.innerHTML = `<div class="tt-x">lag ≈ ${lag.toFixed(1)} km</div>` + nearest.map(r=>
+      `<div class="tt-row"><span class="name"><i style="background:${cssv(r.v.color)}"></i>${r.v.label}</span><span class="v">${r.y.toFixed(3)}</span></div>`
+    ).join('') + `<div class="tt-row"><span class="name">CV block</span><span class="v">${VARIOGRAM.block_km_ew.toFixed(1)} km</span></div>`;
+    tt.style.opacity = 1;
+    let left = (e.clientX - rect.left) + 14; if(left + 180 > rect.width) left -= 194;
+    tt.style.left = Math.max(2, left) + 'px'; tt.style.top = (m.t + 10) + 'px';
+  });
+  overlay.addEventListener('pointerleave', () => tt.style.opacity = 0);
+  svg.appendChild(overlay);
+
+  document.getElementById('legendV').innerHTML = vars.map(v=>
+    `<span class="lg"><span class="dotk" style="background:${cssv(v.color)}"></span>${v.label} · range ${fmt(v.fit.effective_range_km,1)} km</span>`
+  ).join('') + `<span class="lg"><span style="width:16px;height:0;border-top:1.4px dashed ${cssv('--accent')};display:inline-block"></span>0.2° CV block (${fmt(VARIOGRAM.block_km_ew,1)} km)</span>`;
+}
+
+function renderVariogram(){
+  renderVariogramVerdict();
+  renderVariogramChart();
+}
+
 /* ---------------- table toggles ---------------- */
 function wireToggle(btnId, detId){
   const btn = document.getElementById(btnId), det = document.getElementById(detId);
@@ -864,10 +1149,12 @@ function wireToggle(btnId, detId){
 function renderAll(){
   renderHeader(); renderA(); renderB(); renderNotes();
   renderRefdata(); renderMethods(); renderRules(); renderPareto(); renderVerdict();
+  renderAllClassTable(); renderAllClassJ(); renderAllClassArea();
+  renderVariogram();
 }
 wireToggle('tableBtnA','tableA'); wireToggle('tableBtnB','tableB'); wireToggle('tableBtnR','tableR');
 renderAll();
-let rt; addEventListener('resize', ()=>{ clearTimeout(rt); rt=setTimeout(()=>{ renderA(); renderB(); renderRules(); renderPareto(); }, 150); });
+let rt; addEventListener('resize', ()=>{ clearTimeout(rt); rt=setTimeout(()=>{ renderA(); renderB(); renderRules(); renderPareto(); renderAllClassJ(); renderAllClassArea(); renderVariogramChart(); }, 150); });
 </script>
 </body>
 </html>
