@@ -80,6 +80,7 @@ jobs:
         run: |
           mkdir -p _site
           cp inspector/index.html _site/index.html
+          cp inspector/manifest.webmanifest inspector/sw.js _site/
           [ -f inspector/gee_layers.json ] && cp inspector/gee_layers.json _site/ || true
           touch _site/.nojekyll     # serve files as-is, no Jekyll processing
 

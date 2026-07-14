@@ -3,6 +3,8 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+<meta name="theme-color" content="#101218" />
+<link rel="manifest" href="manifest.webmanifest" />
 <title>Thicket Condition Inspector</title>
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css"
   integrity="sha384-MinO0mNliZ3vwppuPOUnGa+iq619pfMhLVUXfC4LHwSCvF9H+6P/KO4Q7qBOYV5V"
@@ -39,12 +41,19 @@
          display:flex; gap:8px; flex-wrap:wrap}
 
   /* progress */
-  .prog{display:flex; gap:6px; margin-top:10px}
-  .chip{flex:1; text-align:center; padding:6px 4px; border-radius:8px; background:#0c0e13;
-        border:1px solid var(--line); font-size:11px}
+  .prog{display:grid; grid-template-columns:repeat(4,1fr); gap:6px; margin-top:8px}
+  .chip{text-align:center; padding:6px 4px; border-radius:8px; background:#0c0e13;
+        border:1px solid var(--line); font:inherit;font-size:11px;color:var(--ink)}
+  .chip[data-filter]{cursor:pointer}
+  .chip[data-filter]:hover,.chip.filter-active{border-color:var(--accent);background:#16233d}
   .chip b{display:block; font-size:16px; line-height:1.1; margin-top:2px}
   .chip.intact b{color:var(--intact)} .chip.moderate b{color:var(--moderate)}
   .chip.severe b{color:var(--severe)} .chip.all b{color:var(--accent)}
+  .chip.remaining b{color:var(--ink)} .chip.notthicket b{color:var(--nott)}
+  .chip.unsure b{color:var(--unsure)}
+  .progressline{display:flex;justify-content:space-between;margin-top:9px;font-size:11px;color:var(--muted)}
+  .progressbar{height:5px;background:#0c0e13;border-radius:5px;overflow:hidden;margin-top:4px}
+  .progressbar span{display:block;height:100%;width:0;background:var(--accent);transition:width .2s}
 
   /* nav */
   .navrow{display:flex; align-items:center; gap:8px; margin:14px 0 6px}
@@ -129,8 +138,13 @@
 
   .toast{position:absolute; bottom:16px; left:50%; transform:translateX(-50%);
     background:#0c0e13; border:1px solid var(--line); padding:8px 14px; border-radius:8px;
-    font-size:12px; opacity:0; transition:.3s; pointer-events:none; z-index:20}
-  .toast.show{opacity:1}
+    font-size:12px; opacity:0; transition:.3s; pointer-events:none; z-index:20;
+    display:flex;gap:12px;align-items:center;white-space:nowrap}
+  .toast.show{opacity:1;pointer-events:auto}
+  .toast button{border:0;background:none;color:#8fb5ff;font-weight:700;cursor:pointer;padding:2px}
+  .settingsrow{display:flex;gap:12px;flex-wrap:wrap;margin-top:7px;font-size:11px;color:var(--muted)}
+  .settingsrow label{cursor:pointer;user-select:none}
+  .save-status{font-size:11px;color:var(--muted);margin-top:5px;min-height:14px}
 
   /* legend on map */
   .legend{position:absolute; top:10px; left:10px; background:rgba(16,18,24,.88);
@@ -139,6 +153,8 @@
   .legend .sw{width:11px; height:11px; border-radius:50%; border:1px solid #0008}
   .legend .filt{margin-top:6px; padding-top:6px; border-top:1px solid var(--line); color:var(--muted)}
   .legend label{cursor:pointer; user-select:none}
+  .legend select{width:100%;margin-bottom:5px;background:#0c0e13;color:var(--ink);border:1px solid var(--line);
+    border-radius:6px;padding:4px;font:inherit}
 
   #intro{position:absolute; inset:0; background:rgba(9,11,15,.94); z-index:50;
     display:flex; align-items:center; justify-content:center}
@@ -149,7 +165,38 @@
   #introbox .who{margin:14px 0}
   #introbox input{width:100%; background:#0c0e13; color:var(--ink); border:1px solid var(--line);
     border-radius:8px; padding:9px 10px; font-size:13px}
+  .modal{position:absolute;inset:0;background:rgba(9,11,15,.88);z-index:60;display:flex;
+    align-items:center;justify-content:center;padding:16px}
+  .modalbox{width:min(520px,100%);background:var(--panel);border:1px solid var(--line);
+    border-radius:14px;padding:22px;box-shadow:0 20px 60px #0008}
+  .modalbox h2{margin:0 0 6px;font-size:18px}.modalbox p{color:var(--muted);font-size:12px;line-height:1.5}
+  .importstats{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:14px 0}
+  .importstats div{background:#0c0e13;border:1px solid var(--line);border-radius:8px;padding:8px;text-align:center;font-size:11px;color:var(--muted)}
+  .importstats b{display:block;color:var(--ink);font-size:17px}
+  .modalbox select{width:100%;background:#0c0e13;color:var(--ink);border:1px solid var(--line);
+    border-radius:8px;padding:9px;margin:5px 0 14px}
+  .modalactions{display:flex;gap:8px;justify-content:flex-end}
   .hidden{display:none !important}
+  .toolbar{display:flex;gap:6px;flex-wrap:wrap;margin:7px 0}.toolbar .btn{padding:7px 9px}
+  .reviewrow{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+  .togglebtn[aria-pressed="true"]{border-color:#ffb84d;background:#3b2b13;color:#ffd58a}
+  .confidence{display:flex;gap:5px}.confidence button{flex:1;padding:7px}.confidence button.active{border-color:var(--accent);background:#16233d}
+  .quicktags{display:flex;gap:5px;flex-wrap:wrap;margin-top:7px}.quicktags button{padding:5px 7px;font-size:11px}
+  .statusline{padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:#0c0e13;font-size:11px;color:var(--muted);margin-top:7px}
+  .statusline.error{border-color:#a94442;color:#ffaaa4}.statusline.ok{border-color:#287b4c;color:#9de0b7}
+  .modalbox.large{width:min(760px,100%);max-height:90vh;overflow:auto}.summarygrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}
+  .summarygrid div{background:#0c0e13;border:1px solid var(--line);border-radius:8px;padding:10px;color:var(--muted);font-size:11px}.summarygrid b{display:block;color:var(--ink);font-size:20px}
+  .reviewlist{max-height:220px;overflow:auto;border:1px solid var(--line);border-radius:8px}.reviewitem{display:flex;align-items:center;gap:8px;padding:8px;border-bottom:1px solid var(--line);font-size:12px}.reviewitem:last-child{border:0}.reviewitem button{margin-left:auto}
+  .goto{display:flex;gap:5px}.goto input{width:100px;background:#0c0e13;color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:7px}
+  .panel-handle{position:absolute;right:380px;top:50%;z-index:8;width:24px;height:48px;border-radius:8px 0 0 8px;padding:0;background:var(--panel2);color:var(--ink);border:1px solid var(--line)}
+  body.panel-collapsed #panel{display:none}body.panel-collapsed .panel-handle{right:0;transform:rotate(180deg)}
+  .guidance details{font-size:12px;color:var(--muted);line-height:1.5}.guidance summary{cursor:pointer;color:var(--ink)}
+  .guidecards{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:8px 0}.guidecard{border:1px solid var(--line);border-radius:7px;overflow:hidden;text-align:center;font-size:10px}.guidepic{height:38px;background-color:#315f3b}.guidepic.intact{background-image:radial-gradient(circle at 20% 30%,#82a85e 0 5px,transparent 6px),radial-gradient(circle at 70% 60%,#6f934d 0 8px,transparent 9px)}.guidepic.moderate{background-color:#957d50;background-image:radial-gradient(circle,#557543 0 7px,transparent 8px);background-size:25px 25px}.guidepic.severe{background-color:#a78354;background-image:repeating-linear-gradient(25deg,transparent 0 10px,#745c3d 11px 13px)}
+  .lblbtn .dot{border:1px solid #fff9}.lblbtn[data-lbl="moderate"] .dot{border-radius:2px}.lblbtn[data-lbl="severe"] .dot{clip-path:polygon(50% 0,100% 100%,0 100%)}
+  #shortcutPanel{position:absolute;right:8px;bottom:8px;z-index:7;background:rgba(12,14,19,.92);border:1px solid var(--line);border-radius:8px;padding:7px;font-size:10px;color:var(--muted)}
+  .drop-active{outline:3px dashed var(--accent);outline-offset:-8px}
+  @media(max-width:760px){#app{flex-direction:column}#mapwrap{height:52%;min-height:260px}#panel{width:100%;flex:1 1 48%;height:48%;border-left:0;border-top:1px solid var(--line)}.panel-handle{display:none}.pbody{padding-bottom:24px}.btn,.lblbtn,button.nav{min-height:44px}.legend{max-width:150px}.summarygrid{grid-template-columns:1fr 1fr}}
+  @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
   kbd{background:#0c0e13; border:1px solid var(--line); border-bottom-width:2px; border-radius:5px;
     padding:1px 5px; font-size:11px; font-family:inherit}
 </style>
@@ -159,38 +206,69 @@
   <div id="mapwrap">
     <div id="map"></div>
     <div class="legend">
-      <div><span class="sw" style="background:var(--intact)"></span>Intact stratum</div>
-      <div><span class="sw" style="background:var(--moderate)"></span>Moderate stratum</div>
-      <div><span class="sw" style="background:var(--severe)"></span>Severe stratum</div>
+      <div class="model-key"><span class="sw" style="background:var(--intact)"></span>Intact stratum</div>
+      <div class="model-key"><span class="sw" style="background:var(--moderate)"></span>Moderate stratum</div>
+      <div class="model-key"><span class="sw" style="background:var(--severe)"></span>Severe stratum</div>
       <div class="filt">
-        <label><input type="checkbox" id="hideLabeled"> hide labeled</label>
+        <select id="pointFilter" aria-label="Filter points">
+          <option value="all">All points</option>
+          <option value="unlabeled">Unlabeled only</option>
+          <option value="labeled">Labeled only</option>
+          <option value="intact">Labeled intact</option>
+          <option value="moderate">Labeled moderate</option>
+          <option value="severe">Labeled severe</option>
+          <option value="notthicket">Not thicket</option>
+          <option value="unsure">Unsure / review</option>
+          <option value="flagged">Flagged for review</option>
+          <option value="low">Low confidence</option>
+        </select>
+        <label style="display:block;margin-top:4px"><input type="checkbox" id="blindMode" checked> blind model prediction</label>
       </div>
     </div>
-    <div class="toast" id="toast"></div>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <div id="shortcutPanel"><kbd>1–5</kbd> label · <kbd>N</kbd> next · <kbd>F</kbd> flag · <kbd>?</kbd> help</div>
   </div>
+
+  <button class="panel-handle" id="panelToggle" title="Collapse side panel" aria-label="Collapse side panel">›</button>
 
   <div id="panel">
     <div class="phead">
       <h1>Thicket Condition Inspector</h1>
       <div class="sub">South African solid thicket · reference labeling</div>
       <div class="prog">
-        <div class="chip all">labeled<b id="c_all">0</b></div>
-        <div class="chip intact">intact<b id="c_intact">0</b></div>
-        <div class="chip moderate">moderate<b id="c_moderate">0</b></div>
-        <div class="chip severe">severe<b id="c_severe">0</b></div>
+        <button class="chip all" data-filter="labeled" title="Show labeled points">labeled<b id="c_all">0</b></button>
+        <button class="chip remaining" data-filter="unlabeled" title="Show unlabeled points">remaining<b id="c_remaining">0</b></button>
+        <button class="chip intact" data-filter="intact" title="Show intact labels">intact<b id="c_intact">0</b></button>
+        <button class="chip moderate" data-filter="moderate" title="Show moderate labels">moderate<b id="c_moderate">0</b></button>
+        <button class="chip severe" data-filter="severe" title="Show severe labels">severe<b id="c_severe">0</b></button>
+        <button class="chip notthicket" data-filter="notthicket" title="Show not-thicket labels">not thicket<b id="c_notthicket">0</b></button>
+        <button class="chip unsure" data-filter="unsure" title="Show unsure labels">unsure<b id="c_unsure">0</b></button>
+        <button class="chip" data-filter="flagged" title="Show flagged points">flagged<b id="c_flagged">0</b></button>
+        <button class="chip" data-filter="low" title="Show low-confidence points">low conf.<b id="c_low">0</b></button>
       </div>
+      <div class="progressline"><span id="progressText">0 of 0 labeled</span><span id="progressPct">0%</span></div>
+      <div class="progressbar"><span id="progressFill"></span></div>
+      <div class="settingsrow"><label><input type="checkbox" id="autoAdvance" checked> auto-advance after labeling</label><button class="btn" id="switchLabeller">Switch labeller</button></div>
+      <div class="save-status" id="saveStatus" role="status" aria-live="polite">Saved locally</div>
     </div>
 
     <div class="pbody">
       <div class="navrow">
         <button class="nav" id="prevBtn">‹ Prev</button>
-        <div class="idlbl">Point <b id="curId">–</b> / <span id="totId">0</span>
+        <div class="idlbl">Sample <b id="curOrdinal">–</b> of <span id="totId">0</span> · ID <b id="curId">–</b>
           <span id="curStratum"></span></div>
         <button class="nav" id="nextBtn">Next ›</button>
       </div>
       <div style="display:flex;gap:8px;margin-bottom:8px">
         <button class="btn wide" id="nextUnlabeled">Jump to next unlabeled →</button>
       </div>
+      <div class="toolbar">
+        <div class="goto"><input id="gotoInput" inputmode="numeric" placeholder="Point ID" aria-label="Point ID"><button class="btn" id="gotoBtn">Go</button></div>
+        <button class="btn" id="historyBack" title="Previous visited point">History ←</button>
+        <button class="btn" id="copyPoint">Copy ID + coordinates</button>
+        <button class="btn" id="recenterBtn">Recenter</button>
+      </div>
+      <div class="toolbar"><button class="btn" id="nextFlagged">Next flagged</button><button class="btn" id="nextLow">Next low-confidence</button><button class="btn" data-zoom="12">Context</button><button class="btn" data-zoom="15.5">Canopy</button><button class="btn" data-zoom="18">Close-up</button></div>
 
       <div class="metarow"><span>Coordinates</span><span id="mCoord">–</span></div>
       <div class="metarow"><span>Map stratum (model)</span><span id="mStratum">–</span></div>
@@ -198,52 +276,65 @@
 
       <div class="seclbl">Imagery</div>
       <div class="srcgrid" id="srcgrid"></div>
+      <div class="statusline ok" id="sourceHealth" role="status">Imagery source ready</div>
       <div class="wbpanel hidden" id="waybackrow">
+        <div class="statusline" id="wbStatus" role="status">Loading Wayback releases…</div>
         <div class="wbrow">
           <button class="wbstep" id="wbPrev" title="Older capture">‹</button>
           <select id="wbSelect" disabled><option>loading…</option></select>
           <button class="wbstep" id="wbNext" title="Newer capture">›</button>
         </div>
         <label class="wbtog"><input type="checkbox" id="wbLocal"> only dates with new imagery here</label>
-        <div class="wbcap" id="wbCap">Acquired: <b id="wbCapDate">–</b></div>
+        <div class="wbcap" id="wbCap">Acquired: <b id="wbCapDate">–</b> · Released: <b id="wbReleaseDate">–</b></div>
+        <div class="toolbar"><button class="btn" id="wbRecent">Recent</button><button class="btn" id="wb5y">~5 years</button><button class="btn" id="wbOldest">Oldest</button></div>
         <label class="wbtog"><input type="checkbox" id="wbCompare"> ⇆ compare two dates (swipe)</label>
         <div class="wbrow hidden" id="wb-row-b">
           <button class="wbstep" id="wbPrevB" title="Older">‹</button>
           <select id="wbSelectB"></select>
           <button class="wbstep" id="wbNextB" title="Newer">›</button>
         </div>
+        <div class="toolbar"><button class="btn" id="wbSwap">Swap A/B</button><button class="btn" id="wbReset">Reset divider</button><label class="wbtog"><input type="checkbox" id="wbFlicker"> flicker A/B</label></div>
       </div>
-      <div style="margin-top:8px;display:flex;gap:8px">
-        <a class="btn wide" id="gmapsLink" target="_blank" rel="noopener">Google Maps ↗</a>
-        <a class="btn wide" id="gearthLink" target="_blank" rel="noopener">Google Earth ↗</a>
-      </div>
+      <details style="margin-top:8px"><summary class="btn">Open externally (new tab) ↗</summary><div style="display:flex;gap:8px;margin-top:6px"><a class="btn wide" id="gmapsLink" target="_blank" rel="noopener">Google Maps ↗</a><a class="btn wide" id="gearthLink" target="_blank" rel="noopener">Google Earth ↗</a><button class="btn" id="copyCoords">Copy coordinates</button></div></details>
 
       <div class="seclbl">Condition at this point</div>
       <div class="lblgrid">
-        <button class="lblbtn" data-lbl="intact"><span class="dot" style="background:var(--intact)"></span>Intact</button>
-        <button class="lblbtn" data-lbl="moderate"><span class="dot" style="background:var(--moderate)"></span>Moderate</button>
-        <button class="lblbtn" data-lbl="severe"><span class="dot" style="background:var(--severe)"></span>Severe</button>
+        <button class="lblbtn" data-lbl="intact"><span class="dot" style="background:var(--intact)"></span><span><u>1</u> Intact</span></button>
+        <button class="lblbtn" data-lbl="moderate"><span class="dot" style="background:var(--moderate)"></span><span><u>2</u> Moderate</span></button>
+        <button class="lblbtn" data-lbl="severe"><span class="dot" style="background:var(--severe)"></span><span><u>3</u> Severe</span></button>
       </div>
       <div class="lblgrid2">
-        <button class="lblbtn" data-lbl="notthicket"><span class="dot" style="background:var(--nott)"></span>Not thicket / transformed</button>
-        <button class="lblbtn" data-lbl="unsure"><span class="dot" style="background:var(--unsure)"></span>Unsure</button>
+        <button class="lblbtn" data-lbl="notthicket"><span class="dot" style="background:var(--nott)"></span><span><u>4</u> Not thicket / transformed</span></button>
+        <button class="lblbtn" data-lbl="unsure"><span class="dot" style="background:var(--unsure)"></span><span><u>5</u> Unsure</span></button>
       </div>
+      <div class="reviewrow">
+        <button class="btn togglebtn" id="flagBtn" aria-pressed="false">⚑ Flag for second review</button>
+        <div class="confidence" aria-label="Confidence"><button class="btn" data-confidence="high">High</button><button class="btn" data-confidence="medium">Med</button><button class="btn" data-confidence="low">Low</button></div>
+      </div>
+      <div class="quicktags" aria-label="Quick note reasons"><button class="btn" data-tag="edge">edge</button><button class="btn" data-tag="erosion">erosion</button><button class="btn" data-tag="cultivation">cultivation</button><button class="btn" data-tag="cloud">cloud</button><button class="btn" data-tag="shadow">shadow</button><button class="btn" data-tag="mixed pixel">mixed pixel</button></div>
       <textarea class="note" id="note" placeholder="Optional note (species, edge effect, why unsure…)"></textarea>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:5px">
+        <span class="save-status" id="noteStatus" aria-live="polite"></span>
+        <button class="btn hidden" id="clearLabelBtn">Clear label</button>
+      </div>
 
       <div class="seclbl">Guidance</div>
-      <div style="font-size:12px;color:var(--muted);line-height:1.5">
+      <div class="guidance"><details open><summary>Decision guide and edge cases</summary><div style="margin-top:6px">
+        <div class="guidecards" aria-label="Illustrated canopy examples"><div class="guidecard"><div class="guidepic intact"></div>Continuous canopy</div><div class="guidecard"><div class="guidepic moderate"></div>Patchy canopy</div><div class="guidecard"><div class="guidepic severe"></div>Sparse / bare</div></div>
         <b style="color:var(--intact)">Intact</b>: dense, continuous canopy of woody thicket.<br>
         <b style="color:var(--moderate)">Moderate</b>: patchy / thinned canopy, visible bare ground between clumps, browse lines.<br>
         <b style="color:var(--severe)">Severe</b>: mostly bare/eroded, sparse remnant bush, ephemeral herbaceous.<br>
-        Use <b>Not thicket</b> for cultivation, plantation, urban, water, or clearly non-thicket vegetation.
-      </div>
+        Use <b>Not thicket</b> for cultivation, plantation, urban, water, or clearly non-thicket vegetation.<br><br>
+        <b>Decision tree:</b> thicket present? If no → Not thicket. If yes, canopy continuous → Intact; visibly opened but substantial → Moderate; sparse remnants/bare or eroded ground → Severe. If imagery cannot support a decision → Unsure + reason.<br><br>
+        Shadows should not be read as canopy gaps; compare dates. Recent fire can temporarily expose ground—flag it. Regular field geometry indicates cultivation. For mixed pixels, judge the point centre and add the “mixed pixel” tag.
+      </div></details></div>
     </div>
 
     <div class="pfoot">
-      <button class="btn primary wide" id="downloadBtn">⬇ Download labels</button>
+      <button class="btn primary wide" id="downloadBtn">Review &amp; download</button>
       <button class="btn wide" id="uploadBtn">⬆ Upload / resume</button>
       <input type="file" id="uploadInput" accept=".json,.csv" class="hidden" />
-      <button class="btn" id="helpBtn">?</button>
+      <button class="btn" id="helpBtn" aria-label="Keyboard shortcuts and help">?</button>
     </div>
   </div>
 </div>
@@ -265,7 +356,51 @@
       <label style="font-size:12px;color:var(--muted)">Your name / initials (stored with each label)</label>
       <input id="labelerName" placeholder="e.g. SJ" />
     </div>
+    <div class="save-status">Dataset <span id="datasetId">cc4a9721063db293</span> · progress stays in this browser</div>
+    <div style="display:flex;gap:8px;margin:10px 0"><button class="btn wide" id="welcomeUpload">Import backup</button><label style="font-size:12px;color:var(--muted);display:flex;align-items:center;gap:5px"><input type="checkbox" id="allowAnon"> Allow anonymous</label></div>
     <button class="btn primary" id="startBtn" style="width:100%;padding:11px">Start labeling</button>
+  </div>
+</div>
+
+<div id="completionModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="completionTitle">
+  <div class="modalbox large" tabindex="-1">
+    <h2 id="completionTitle">Completion &amp; QA</h2><p id="completionState"></p>
+    <div class="summarygrid" id="finalSummary"></div>
+    <p>Last backup: <b id="lastBackup">Never</b></p>
+    <h3 style="font-size:14px">Needs review</h3><div class="reviewlist" id="reviewList"></div>
+    <div style="display:flex;gap:8px;align-items:center;margin-top:14px"><label for="exportFormat">Format</label><select id="exportFormat"><option value="json">JSON (full fidelity)</option><option value="csv">CSV (spreadsheet)</option></select></div>
+    <div class="modalactions"><button class="btn" id="closeCompletion">Return to labeling</button><button class="btn primary" id="finalDownload">Download final</button></div>
+  </div>
+</div>
+
+<div id="helpModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="helpTitle"><div class="modalbox" tabindex="-1"><h2 id="helpTitle">Keyboard shortcuts</h2><p><kbd>1–5</kbd> label · <kbd>←</kbd>/<kbd>→</kbd> navigate · <kbd>N</kbd> next queue item · <kbd>F</kbd> flag · <kbd>Ctrl/⌘ Z</kbd> undo · <kbd>I/G/S/W</kbd> imagery · <kbd>[</kbd>/<kbd>]</kbd> Wayback dates · <kbd>Esc</kbd> focus map · <kbd>?</kbd> this panel.</p><div class="modalactions"><button class="btn primary" id="closeHelp">Close</button></div></div></div>
+
+<div id="importPreview" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="importTitle">
+  <div class="modalbox">
+    <h2 id="importTitle">Review imported labels</h2>
+    <p id="importFile">Check what will change before applying this backup.</p>
+    <div class="importstats">
+      <div>valid records<b id="impValid">0</b></div>
+      <div>new labels<b id="impNew">0</b></div>
+      <div>conflicts<b id="impConflicts">0</b></div>
+      <div>unchanged<b id="impSame">0</b></div>
+      <div>invalid<b id="impInvalid">0</b></div>
+      <div>wrong point<b id="impMoved">0</b></div>
+      <div>duplicates<b id="impDuplicates">0</b></div>
+    </div>
+    <label for="importStrategy" style="font-size:12px">When a point already has a different local label</label>
+    <select id="importStrategy">
+      <option value="fill">Keep local labels; fill blanks only (recommended)</option>
+      <option value="newer">Keep whichever label is newer</option>
+      <option value="replace">Replace local labels with imported labels</option>
+      <option value="manual">Resolve each conflict below</option>
+    </select>
+    <div class="reviewlist hidden" id="conflictList"></div>
+    <p id="importHint"></p>
+    <div class="modalactions">
+      <button class="btn" id="cancelImport">Cancel</button>
+      <button class="btn primary" id="applyImport">Apply import</button>
+    </div>
   </div>
 </div>
 
@@ -1141,17 +1276,31 @@ const DS_ID = (typeof DATASET_ID === 'string' && !DATASET_ID.startsWith('__'))
   ? DATASET_ID : 'dev';
 // Labels are namespaced by dataset so a new sample draw never shows stale labels.
 const KEY_LABELS = 'thicket-inspector-labels-' + DS_ID;
+const KEY_DRAFTS = 'thicket-inspector-note-drafts-' + DS_ID;
 const KEY_NAME   = 'thicket-inspector-name';
 const KEY_UI     = 'thicket-inspector-ui';
+const KEY_BACKUP = 'thicket-inspector-last-backup-' + DS_ID;
+const KEY_WBCACHE = 'thicket-inspector-wayback-cache-' + DS_ID;
 // Coordinates must match the embedded draw within ~1 m to count as the same point.
 const COORD_EPS = 1e-5;
 
 // ------------------------------------------------------------------ state
 let labels = {};            // id -> {label, note, labeler, ts}
+let noteDrafts = {};        // id -> note text before a point has a label
 let curIdx = -1;            // index into POINTS
 let labeler = '';
 let activeSource = 'esri';
+let blindMode = true;
+let autoAdvance = true;
+let pointFilter = 'all';
+let pendingAdvance = 0;
+let pendingImport = null;
+let undoStack = [];
+let navHistory = [], navHistoryPos = -1;
+let lastBackup = localStorage.getItem(KEY_BACKUP) || '';
+let wbPointCache = {};
 let map;
+let sourceErrors=0, fallbackInProgress=false;
 // Esri Wayback state
 const wb = {
   releases: [],      // [{num,title,date,metaUrl,tileUrl}], newest-first
@@ -1169,8 +1318,17 @@ let wbCmp = { map:null, f:0.5 };                       // swipe compare map + fr
 // ------------------------------------------------------------------ helpers
 const $ = s => document.querySelector(s);
 const byId = id => POINTS.findIndex(p => p.id === id);
-function toast(msg){ const t=$('#toast'); t.textContent=msg; t.classList.add('show');
-  clearTimeout(toast._t); toast._t=setTimeout(()=>t.classList.remove('show'),1800); }
+function toast(msg, actionLabel, action, duration=2200){
+  const t=$('#toast'); t.textContent='';
+  const span=document.createElement('span'); span.textContent=msg; t.appendChild(span);
+  if(actionLabel && action){
+    const b=document.createElement('button'); b.textContent=actionLabel;
+    b.onclick=()=>{ clearTimeout(toast._t); t.classList.remove('show'); action(); };
+    t.appendChild(b);
+  }
+  t.classList.add('show'); clearTimeout(toast._t);
+  toast._t=setTimeout(()=>t.classList.remove('show'),duration);
+}
 
 // Accept only a plain object of {id -> valid record for a current point}.
 function sanitizeLabels(raw){
@@ -1184,6 +1342,9 @@ function sanitizeLabels(raw){
     clean[p.id]={ label:r.label, note:String(r.note||''),
                   labeler:String(r.labeler||''),
                   ts:typeof r.ts==='string'?r.ts:'',
+                  flagged:!!r.flagged,
+                  confidence:['high','medium','low'].includes(r.confidence)?r.confidence:'',
+                  reasons:Array.isArray(r.reasons)?r.reasons.map(String).slice(0,12):[],
                   stratum:p.s, lon:p.lon, lat:p.lat };
   }
   return clean;
@@ -1192,9 +1353,40 @@ function loadStore(){
   let raw={};
   try{ raw = JSON.parse(localStorage.getItem(KEY_LABELS)||'{}'); }catch(e){ raw={}; }
   labels = sanitizeLabels(raw);
+  try{
+    const d=JSON.parse(localStorage.getItem(KEY_DRAFTS)||'{}');
+    if(d && typeof d==='object' && !Array.isArray(d)){
+      Object.entries(d).forEach(([id,note])=>{
+        if(byId(Number(id))>=0 && typeof note==='string') noteDrafts[id]=note.slice(0,5000);
+      });
+    }
+  }catch(e){ noteDrafts={}; }
   labeler = localStorage.getItem(KEY_NAME) || '';
+  try{ wbPointCache=JSON.parse(localStorage.getItem(KEY_WBCACHE)||'{}')||{}; }catch(e){ wbPointCache={}; }
 }
-function saveStore(){ localStorage.setItem(KEY_LABELS, JSON.stringify(labels)); }
+function saveStore(){
+  try{
+    localStorage.setItem(KEY_LABELS, JSON.stringify(labels));
+    localStorage.setItem(KEY_DRAFTS, JSON.stringify(noteDrafts));
+    const el=$('#saveStatus'); if(el) el.textContent='Saved locally · '+new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})+' · backup '+(lastBackup?new Date(lastBackup).toLocaleString():'never');
+    return true;
+  }catch(e){
+    const el=$('#saveStatus'); if(el) el.textContent='⚠ Could not save in this browser';
+    toast('Could not save locally — download a backup'); return false;
+  }
+}
+
+function snapshotUndo(description){
+  undoStack.push({labels:JSON.stringify(labels),drafts:JSON.stringify(noteDrafts),description});
+  if(undoStack.length>30) undoStack.shift();
+}
+function undoLast(){
+  const u=undoStack.pop(); if(!u){ toast('Nothing to undo'); return; }
+  labels=sanitizeLabels(JSON.parse(u.labels));
+  try{ noteDrafts=JSON.parse(u.drafts)||{}; }catch(e){ noteDrafts={}; }
+  saveStore(); refreshPoints(); applyPointFilter(); updateCounts(); if(curIdx>=0) renderPoint();
+  toast(`${u.description||'Change'} undone`);
+}
 
 // ------------------------------------------------------------------ imagery sources
 // All keyless raster XYZ sources so the page stays a shareable static file.
@@ -1242,7 +1434,11 @@ function initMap(){
     map.addLayer({id:'base-layer', type:'raster', source:'base'}, );
 
     // sample points as GeoJSON
-    map.addSource('pts', {type:'geojson', data: pointsGeoJSON()});
+    map.addSource('pts', {type:'geojson', data: pointsGeoJSON(), cluster:true, clusterMaxZoom:8, clusterRadius:45});
+    map.addLayer({id:'clusters',type:'circle',source:'pts',maxzoom:9,filter:['has','point_count'],paint:{
+      'circle-radius':['step',['get','point_count'],14,20,18,100,24],
+      'circle-color':'#263957','circle-stroke-color':'#8fb5ff','circle-stroke-width':2
+    }});
     map.addLayer({ id:'pts-layer', type:'circle', source:'pts', paint:{
       'circle-radius':['interpolate',['linear'],['zoom'],5,3,10,5,14,7],
       'circle-color':['match',['get','stratum'],
@@ -1250,14 +1446,22 @@ function initMap(){
         'severe',STRAT_COLOR.severe,'#888'],
       'circle-stroke-width':['case',['get','labeled'],2.5,1],
       'circle-stroke-color':['case',['get','labeled'],'#ffffff','#00000088'],
-      'circle-opacity':0.9
-    }});
+      'circle-opacity':0.55
+    }, filter:['!',['has','point_count']], minzoom:8});
     // selection halo
     map.addLayer({ id:'sel-layer', type:'circle', source:'pts',
       filter:['==',['get','id'],-1], paint:{
-        'circle-radius':['interpolate',['linear'],['zoom'],5,7,14,13],
-        'circle-color':'#00000000','circle-stroke-width':3,'circle-stroke-color':'#4f8cff'
+        'circle-radius':['interpolate',['linear'],['zoom'],5,9,14,16],
+        'circle-color':'#ffffff22','circle-stroke-width':5,'circle-stroke-color':'#67a0ff'
       }});
+
+    map.on('click','clusters',e=>{
+      const f=e.features[0]; map.getSource('pts').getClusterExpansionZoom(f.properties.cluster_id)
+        .then(z=>map.easeTo({center:f.geometry.coordinates,zoom:z}));
+    });
+    map.on('error',e=>{ if(!e||!e.error)return; sourceErrors++; setSourceHealth('Imagery is having trouble loading…',true);
+      if(sourceErrors>=4&&!fallbackInProgress){fallbackInProgress=true;const next=activeSource==='esri'?'google':'esri';toast(`${SOURCES[activeSource].name} unavailable — switching to ${SOURCES[next].name}`);setSource(next);setTimeout(()=>fallbackInProgress=false,3000);}
+    });
 
     map.on('click','pts-layer', e=>{
       const id = e.features[0].properties.id; gotoId(id);
@@ -1267,6 +1471,7 @@ function initMap(){
 
     fetchWayback();
     refreshPoints();
+    applyPointFilter();
     // Apply the remembered imagery source (base layer above is Esri by default).
     // GEE sources aren't in SOURCES yet — loadGeeLayers() re-applies once baked.
     if(activeSource && activeSource!=='esri' && SOURCES[activeSource]) setSource(activeSource);
@@ -1276,11 +1481,41 @@ function initMap(){
 function pointsGeoJSON(){
   return { type:'FeatureCollection', features: POINTS.map(p=>({
     type:'Feature', geometry:{type:'Point',coordinates:[p.lon,p.lat]},
-    properties:{ id:p.id, stratum:p.s, labeled: !!labels[p.id] }
+    properties:{ id:p.id, stratum:blindMode?'blind':p.s, labeled: !!labels[p.id],
+                 label:labels[p.id] ? labels[p.id].label : '',
+                 flagged:!!(labels[p.id]&&labels[p.id].flagged),
+                 confidence:labels[p.id] ? labels[p.id].confidence||'' : '' }
   }))};
 }
 function refreshPoints(){
   const src = map && map.getSource('pts'); if(src) src.setData(pointsGeoJSON());
+}
+function applyPointFilter(value=pointFilter){
+  pointFilter=value;
+  const filters={
+    all:null,
+    unlabeled:['==',['get','labeled'],false],
+    labeled:['==',['get','labeled'],true],
+    intact:['==',['get','label'],'intact'],
+    moderate:['==',['get','label'],'moderate'],
+    severe:['==',['get','label'],'severe'],
+    notthicket:['==',['get','label'],'notthicket'],
+    unsure:['==',['get','label'],'unsure'],
+    flagged:['==',['get','flagged'],true],
+    low:['==',['get','confidence'],'low']
+  };
+  if(!Object.hasOwn(filters,pointFilter)) pointFilter='all';
+  const base=['!', ['has','point_count']];
+  if(map && map.getLayer('pts-layer')) map.setFilter('pts-layer',filters[pointFilter]?['all',base,filters[pointFilter]]:base);
+  const sel=$('#pointFilter'); if(sel) sel.value=pointFilter;
+  document.querySelectorAll('.chip[data-filter]').forEach(c=>
+    c.classList.toggle('filter-active',c.dataset.filter===pointFilter));
+  const next=$('#nextUnlabeled');
+  if(next){
+    const names={all:'unlabeled',unlabeled:'unlabeled',labeled:'labeled',notthicket:'not thicket'};
+    next.textContent=`Jump to next ${names[pointFilter]||pointFilter} →`;
+  }
+  saveUI();
 }
 
 // ------------------------------------------------------------------ Esri Wayback
@@ -1299,6 +1534,8 @@ function isEsriUrl(u){
 }
 
 async function fetchWayback(){
+  const status=$('#wbStatus');
+  if(status){ status.textContent='Loading Wayback releases…'; status.className='statusline'; }
   try{
     const cfg = await fetch(WAYBACK_CONFIG_URL).then(r=>{
       if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); });
@@ -1321,7 +1558,9 @@ async function fetchWayback(){
     wb.idx = 0; wb.idxB = Math.min(1, wb.releases.length-1);
     fillWbSelect($('#wbSelect'), wb.idx);
     fillWbSelect($('#wbSelectB'), wb.idxB);
-  }catch(e){ wb.releases=[]; }
+    if(status){ status.textContent=`${wb.releases.length} releases available`; status.className='statusline ok'; }
+    if(activeSource==='wayback') applyWayback();
+  }catch(e){ wb.releases=[]; if(status){ status.textContent='Wayback could not be loaded. Check the network or use another source.'; status.className='statusline error'; } }
 }
 
 function fillWbSelect(el, cur){
@@ -1348,6 +1587,7 @@ function applyWayback(){
   if(src && src.setTiles){ src.setTiles([r.tileUrl]); }
   else { swapBase(rasterSourceDef(SOURCES.wayback, [r.tileUrl])); }
   const sel = $('#wbSelect'); if(sel && wb.view.includes(wb.idx)) sel.value = String(wb.idx);
+  const rd=$('#wbReleaseDate'); if(rd) rd.textContent=r.date;
   lookupCaptureDate(r);
   if(wb.compare) applyWaybackB();
 }
@@ -1375,16 +1615,21 @@ async function refreshWbLocal(){
     updateWbStepBtns(); return;
   }
   const sel = $('#wbSelect'); if(sel){ sel.disabled = true; }
+  const status=$('#wbStatus'); if(status){ status.textContent='Finding imagery changes at this point…'; status.className='statusline'; }
   const c = map.getCenter();
   try{
-    const set = await wbLocalReleases(c);
+    const pid=curIdx>=0?POINTS[curIdx].id:null;
+    let set;
+    if(pid && wbPointCache[pid]) set=new Set(wbPointCache[pid]);
+    else { set=await wbLocalReleases(c); if(pid){ wbPointCache[pid]=Array.from(set); localStorage.setItem(KEY_WBCACHE,JSON.stringify(wbPointCache)); } }
     if(myId !== wb.localId) return;                // superseded
     const idxs = wb.releases.map((r,i)=> set.has(r.num) ? i : -1).filter(i=>i>=0);
     wb.view = idxs.length ? idxs : wb.releases.map((_,i)=>i);
     if(!wb.view.includes(wb.idx)) { wb.idx = wb.view[0]; applyWayback(); }
     fillWbSelect($('#wbSelect'), wb.idx); fillWbSelect($('#wbSelectB'), wb.idxB);
     updateWbStepBtns();
-  }catch(e){ if(myId===wb.localId){ if(sel) sel.disabled=false; } }
+    if(status){ status.textContent=`${wb.view.length} dates with imagery changes here`; status.className='statusline ok'; }
+  }catch(e){ if(myId===wb.localId){ if(sel) sel.disabled=false; if(status){ status.textContent='Local date filtering failed; showing all releases.'; status.className='statusline error'; } } }
 }
 async function wbLocalReleases(pt){
   const z = Math.max(3, Math.min(18, Math.round(map.getZoom())));
@@ -1497,6 +1742,13 @@ function disableCompare(){
   document.querySelectorAll('.wb-swipe-label').forEach(e=>e.style.display='none');
 }
 
+function resetDivider(){ if(wbCmp._setX) wbCmp._setX($('#map').clientWidth*0.5); }
+function swapWayback(){ const x=wb.idx; wb.idx=wb.idxB; wb.idxB=x; fillWbSelect($('#wbSelect'),wb.idx); fillWbSelect($('#wbSelectB'),wb.idxB); applyWayback(); applyWaybackB(); }
+let flickerTimer=0;
+function setFlicker(on){ clearInterval(flickerTimer); flickerTimer=0; if(!on) return;
+  let b=false; flickerTimer=setInterval(()=>{ b=!b; const a=wb.releases[b?wb.idxB:wb.idx]; const s=map.getSource(WB_SOURCE); if(a&&s&&s.setTiles)s.setTiles([a.tileUrl]); },650);
+}
+
 function swapBase(def){
   if(map.getLayer(WB_LAYER)) map.removeLayer(WB_LAYER);
   if(map.getSource(WB_SOURCE)) map.removeSource(WB_SOURCE);
@@ -1522,6 +1774,8 @@ function buildSourceButtons(){
     b.onclick=()=>setSource(k); g.appendChild(b);
   });
 }
+
+function setSourceHealth(msg,error=false){ const el=$('#sourceHealth'); if(el){ el.textContent=msg; el.className='statusline '+(error?'error':'ok'); } }
 
 // A tile URL template must be https; {x}/{y}/{z} placeholders survive the URL parse.
 function isHttpsTileUrl(u){
@@ -1553,7 +1807,9 @@ async function loadGeeLayers(){
   }catch(e){ /* manifest optional — page works without it */ }
 }
 function setSource(k){
+  if(!SOURCES[k]) return;
   activeSource=k;
+  sourceErrors=0; setSourceHealth(`${SOURCES[k].name} selected`,false);
   document.querySelectorAll('.srcbtn').forEach(b=>b.classList.toggle('active',b.dataset.src===k));
   $('#waybackrow').classList.toggle('hidden', k!=='wayback');
   if(k==='wayback'){
@@ -1568,9 +1824,15 @@ function setSource(k){
 }
 
 // ------------------------------------------------------------------ navigation
-function gotoIdx(idx){
+function gotoIdx(idx, recordHistory=true){
   if(idx<0||idx>=POINTS.length) return;
+  if(curIdx>=0) saveNote();
+  clearTimeout(pendingAdvance);
   curIdx=idx; const p=POINTS[idx];
+  if(recordHistory && navHistory[navHistoryPos]!==p.id){
+    navHistory=navHistory.slice(0,navHistoryPos+1); navHistory.push(p.id);
+    if(navHistory.length>100) navHistory.shift(); navHistoryPos=navHistory.length-1;
+  }
   map.easeTo({center:[p.lon,p.lat], zoom:Math.max(map.getZoom(),15.5), duration:600});
   map.setFilter('sel-layer',['==',['get','id'],p.id]);
   renderPoint();
@@ -1584,6 +1846,15 @@ function gotoIdx(idx){
   }
 }
 function gotoId(id){ const i=byId(id); if(i>=0) gotoIdx(i); }
+function historyBack(){ if(navHistoryPos>0){ navHistoryPos--; const i=byId(navHistory[navHistoryPos]); if(i>=0) gotoIdx(i,false); } else toast('No earlier point in history'); }
+function gotoQueue(test,empty){
+  for(let k=1;k<=POINTS.length;k++){ const i=(curIdx+k)%POINTS.length,r=labels[POINTS[i].id]; if(r&&test(r)){gotoIdx(i);return;} }
+  toast(empty);
+}
+function recenter(){ const p=POINTS[curIdx]; if(p) map.easeTo({center:[p.lon,p.lat],duration:350}); }
+async function copyPoint(){ const p=POINTS[curIdx]; if(!p)return; const text=`ID ${p.id}: ${p.lat.toFixed(6)}, ${p.lon.toFixed(6)}`;
+  try{ await navigator.clipboard.writeText(text); toast('Point ID and coordinates copied'); }catch(e){ toast(text); }
+}
 function nextUnlabeled(){
   for(let k=1;k<=POINTS.length;k++){
     const i=(curIdx+k)%POINTS.length;
@@ -1591,15 +1862,26 @@ function nextUnlabeled(){
   }
   toast('All points labeled 🎉');
 }
+function nextForFilter(){
+  if(pointFilter==='all'||pointFilter==='unlabeled'){ nextUnlabeled(); return; }
+  for(let k=1;k<=POINTS.length;k++){
+    const i=(curIdx+k)%POINTS.length, rec=labels[POINTS[i].id];
+    if((pointFilter==='labeled'&&rec)||(rec&&rec.label===pointFilter)){ gotoIdx(i); return; }
+  }
+  toast(`No ${pointFilter==='labeled'?'labeled':pointFilter} points to review`);
+}
 
 // ------------------------------------------------------------------ render
 function renderPoint(){
   const p=POINTS[curIdx]; if(!p) return;
-  $('#curId').textContent=p.id; $('#totId').textContent=POINTS.length;
-  $('#curStratum').innerHTML = ` · <span class="pill ${p.s}">${p.s}</span>`;
-  $('#mCoord').textContent=`${p.lat.toFixed(5)}, ${p.lon.toFixed(5)}`;
-  $('#mStratum').innerHTML=`<span class="pill ${p.s}">${CLASS_LABEL[p.s]||p.s}</span>`;
+  $('#curId').textContent=p.id; $('#curOrdinal').textContent=curIdx+1; $('#totId').textContent=POINTS.length;
   const rec=labels[p.id];
+  const showPrediction=!blindMode || !!rec;
+  if(showPrediction) $('#curStratum').innerHTML = ` · <span class="pill ${p.s}">${p.s}</span>`;
+  else $('#curStratum').textContent=' · model hidden';
+  $('#mCoord').textContent=`${p.lat.toFixed(5)}, ${p.lon.toFixed(5)}`;
+  if(showPrediction) $('#mStratum').innerHTML=`<span class="pill ${p.s}">${CLASS_LABEL[p.s]||p.s}</span>`;
+  else $('#mStratum').textContent='Hidden until label saved';
   const mLabel=$('#mLabel');
   if(rec && isValidClass(rec.label)){
     const b=document.createElement('b');
@@ -1607,11 +1889,16 @@ function renderPoint(){
     b.textContent = CLASS_LABEL[rec.label];
     mLabel.textContent=''; mLabel.appendChild(b);
   } else { mLabel.textContent='–'; }
-  $('#note').value = rec ? (rec.note||'') : '';
+  $('#note').value = rec ? (rec.note||'') : (noteDrafts[p.id]||'');
+  autoGrowNote();
+  $('#noteStatus').textContent = noteDrafts[p.id] && !rec ? 'Draft saved locally' : '';
+  $('#clearLabelBtn').classList.toggle('hidden', !rec);
   document.querySelectorAll('.lblbtn').forEach(b=>{
     b.className='lblbtn';
     if(rec && isValidClass(rec.label) && rec.label===b.dataset.lbl) b.classList.add('sel-'+rec.label);
   });
+  $('#flagBtn').setAttribute('aria-pressed',String(!!(rec&&rec.flagged)));
+  document.querySelectorAll('[data-confidence]').forEach(b=>b.classList.toggle('active',!!rec&&rec.confidence===b.dataset.confidence));
   // imagery deep links
   $('#gmapsLink').href = `https://www.google.com/maps/@${p.lat},${p.lon},400m/data=!3m1!1e3`;
   $('#gearthLink').href = `https://earth.google.com/web/@${p.lat},${p.lon},0a,800d,35y,0h,0t,0r`;
@@ -1621,31 +1908,122 @@ function renderPoint(){
 
 function setLabel(cls){
   if(curIdx<0){ toast('Pick a point first'); return; }
+  if(!isValidClass(cls)) return;
+  clearTimeout(pendingAdvance);
   const p=POINTS[curIdx];
-  if(labels[p.id] && labels[p.id].label===cls){    // toggle off
-    delete labels[p.id];
-  }else{
-    labels[p.id]={ label:cls, note:$('#note').value.trim(),
-                   labeler:labeler, ts:new Date().toISOString(),
-                   stratum:p.s, lon:p.lon, lat:p.lat };
+  if(labels[p.id] && labels[p.id].label===cls){
+    toast(`${CLASS_LABEL[cls]} already selected`); return;
   }
-  saveStore(); renderPoint(); refreshPoints(); updateCounts();
+  const previous=labels[p.id] ? {...labels[p.id]} : null;
+  snapshotUndo('Label change');
+  const previousDraft=noteDrafts[p.id];
+  labels[p.id]={ label:cls, note:$('#note').value.trim(),
+                 labeler:labeler, ts:new Date().toISOString(),
+                 flagged:previous?!!previous.flagged:false,
+                 confidence:previous?previous.confidence||'':'', reasons:previous?previous.reasons||[]:[],
+                 stratum:p.s, lon:p.lon, lat:p.lat };
+  delete noteDrafts[p.id];
+  const saved=saveStore(); renderPoint(); refreshPoints(); updateCounts();
+  const undo=()=>{
+    clearTimeout(pendingAdvance);
+    if(previous) labels[p.id]=previous; else delete labels[p.id];
+    if(previousDraft!=null) noteDrafts[p.id]=previousDraft; else delete noteDrafts[p.id];
+    saveStore(); refreshPoints(); updateCounts(); gotoId(p.id); toast('Change undone');
+  };
+  toast(`Point ${p.id} marked ${CLASS_LABEL[cls]}`, 'Undo', undo, 4200);
+  if(autoAdvance && saved) pendingAdvance=setTimeout(nextUnlabeled, 450);
 }
-function saveNote(){
+function clearLabel(){
   const p=POINTS[curIdx]; if(!p||!labels[p.id]) return;
-  labels[p.id].note=$('#note').value.trim(); saveStore();
+  clearTimeout(pendingAdvance);
+  const previous={...labels[p.id]};
+  snapshotUndo('Clear label');
+  const note=$('#note').value.trim(); if(note) noteDrafts[p.id]=note;
+  delete labels[p.id]; saveStore(); renderPoint(); refreshPoints(); updateCounts();
+  toast(`Label cleared for point ${p.id}`, 'Undo', ()=>{
+    labels[p.id]=previous; delete noteDrafts[p.id]; saveStore(); refreshPoints(); updateCounts();
+    gotoId(p.id); toast('Label restored');
+  }, 4200);
+}
+function updateReviewField(field,value){
+  const p=POINTS[curIdx]; if(!p){return;} if(!labels[p.id]){ toast('Label the point before adding review metadata'); return; }
+  snapshotUndo('Review metadata'); labels[p.id][field]=value; labels[p.id].ts=new Date().toISOString();
+  saveStore(); refreshPoints(); updateCounts(); renderPoint();
+}
+function toggleFlag(){ const p=POINTS[curIdx],r=p&&labels[p.id]; if(!r){toast('Label the point before flagging it');return;} updateReviewField('flagged',!r.flagged); }
+function addReason(tag){
+  const p=POINTS[curIdx]; if(!p)return;
+  const note=$('#note'), token=`[${tag}]`; if(!note.value.includes(token)) note.value=(note.value.trim()+' '+token).trim();
+  autoGrowNote(); saveNote();
+  if(labels[p.id]){ const rs=new Set(labels[p.id].reasons||[]); rs.add(tag); labels[p.id].reasons=Array.from(rs); saveStore(); }
+}
+function autoGrowNote(){ const n=$('#note'); if(!n)return; n.style.height='auto'; n.style.height=Math.min(180,Math.max(44,n.scrollHeight))+'px'; }
+function saveNote(){
+  const p=POINTS[curIdx]; if(!p) return;
+  const note=$('#note').value.trim();
+  if(labels[p.id]){ labels[p.id].note=note; delete noteDrafts[p.id]; }
+  else if(note) noteDrafts[p.id]=note;
+  else delete noteDrafts[p.id];
+  saveStore();
+  $('#noteStatus').textContent=note ? (labels[p.id]?'Note saved':'Draft saved locally') : '';
 }
 
 function updateCounts(){
-  const c={intact:0,moderate:0,severe:0,all:0};
+  const c={intact:0,moderate:0,severe:0,notthicket:0,unsure:0,all:0,flagged:0,low:0};
   Object.values(labels).forEach(r=>{ if(!r||!isValidClass(r.label)) return;
-    c.all++; if(c[r.label]!=null) c[r.label]++; });
+    c.all++; if(c[r.label]!=null) c[r.label]++; if(r.flagged)c.flagged++; if(r.confidence==='low')c.low++; });
   $('#c_all').textContent=c.all; $('#c_intact').textContent=c.intact;
   $('#c_moderate').textContent=c.moderate; $('#c_severe').textContent=c.severe;
+  $('#c_notthicket').textContent=c.notthicket; $('#c_unsure').textContent=c.unsure;
+  $('#c_flagged').textContent=c.flagged; $('#c_low').textContent=c.low;
+  const remaining=Math.max(0,POINTS.length-c.all), pct=POINTS.length?c.all/POINTS.length*100:0;
+  $('#c_remaining').textContent=remaining; $('#progressText').textContent=`${c.all} of ${POINTS.length} labeled`;
+  $('#progressPct').textContent=(pct<10?pct.toFixed(1):Math.round(pct))+'%'; $('#progressFill').style.width=pct+'%';
 }
 
 // ------------------------------------------------------------------ import / export
-function download(){
+function exportRows(){
+  return POINTS.filter(p=>labels[p.id]).map(p=>{ const r=labels[p.id]; return {id:p.id,stratum:p.s,lon:p.lon,lat:p.lat,
+    label:r.label,note:r.note||'',labeler:r.labeler||labeler,ts:r.ts||'',flagged:!!r.flagged,
+    confidence:r.confidence||'',reasons:(r.reasons||[]).join('|')}; });
+}
+function checksumText(text){ let h=2166136261; for(let i=0;i<text.length;i++){h^=text.charCodeAt(i);h=Math.imul(h,16777619);} return ('00000000'+(h>>>0).toString(16)).slice(-8); }
+function download(){ openCompletion(); }
+function openCompletion(){
+  saveNote(); const rows=exportRows(), remaining=POINTS.length-rows.length;
+  const counts={}; CLASSES.forEach(c=>counts[c]=rows.filter(r=>r.label===c).length);
+  const flagged=rows.filter(r=>r.flagged), low=rows.filter(r=>r.confidence==='low'), unsure=rows.filter(r=>r.label==='unsure');
+  $('#completionState').textContent=remaining?`${remaining} point${remaining===1?' is':'s are'} incomplete. You can export a backup now, but final QA is not complete.`:'All points are labeled. Review the items below before final export.';
+  $('#completionState').className=remaining?'statusline error':'statusline ok';
+  const stats=[['Labeled',rows.length],['Remaining',remaining],['Intact',counts.intact],['Moderate',counts.moderate],['Severe',counts.severe],['Not thicket',counts.notthicket],['Unsure',counts.unsure],['Flagged',flagged.length],['Low confidence',low.length]];
+  const grid=$('#finalSummary'); grid.textContent=''; stats.forEach(([n,v])=>{const d=document.createElement('div'),b=document.createElement('b');b.textContent=v;d.append(n,b);grid.appendChild(d);});
+  $('#lastBackup').textContent=lastBackup?new Date(lastBackup).toLocaleString():'Never';
+  $('#finalDownload').textContent=remaining?'Download backup':'Download final';
+  const review=$('#reviewList'); review.textContent='';
+  const ids=new Set([...unsure,...flagged,...low].map(r=>r.id));
+  if(!ids.size){const d=document.createElement('div');d.className='reviewitem';d.textContent='No unsure, flagged, or low-confidence points.';review.appendChild(d);}
+  ids.forEach(id=>{const r=labels[id],d=document.createElement('div');d.className='reviewitem';d.append(`ID ${id} · ${CLASS_LABEL[r.label]}${r.flagged?' · flagged':''}${r.confidence?` · ${r.confidence} confidence`:''}`);const b=document.createElement('button');b.className='btn';b.textContent='Review';b.onclick=()=>{closeDialog('#completionModal');gotoId(id);};d.appendChild(b);review.appendChild(d);});
+  openDialog('#completionModal');
+}
+async function exportFinal(){
+  const rows = exportRows();
+  const exported=new Date().toISOString(), completion={complete:rows.length===POINTS.length,total:POINTS.length,labeled:rows.length,
+    flagged:rows.filter(r=>r.flagged).length,unsure:rows.filter(r=>r.label==='unsure').length,lowConfidence:rows.filter(r=>r.confidence==='low').length};
+  const canonical=JSON.stringify(rows), checksum=checksumText(canonical);
+  const payload={tool:'thicket_inspector',version:2,dataset:DS_ID,labeler,exported,n:rows.length,completion,checksum:{algorithm:'fnv1a-32',value:checksum},labels:rows};
+  const stamp=exported.slice(0,19).replace(/[:T]/g,'-'), safe=(labeler||'anon').replace(/[^A-Za-z0-9_-]/g,'');
+  const format=$('#exportFormat').value;
+  if(format==='json') blobDownload(JSON.stringify(payload,null,2),`thicket_labels_${safe}_${stamp}.json`,'application/json');
+  else {
+    const csvSafe=v=>{let s=String(v==null?'':v);if(/^[=+\-@\t\r]/.test(s))s="'"+s;return s;},q=v=>'"'+String(v==null?'':v).replace(/"/g,'""')+'"',qt=v=>'"'+csvSafe(v).replace(/"/g,'""')+'"';
+    const hdr='dataset,id,stratum,lon,lat,label,note,labeler,ts,flagged,confidence,reasons,checksum';
+    const csv=[hdr].concat(rows.map(r=>[q(DS_ID),q(r.id),q(r.stratum),q(r.lon),q(r.lat),q(r.label),qt(r.note),qt(r.labeler),q(r.ts),q(r.flagged),q(r.confidence),qt(r.reasons),q(checksum)].join(','))).join('\r\n');
+    blobDownload(csv,`thicket_labels_${safe}_${stamp}.csv`,'text/csv');
+  }
+  lastBackup=exported; localStorage.setItem(KEY_BACKUP,lastBackup); closeDialog('#completionModal'); saveStore(); toast(`Downloaded ${rows.length} labels as ${format.toUpperCase()}`);
+}
+/* Legacy two-file export retained below for reference during older file imports. */
+function legacyDownload(){
   const rows = POINTS.filter(p=>labels[p.id]).map(p=>{
     const r=labels[p.id];
     return {id:p.id, stratum:p.s, lon:p.lon, lat:p.lat,
@@ -1666,9 +2044,9 @@ function download(){
     if(/^[=+\-@\t\r]/.test(s)) s="'"+s; return s; };
   const q=v=>'"'+String(v==null?'':v).replace(/"/g,'""')+'"';       // numeric/enum
   const qt=v=>'"'+csvSafe(v).replace(/"/g,'""')+'"';                // free text
-  const hdr='id,stratum,lon,lat,label,note,labeler,ts';
+  const hdr='dataset,id,stratum,lon,lat,label,note,labeler,ts';
   const csv=[hdr].concat(rows.map(r=>
-    [q(r.id),q(r.stratum),q(r.lon),q(r.lat),q(r.label),qt(r.note||''),qt(r.labeler),q(r.ts)].join(',')
+    [q(DS_ID),q(r.id),q(r.stratum),q(r.lon),q(r.lat),q(r.label),qt(r.note||''),qt(r.labeler),q(r.ts)].join(',')
   )).join('\r\n');
   blobDownload(csv, `thicket_labels_${safe}_${stamp}.csv`,'text/csv');
   toast(`Downloaded ${rows.length} labels (JSON + CSV)`);
@@ -1687,43 +2065,93 @@ function handleUpload(file){
   fr.onload=()=>{
     try{
       let rows, fileDataset=null;
-      if(file.name.toLowerCase().endsWith('.csv')){ rows=parseCSV(fr.result); }
+      if(file.name.toLowerCase().endsWith('.csv')){
+        rows=parseCSV(fr.result); fileDataset=rows.find(r=>r.dataset)?.dataset||null;
+      }
       else { const j=JSON.parse(fr.result); rows=j.labels||[]; fileDataset=j.dataset||null; }
       if(!Array.isArray(rows)){ toast('Could not read that file'); return; }
 
       // Dataset-mismatch guard: a JSON export from a different sample draw must
       // not silently paint its labels onto these coordinates.
       if(fileDataset && fileDataset !== DS_ID){
-        if(!confirm('This file was made for a different sample draw ('+fileDataset+
-          ') than the current one ('+DS_ID+'). Coordinates may not match. Import anyway?'))
-          { toast('Import cancelled'); return; }
+        toast('Import blocked: file belongs to a different dataset'); return;
       }
 
-      let merged=0, skipped=0, moved=0, kept=0;
+      previewImport(rows,file.name);
+    }catch(e){ toast('Could not read that file'); }
+  };
+  fr.onerror=()=>toast('Could not read that file');
+  fr.readAsText(file);
+}
+function previewImport(rows,fileName){
+      const records=[]; let invalid=0, moved=0, fresh=0, conflicts=0, same=0,duplicates=0; const seen=new Set();
       rows.forEach(r=>{
-        const id=Number(r.id); const i=byId(id); if(i<0){ skipped++; return; }
-        if(!isValidClass(r.label)){ skipped++; return; }
+        const id=Number(r.id); const i=byId(id); if(i<0||!isValidClass(r.label)){ invalid++; return; }
+        if(seen.has(id)){duplicates++;return;} seen.add(id);
         const p=POINTS[i];
+        if(r.stratum && r.stratum!==p.s){ moved++; return; }
         // If the file carries coordinates, they must match the embedded draw.
         if(r.lon!=null && r.lat!=null){
           const dlon=Math.abs(Number(r.lon)-p.lon), dlat=Math.abs(Number(r.lat)-p.lat);
           if(!(dlon<=COORD_EPS && dlat<=COORD_EPS)){ moved++; return; }
         }
-        // Conflict: don't let an older file clobber a newer local label.
-        const cur=labels[id], incTs=typeof r.ts==='string'?r.ts:'';
-        if(cur && cur.ts && incTs && incTs < cur.ts){ kept++; return; }
-        labels[id]={label:r.label, note:String(r.note||''), labeler:String(r.labeler||labeler),
-                    ts:incTs||new Date().toISOString(), stratum:p.s, lon:p.lon, lat:p.lat};
-        merged++;
+        const rec={label:r.label,note:String(r.note||'').slice(0,5000),
+          labeler:String(r.labeler||labeler).slice(0,200),
+          ts:typeof r.ts==='string'?r.ts:'',flagged:r.flagged===true||String(r.flagged).toLowerCase()==='true',
+          confidence:['high','medium','low'].includes(r.confidence)?r.confidence:'',
+          reasons:Array.isArray(r.reasons)?r.reasons:String(r.reasons||'').split('|').filter(Boolean),stratum:p.s,lon:p.lon,lat:p.lat};
+        const cur=labels[id];
+        const unchanged=cur && cur.label===rec.label && (cur.note||'')===rec.note;
+        if(!cur) fresh++; else if(unchanged) same++; else conflicts++;
+        records.push({id,rec,unchanged:!!unchanged});
       });
-      saveStore(); refreshPoints(); updateCounts();
-      if(curIdx>=0) renderPoint();
-      const extra=[skipped&&`${skipped} skipped`, moved&&`${moved} moved`,
-                   kept&&`${kept} kept newer`].filter(Boolean).join(', ');
-      toast(`Loaded ${merged} labels${extra?` (${extra})`:''} — resuming`);
-    }catch(e){ toast('Could not read that file'); }
-  };
-  fr.readAsText(file);
+      pendingImport={records,invalid,moved,fresh,conflicts,same,duplicates,fileName};
+      $('#importFile').textContent=`${fileName} contains ${rows.length} row${rows.length===1?'':'s'}. Nothing changes until you apply it.`+
+        (rows.some(r=>!r.dataset)?' This appears to be a legacy file without a dataset fingerprint; point IDs, strata, and coordinates are validated where present.':'');
+      $('#impValid').textContent=records.length; $('#impNew').textContent=fresh;
+      $('#impConflicts').textContent=conflicts; $('#impSame').textContent=same;
+      $('#impInvalid').textContent=invalid; $('#impMoved').textContent=moved;
+      $('#impDuplicates').textContent=duplicates;
+      $('#importStrategy').value='fill'; $('#importStrategy').disabled=conflicts===0;
+      $('#importHint').textContent=conflicts
+        ? `${conflicts} existing label${conflicts===1?' differs':'s differ'} from this file. Choose how to resolve them.`
+        : 'No conflicting local labels were found.';
+      $('#applyImport').disabled=records.length===0;
+      renderConflictChoices();
+      openDialog('#importPreview'); $('#cancelImport').focus();
+}
+function renderConflictChoices(){
+  const list=$('#conflictList'); list.textContent='';
+  (pendingImport?pendingImport.records:[]).filter(x=>labels[x.id]&&!x.unchanged).forEach(x=>{
+    const d=document.createElement('div');d.className='reviewitem';d.append(`ID ${x.id}: local ${CLASS_LABEL[labels[x.id].label]} / imported ${CLASS_LABEL[x.rec.label]}`);
+    const s=document.createElement('select');s.dataset.conflict=String(x.id);s.innerHTML='<option value="local">Keep local</option><option value="import">Use imported</option>';d.appendChild(s);list.appendChild(d);
+  });
+  list.classList.toggle('hidden',$('#importStrategy').value!=='manual');
+}
+function closeImport(){
+  closeDialog('#importPreview'); pendingImport=null;
+}
+function applyImport(){
+  if(!pendingImport) return;
+  const before=JSON.stringify(labels), strategy=$('#importStrategy').value;
+  snapshotUndo('Import');
+  let applied=0,kept=0;
+  pendingImport.records.forEach(({id,rec,unchanged})=>{
+    const cur=labels[id];
+    if(unchanged){ kept++; return; }
+    let use=!cur;
+    if(cur && strategy==='replace') use=true;
+    else if(cur && strategy==='newer') use=!!rec.ts && (!cur.ts || rec.ts>cur.ts);
+    else if(cur && strategy==='manual'){ const s=document.querySelector(`[data-conflict="${id}"]`); use=!!s&&s.value==='import'; }
+    if(use){ labels[id]={...rec,ts:rec.ts||new Date().toISOString()}; applied++; }
+    else kept++;
+  });
+  closeImport(); saveStore(); refreshPoints(); applyPointFilter(); updateCounts();
+  if(curIdx>=0) renderPoint();
+  toast(`Applied ${applied} label${applied===1?'':'s'} · kept ${kept}`, 'Undo', ()=>{
+    labels=sanitizeLabels(JSON.parse(before)); saveStore(); refreshPoints(); applyPointFilter(); updateCounts();
+    if(curIdx>=0) renderPoint(); toast('Import undone');
+  },5000);
 }
 // Full RFC-4180-ish tokenizer: quotes may contain commas and newlines, "" -> ".
 // Records are split on unquoted CR/LF, so a multiline note stays one record.
@@ -1751,30 +2179,74 @@ function parseCSV(txt){
   const hdr=rows.shift();
   const ix=n=>hdr.indexOf(n);
   return rows.map(cells=>({
-    id:cells[ix('id')], stratum:cells[ix('stratum')], label:cells[ix('label')],
-    note:cells[ix('note')]||'', labeler:cells[ix('labeler')]||'', ts:cells[ix('ts')]||''
+    dataset:cells[ix('dataset')], id:cells[ix('id')], stratum:cells[ix('stratum')], label:cells[ix('label')],
+    lon:cells[ix('lon')], lat:cells[ix('lat')], note:cells[ix('note')]||'',
+    labeler:cells[ix('labeler')]||'', ts:cells[ix('ts')]||'',
+    flagged:cells[ix('flagged')]||'',confidence:cells[ix('confidence')]||'',reasons:cells[ix('reasons')]||''
   }));
 }
 
 // ------------------------------------------------------------------ UI persistence
-function saveUI(){ localStorage.setItem(KEY_UI, JSON.stringify({src:activeSource})); }
+function saveUI(){ localStorage.setItem(KEY_UI, JSON.stringify({
+  src:activeSource, blind:blindMode, autoAdvance, filter:pointFilter,
+  panelCollapsed:document.body.classList.contains('panel-collapsed')
+})); }
 function loadUI(){ try{const u=JSON.parse(localStorage.getItem(KEY_UI)||'{}');
-  if(u.src&&SOURCES[u.src]) activeSource=u.src;}catch(e){} }
+  if(typeof u.src==='string') activeSource=u.src;
+  if(typeof u.blind==='boolean') blindMode=u.blind;
+  if(typeof u.autoAdvance==='boolean') autoAdvance=u.autoAdvance;
+  if(typeof u.filter==='string') pointFilter=u.filter;
+  if(u.panelCollapsed) document.body.classList.add('panel-collapsed');
+}catch(e){} }
+
+let dialogReturnFocus=null;
+function openDialog(sel){ const d=$(sel);dialogReturnFocus=document.activeElement;d.classList.remove('hidden');const box=d.querySelector('[tabindex="-1"]')||d.querySelector('button');if(box)box.focus(); }
+function closeDialog(sel){ const d=$(sel);d.classList.add('hidden');if(dialogReturnFocus&&dialogReturnFocus.focus)dialogReturnFocus.focus();dialogReturnFocus=null; }
+function trapFocus(e,sel){ if(e.key!=='Tab')return;const els=Array.from($(sel).querySelectorAll('button:not([disabled]),input:not([disabled]),select:not([disabled]),[tabindex="0"]')).filter(x=>x.offsetParent!==null);if(!els.length)return;const a=els[0],z=els[els.length-1];if(e.shiftKey&&document.activeElement===a){z.focus();e.preventDefault();}else if(!e.shiftKey&&document.activeElement===z){a.focus();e.preventDefault();} }
+function setWaybackPreset(kind){ if(!wb.view.length)return; let idx=wb.view[0]; if(kind==='oldest')idx=wb.view[wb.view.length-1]; else if(kind==='5y'){const y=new Date().getFullYear()-5;idx=wb.view.reduce((best,i)=>Math.abs(parseInt(wb.releases[i].date)-y)<Math.abs(parseInt(wb.releases[best].date)-y)?i:best,wb.view[0]);} wb.idx=idx;applyWayback();updateWbStepBtns(); }
 
 // ------------------------------------------------------------------ wiring
 function wire(){
   $('#prevBtn').onclick=()=>gotoIdx(curIdx-1);
   $('#nextBtn').onclick=()=>gotoIdx(curIdx+1);
-  $('#nextUnlabeled').onclick=nextUnlabeled;
+  $('#nextUnlabeled').onclick=nextForFilter;
   document.querySelectorAll('.lblbtn').forEach(b=> b.onclick=()=>setLabel(b.dataset.lbl));
-  $('#note').addEventListener('change', saveNote);
+  let noteTimer=0;
+  $('#note').addEventListener('input', ()=>{
+    $('#noteStatus').textContent='Saving…'; autoGrowNote(); clearTimeout(noteTimer);
+    noteTimer=setTimeout(saveNote, 350);
+  });
+  $('#note').addEventListener('change', ()=>{ clearTimeout(noteTimer); saveNote(); });
+  $('#clearLabelBtn').onclick=clearLabel;
   $('#downloadBtn').onclick=download;
   $('#uploadBtn').onclick=()=>$('#uploadInput').click();
   $('#uploadInput').onchange=e=>{ if(e.target.files[0]) handleUpload(e.target.files[0]); e.target.value=''; };
-  $('#helpBtn').onclick=()=>$('#intro').classList.remove('hidden');
-  $('#hideLabeled').onchange=e=>{
-    map.setFilter('pts-layer', e.target.checked ? ['!',['get','labeled']] : null);
+  $('#helpBtn').onclick=()=>openDialog('#helpModal');
+  $('#closeHelp').onclick=()=>closeDialog('#helpModal');
+  $('#closeCompletion').onclick=()=>closeDialog('#completionModal'); $('#finalDownload').onclick=exportFinal;
+  $('#welcomeUpload').onclick=()=>$('#uploadInput').click();
+  $('#switchLabeller').onclick=()=>{ $('#labelerName').value=labeler; $('#intro').classList.remove('hidden'); $('#labelerName').focus(); };
+  $('#gotoBtn').onclick=()=>{const id=Number($('#gotoInput').value),i=byId(id);if(i>=0)gotoIdx(i);else toast('Point ID not found');};
+  $('#gotoInput').onkeydown=e=>{if(e.key==='Enter')$('#gotoBtn').click();};
+  $('#historyBack').onclick=historyBack; $('#copyPoint').onclick=copyPoint; $('#copyCoords').onclick=copyPoint; $('#recenterBtn').onclick=recenter;
+  $('#nextFlagged').onclick=()=>gotoQueue(r=>r.flagged,'No flagged points');
+  $('#nextLow').onclick=()=>gotoQueue(r=>r.confidence==='low','No low-confidence points');
+  document.querySelectorAll('[data-zoom]').forEach(b=>b.onclick=()=>{recenter();map.easeTo({zoom:+b.dataset.zoom,duration:350});});
+  $('#flagBtn').onclick=toggleFlag;
+  document.querySelectorAll('[data-confidence]').forEach(b=>b.onclick=()=>updateReviewField('confidence',b.dataset.confidence));
+  document.querySelectorAll('[data-tag]').forEach(b=>b.onclick=()=>addReason(b.dataset.tag));
+  $('#panelToggle').onclick=()=>{document.body.classList.toggle('panel-collapsed');setTimeout(()=>map.resize(),20);saveUI();};
+  $('#pointFilter').onchange=e=>applyPointFilter(e.target.value);
+  document.querySelectorAll('.chip[data-filter]').forEach(c=>c.onclick=()=>
+    applyPointFilter(pointFilter===c.dataset.filter?'all':c.dataset.filter));
+  $('#cancelImport').onclick=closeImport; $('#applyImport').onclick=applyImport;
+  $('#importStrategy').onchange=renderConflictChoices;
+  $('#blindMode').onchange=e=>{
+    blindMode=e.target.checked;
+    document.querySelectorAll('.model-key').forEach(x=>x.classList.toggle('hidden',blindMode));
+    refreshPoints(); if(curIdx>=0) renderPoint(); saveUI();
   };
+  $('#autoAdvance').onchange=e=>{ autoAdvance=e.target.checked; saveUI(); };
   // Esri Wayback controls
   $('#wbSelect').onchange=e=>{ wb.idx=+e.target.value; applyWayback(); updateWbStepBtns(); };
   $('#wbPrev').onclick=()=>wbStep(+1);   // older
@@ -1790,18 +2262,37 @@ function wire(){
     wb.idxB=wb.view[np]; fillWbSelect($('#wbSelectB'),wb.idxB); applyWaybackB(); };
   $('#wbNextB').onclick=()=>{ const p=wb.view.indexOf(wb.idxB); const np=Math.max(0,(p<0?0:p)-1);
     wb.idxB=wb.view[np]; fillWbSelect($('#wbSelectB'),wb.idxB); applyWaybackB(); };
+  $('#wbSwap').onclick=swapWayback; $('#wbReset').onclick=resetDivider; $('#wbFlicker').onchange=e=>setFlicker(e.target.checked);
+  $('#wbRecent').onclick=()=>setWaybackPreset('recent'); $('#wb5y').onclick=()=>setWaybackPreset('5y'); $('#wbOldest').onclick=()=>setWaybackPreset('oldest');
+
+  const drop=e=>{e.preventDefault();document.body.classList.remove('drop-active');const f=e.dataTransfer&&e.dataTransfer.files[0];if(f)handleUpload(f);};
+  document.addEventListener('dragover',e=>{e.preventDefault();document.body.classList.add('drop-active');});
+  document.addEventListener('dragleave',e=>{if(!e.relatedTarget)document.body.classList.remove('drop-active');});document.addEventListener('drop',drop);
 
   document.addEventListener('keydown', e=>{
-    if(e.target.tagName==='TEXTAREA'||e.target.tagName==='INPUT') return;
+    if(!$('#importPreview').classList.contains('hidden')){
+      if(e.key==='Escape') closeImport(); else trapFocus(e,'#importPreview'); return;
+    }
+    if(!$('#completionModal').classList.contains('hidden')){if(e.key==='Escape')closeDialog('#completionModal');else trapFocus(e,'#completionModal');return;}
+    if(!$('#helpModal').classList.contains('hidden')){if(e.key==='Escape')closeDialog('#helpModal');else trapFocus(e,'#helpModal');return;}
+    if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'){undoLast();e.preventDefault();return;}
+    if(e.target.tagName==='TEXTAREA'||e.target.tagName==='INPUT'||e.target.tagName==='SELECT') return;
     const map5={'1':'intact','2':'moderate','3':'severe','4':'notthicket','5':'unsure'};
     if(map5[e.key]){ setLabel(map5[e.key]); e.preventDefault(); }
     else if(e.key==='ArrowRight'||e.key===' '){ gotoIdx(curIdx+1); e.preventDefault(); }
     else if(e.key==='ArrowLeft'){ gotoIdx(curIdx-1); e.preventDefault(); }
-    else if(e.key.toLowerCase()==='n'){ nextUnlabeled(); e.preventDefault(); }
+    else if(e.key.toLowerCase()==='n'){ nextForFilter(); e.preventDefault(); }
+    else if(e.key.toLowerCase()==='f'){toggleFlag();e.preventDefault();}
+    else if(e.key==='?'){openDialog('#helpModal');e.preventDefault();}
+    else if(e.key==='Escape'){map.getCanvas().focus();}
+    else if(e.key==='['&&activeSource==='wayback'){wbStep(+1);e.preventDefault();}
+    else if(e.key===']'&&activeSource==='wayback'){wbStep(-1);e.preventDefault();}
+    else if(['i','g','s','w'].includes(e.key.toLowerCase())){const x={i:'esri',g:'google',s:'s2',w:'wayback'}[e.key.toLowerCase()];setSource(x);e.preventDefault();}
   });
 
   $('#startBtn').onclick=()=>{
     labeler=($('#labelerName').value||'').trim();
+    if(!labeler&&!$('#allowAnon').checked){toast('Enter a name/initials, or explicitly allow anonymous labeling');$('#labelerName').focus();return;}
     localStorage.setItem(KEY_NAME, labeler);
     $('#intro').classList.add('hidden');
     // first unlabeled, or first point
@@ -1817,11 +2308,20 @@ function boot(){
   window.POINTS=POINTS;
   Object.defineProperty(window,'labels',{get:()=>labels});
   $('#labelerName').value = labeler;
+  $('#blindMode').checked=blindMode; $('#autoAdvance').checked=autoAdvance;
+  $('#pointFilter').value=pointFilter;
+  document.querySelectorAll('.model-key').forEach(x=>x.classList.toggle('hidden',blindMode));
+  const savedCount=Object.keys(labels).length;
+  if(labeler && savedCount) $('#startBtn').textContent=`Continue as ${labeler} · ${POINTS.length-savedCount} remaining`;
   buildSourceButtons(); wire(); initMap(); updateCounts();
   loadGeeLayers();   // async; re-renders source buttons if a manifest is present
   // restore hash target after map ready
   const m=location.hash.match(/p=(\d+)/);
   if(m){ const tid=+m[1]; map && map.on('load',()=>gotoId(tid)); }
+  if('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('./sw.js').catch(()=>{});
+  window.addEventListener('online',()=>setSourceHealth('Network restored',false));
+  window.addEventListener('offline',()=>setSourceHealth('Offline: saved labels remain available; uncached imagery may not load.',true));
+  setInterval(()=>{ if(Object.keys(labels).length && (!lastBackup || Date.now()-Date.parse(lastBackup)>30*60*1000)) toast('Backup reminder: download your latest work',null,null,5000); },15*60*1000);
 }
 boot();
 

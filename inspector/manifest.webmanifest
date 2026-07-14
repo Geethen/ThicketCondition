@@ -1,0 +1,9 @@
+{
+  "name": "Thicket Condition Inspector",
+  "short_name": "Thicket QA",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#0f1115",
+  "theme_color": "#101218",
+  "description": "Offline-resilient reference labeling for South African solid thicket."
+}

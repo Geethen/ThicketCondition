@@ -3,6 +3,8 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+<meta name="theme-color" content="#101218" />
+<link rel="manifest" href="manifest.webmanifest" />
 <title>Thicket Condition Inspector</title>
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css"
   integrity="sha384-MinO0mNliZ3vwppuPOUnGa+iq619pfMhLVUXfC4LHwSCvF9H+6P/KO4Q7qBOYV5V"
@@ -39,12 +41,19 @@
          display:flex; gap:8px; flex-wrap:wrap}
 
   /* progress */
-  .prog{display:flex; gap:6px; margin-top:10px}
-  .chip{flex:1; text-align:center; padding:6px 4px; border-radius:8px; background:#0c0e13;
-        border:1px solid var(--line); font-size:11px}
+  .prog{display:grid; grid-template-columns:repeat(4,1fr); gap:6px; margin-top:8px}
+  .chip{text-align:center; padding:6px 4px; border-radius:8px; background:#0c0e13;
+        border:1px solid var(--line); font:inherit;font-size:11px;color:var(--ink)}
+  .chip[data-filter]{cursor:pointer}
+  .chip[data-filter]:hover,.chip.filter-active{border-color:var(--accent);background:#16233d}
   .chip b{display:block; font-size:16px; line-height:1.1; margin-top:2px}
   .chip.intact b{color:var(--intact)} .chip.moderate b{color:var(--moderate)}
   .chip.severe b{color:var(--severe)} .chip.all b{color:var(--accent)}
+  .chip.remaining b{color:var(--ink)} .chip.notthicket b{color:var(--nott)}
+  .chip.unsure b{color:var(--unsure)}
+  .progressline{display:flex;justify-content:space-between;margin-top:9px;font-size:11px;color:var(--muted)}
+  .progressbar{height:5px;background:#0c0e13;border-radius:5px;overflow:hidden;margin-top:4px}
+  .progressbar span{display:block;height:100%;width:0;background:var(--accent);transition:width .2s}
 
   /* nav */
   .navrow{display:flex; align-items:center; gap:8px; margin:14px 0 6px}
@@ -129,8 +138,13 @@
 
   .toast{position:absolute; bottom:16px; left:50%; transform:translateX(-50%);
     background:#0c0e13; border:1px solid var(--line); padding:8px 14px; border-radius:8px;
-    font-size:12px; opacity:0; transition:.3s; pointer-events:none; z-index:20}
-  .toast.show{opacity:1}
+    font-size:12px; opacity:0; transition:.3s; pointer-events:none; z-index:20;
+    display:flex;gap:12px;align-items:center;white-space:nowrap}
+  .toast.show{opacity:1;pointer-events:auto}
+  .toast button{border:0;background:none;color:#8fb5ff;font-weight:700;cursor:pointer;padding:2px}
+  .settingsrow{display:flex;gap:12px;flex-wrap:wrap;margin-top:7px;font-size:11px;color:var(--muted)}
+  .settingsrow label{cursor:pointer;user-select:none}
+  .save-status{font-size:11px;color:var(--muted);margin-top:5px;min-height:14px}
 
   /* legend on map */
   .legend{position:absolute; top:10px; left:10px; background:rgba(16,18,24,.88);
@@ -139,6 +153,8 @@
   .legend .sw{width:11px; height:11px; border-radius:50%; border:1px solid #0008}
   .legend .filt{margin-top:6px; padding-top:6px; border-top:1px solid var(--line); color:var(--muted)}
   .legend label{cursor:pointer; user-select:none}
+  .legend select{width:100%;margin-bottom:5px;background:#0c0e13;color:var(--ink);border:1px solid var(--line);
+    border-radius:6px;padding:4px;font:inherit}
 
   #intro{position:absolute; inset:0; background:rgba(9,11,15,.94); z-index:50;
     display:flex; align-items:center; justify-content:center}
@@ -149,7 +165,38 @@
   #introbox .who{margin:14px 0}
   #introbox input{width:100%; background:#0c0e13; color:var(--ink); border:1px solid var(--line);
     border-radius:8px; padding:9px 10px; font-size:13px}
+  .modal{position:absolute;inset:0;background:rgba(9,11,15,.88);z-index:60;display:flex;
+    align-items:center;justify-content:center;padding:16px}
+  .modalbox{width:min(520px,100%);background:var(--panel);border:1px solid var(--line);
+    border-radius:14px;padding:22px;box-shadow:0 20px 60px #0008}
+  .modalbox h2{margin:0 0 6px;font-size:18px}.modalbox p{color:var(--muted);font-size:12px;line-height:1.5}
+  .importstats{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:14px 0}
+  .importstats div{background:#0c0e13;border:1px solid var(--line);border-radius:8px;padding:8px;text-align:center;font-size:11px;color:var(--muted)}
+  .importstats b{display:block;color:var(--ink);font-size:17px}
+  .modalbox select{width:100%;background:#0c0e13;color:var(--ink);border:1px solid var(--line);
+    border-radius:8px;padding:9px;margin:5px 0 14px}
+  .modalactions{display:flex;gap:8px;justify-content:flex-end}
   .hidden{display:none !important}
+  .toolbar{display:flex;gap:6px;flex-wrap:wrap;margin:7px 0}.toolbar .btn{padding:7px 9px}
+  .reviewrow{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+  .togglebtn[aria-pressed="true"]{border-color:#ffb84d;background:#3b2b13;color:#ffd58a}
+  .confidence{display:flex;gap:5px}.confidence button{flex:1;padding:7px}.confidence button.active{border-color:var(--accent);background:#16233d}
+  .quicktags{display:flex;gap:5px;flex-wrap:wrap;margin-top:7px}.quicktags button{padding:5px 7px;font-size:11px}
+  .statusline{padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:#0c0e13;font-size:11px;color:var(--muted);margin-top:7px}
+  .statusline.error{border-color:#a94442;color:#ffaaa4}.statusline.ok{border-color:#287b4c;color:#9de0b7}
+  .modalbox.large{width:min(760px,100%);max-height:90vh;overflow:auto}.summarygrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}
+  .summarygrid div{background:#0c0e13;border:1px solid var(--line);border-radius:8px;padding:10px;color:var(--muted);font-size:11px}.summarygrid b{display:block;color:var(--ink);font-size:20px}
+  .reviewlist{max-height:220px;overflow:auto;border:1px solid var(--line);border-radius:8px}.reviewitem{display:flex;align-items:center;gap:8px;padding:8px;border-bottom:1px solid var(--line);font-size:12px}.reviewitem:last-child{border:0}.reviewitem button{margin-left:auto}
+  .goto{display:flex;gap:5px}.goto input{width:100px;background:#0c0e13;color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:7px}
+  .panel-handle{position:absolute;right:380px;top:50%;z-index:8;width:24px;height:48px;border-radius:8px 0 0 8px;padding:0;background:var(--panel2);color:var(--ink);border:1px solid var(--line)}
+  body.panel-collapsed #panel{display:none}body.panel-collapsed .panel-handle{right:0;transform:rotate(180deg)}
+  .guidance details{font-size:12px;color:var(--muted);line-height:1.5}.guidance summary{cursor:pointer;color:var(--ink)}
+  .guidecards{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:8px 0}.guidecard{border:1px solid var(--line);border-radius:7px;overflow:hidden;text-align:center;font-size:10px}.guidepic{height:38px;background-color:#315f3b}.guidepic.intact{background-image:radial-gradient(circle at 20% 30%,#82a85e 0 5px,transparent 6px),radial-gradient(circle at 70% 60%,#6f934d 0 8px,transparent 9px)}.guidepic.moderate{background-color:#957d50;background-image:radial-gradient(circle,#557543 0 7px,transparent 8px);background-size:25px 25px}.guidepic.severe{background-color:#a78354;background-image:repeating-linear-gradient(25deg,transparent 0 10px,#745c3d 11px 13px)}
+  .lblbtn .dot{border:1px solid #fff9}.lblbtn[data-lbl="moderate"] .dot{border-radius:2px}.lblbtn[data-lbl="severe"] .dot{clip-path:polygon(50% 0,100% 100%,0 100%)}
+  #shortcutPanel{position:absolute;right:8px;bottom:8px;z-index:7;background:rgba(12,14,19,.92);border:1px solid var(--line);border-radius:8px;padding:7px;font-size:10px;color:var(--muted)}
+  .drop-active{outline:3px dashed var(--accent);outline-offset:-8px}
+  @media(max-width:760px){#app{flex-direction:column}#mapwrap{height:52%;min-height:260px}#panel{width:100%;flex:1 1 48%;height:48%;border-left:0;border-top:1px solid var(--line)}.panel-handle{display:none}.pbody{padding-bottom:24px}.btn,.lblbtn,button.nav{min-height:44px}.legend{max-width:150px}.summarygrid{grid-template-columns:1fr 1fr}}
+  @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
   kbd{background:#0c0e13; border:1px solid var(--line); border-bottom-width:2px; border-radius:5px;
     padding:1px 5px; font-size:11px; font-family:inherit}
 </style>
@@ -159,38 +206,69 @@
   <div id="mapwrap">
     <div id="map"></div>
     <div class="legend">
-      <div><span class="sw" style="background:var(--intact)"></span>Intact stratum</div>
-      <div><span class="sw" style="background:var(--moderate)"></span>Moderate stratum</div>
-      <div><span class="sw" style="background:var(--severe)"></span>Severe stratum</div>
+      <div class="model-key"><span class="sw" style="background:var(--intact)"></span>Intact stratum</div>
+      <div class="model-key"><span class="sw" style="background:var(--moderate)"></span>Moderate stratum</div>
+      <div class="model-key"><span class="sw" style="background:var(--severe)"></span>Severe stratum</div>
       <div class="filt">
-        <label><input type="checkbox" id="hideLabeled"> hide labeled</label>
+        <select id="pointFilter" aria-label="Filter points">
+          <option value="all">All points</option>
+          <option value="unlabeled">Unlabeled only</option>
+          <option value="labeled">Labeled only</option>
+          <option value="intact">Labeled intact</option>
+          <option value="moderate">Labeled moderate</option>
+          <option value="severe">Labeled severe</option>
+          <option value="notthicket">Not thicket</option>
+          <option value="unsure">Unsure / review</option>
+          <option value="flagged">Flagged for review</option>
+          <option value="low">Low confidence</option>
+        </select>
+        <label style="display:block;margin-top:4px"><input type="checkbox" id="blindMode" checked> blind model prediction</label>
       </div>
     </div>
-    <div class="toast" id="toast"></div>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <div id="shortcutPanel"><kbd>1–5</kbd> label · <kbd>N</kbd> next · <kbd>F</kbd> flag · <kbd>?</kbd> help</div>
   </div>
+
+  <button class="panel-handle" id="panelToggle" title="Collapse side panel" aria-label="Collapse side panel">›</button>
 
   <div id="panel">
     <div class="phead">
       <h1>Thicket Condition Inspector</h1>
       <div class="sub">South African solid thicket · reference labeling</div>
       <div class="prog">
-        <div class="chip all">labeled<b id="c_all">0</b></div>
-        <div class="chip intact">intact<b id="c_intact">0</b></div>
-        <div class="chip moderate">moderate<b id="c_moderate">0</b></div>
-        <div class="chip severe">severe<b id="c_severe">0</b></div>
+        <button class="chip all" data-filter="labeled" title="Show labeled points">labeled<b id="c_all">0</b></button>
+        <button class="chip remaining" data-filter="unlabeled" title="Show unlabeled points">remaining<b id="c_remaining">0</b></button>
+        <button class="chip intact" data-filter="intact" title="Show intact labels">intact<b id="c_intact">0</b></button>
+        <button class="chip moderate" data-filter="moderate" title="Show moderate labels">moderate<b id="c_moderate">0</b></button>
+        <button class="chip severe" data-filter="severe" title="Show severe labels">severe<b id="c_severe">0</b></button>
+        <button class="chip notthicket" data-filter="notthicket" title="Show not-thicket labels">not thicket<b id="c_notthicket">0</b></button>
+        <button class="chip unsure" data-filter="unsure" title="Show unsure labels">unsure<b id="c_unsure">0</b></button>
+        <button class="chip" data-filter="flagged" title="Show flagged points">flagged<b id="c_flagged">0</b></button>
+        <button class="chip" data-filter="low" title="Show low-confidence points">low conf.<b id="c_low">0</b></button>
       </div>
+      <div class="progressline"><span id="progressText">0 of 0 labeled</span><span id="progressPct">0%</span></div>
+      <div class="progressbar"><span id="progressFill"></span></div>
+      <div class="settingsrow"><label><input type="checkbox" id="autoAdvance" checked> auto-advance after labeling</label><button class="btn" id="switchLabeller">Switch labeller</button></div>
+      <div class="save-status" id="saveStatus" role="status" aria-live="polite">Saved locally</div>
     </div>
 
     <div class="pbody">
       <div class="navrow">
         <button class="nav" id="prevBtn">‹ Prev</button>
-        <div class="idlbl">Point <b id="curId">–</b> / <span id="totId">0</span>
+        <div class="idlbl">Sample <b id="curOrdinal">–</b> of <span id="totId">0</span> · ID <b id="curId">–</b>
           <span id="curStratum"></span></div>
         <button class="nav" id="nextBtn">Next ›</button>
       </div>
       <div style="display:flex;gap:8px;margin-bottom:8px">
         <button class="btn wide" id="nextUnlabeled">Jump to next unlabeled →</button>
       </div>
+      <div class="toolbar">
+        <div class="goto"><input id="gotoInput" inputmode="numeric" placeholder="Point ID" aria-label="Point ID"><button class="btn" id="gotoBtn">Go</button></div>
+        <button class="btn" id="historyBack" title="Previous visited point">History ←</button>
+        <button class="btn" id="copyPoint">Copy ID + coordinates</button>
+        <button class="btn" id="recenterBtn">Recenter</button>
+      </div>
+      <div class="toolbar"><button class="btn" id="nextFlagged">Next flagged</button><button class="btn" id="nextLow">Next low-confidence</button><button class="btn" data-zoom="12">Context</button><button class="btn" data-zoom="15.5">Canopy</button><button class="btn" data-zoom="18">Close-up</button></div>
 
       <div class="metarow"><span>Coordinates</span><span id="mCoord">–</span></div>
       <div class="metarow"><span>Map stratum (model)</span><span id="mStratum">–</span></div>
@@ -198,52 +276,65 @@
 
       <div class="seclbl">Imagery</div>
       <div class="srcgrid" id="srcgrid"></div>
+      <div class="statusline ok" id="sourceHealth" role="status">Imagery source ready</div>
       <div class="wbpanel hidden" id="waybackrow">
+        <div class="statusline" id="wbStatus" role="status">Loading Wayback releases…</div>
         <div class="wbrow">
           <button class="wbstep" id="wbPrev" title="Older capture">‹</button>
           <select id="wbSelect" disabled><option>loading…</option></select>
           <button class="wbstep" id="wbNext" title="Newer capture">›</button>
         </div>
         <label class="wbtog"><input type="checkbox" id="wbLocal"> only dates with new imagery here</label>
-        <div class="wbcap" id="wbCap">Acquired: <b id="wbCapDate">–</b></div>
+        <div class="wbcap" id="wbCap">Acquired: <b id="wbCapDate">–</b> · Released: <b id="wbReleaseDate">–</b></div>
+        <div class="toolbar"><button class="btn" id="wbRecent">Recent</button><button class="btn" id="wb5y">~5 years</button><button class="btn" id="wbOldest">Oldest</button></div>
         <label class="wbtog"><input type="checkbox" id="wbCompare"> ⇆ compare two dates (swipe)</label>
         <div class="wbrow hidden" id="wb-row-b">
           <button class="wbstep" id="wbPrevB" title="Older">‹</button>
           <select id="wbSelectB"></select>
           <button class="wbstep" id="wbNextB" title="Newer">›</button>
         </div>
+        <div class="toolbar"><button class="btn" id="wbSwap">Swap A/B</button><button class="btn" id="wbReset">Reset divider</button><label class="wbtog"><input type="checkbox" id="wbFlicker"> flicker A/B</label></div>
       </div>
-      <div style="margin-top:8px;display:flex;gap:8px">
-        <a class="btn wide" id="gmapsLink" target="_blank" rel="noopener">Google Maps ↗</a>
-        <a class="btn wide" id="gearthLink" target="_blank" rel="noopener">Google Earth ↗</a>
-      </div>
+      <details style="margin-top:8px"><summary class="btn">Open externally (new tab) ↗</summary><div style="display:flex;gap:8px;margin-top:6px"><a class="btn wide" id="gmapsLink" target="_blank" rel="noopener">Google Maps ↗</a><a class="btn wide" id="gearthLink" target="_blank" rel="noopener">Google Earth ↗</a><button class="btn" id="copyCoords">Copy coordinates</button></div></details>
 
       <div class="seclbl">Condition at this point</div>
       <div class="lblgrid">
-        <button class="lblbtn" data-lbl="intact"><span class="dot" style="background:var(--intact)"></span>Intact</button>
-        <button class="lblbtn" data-lbl="moderate"><span class="dot" style="background:var(--moderate)"></span>Moderate</button>
-        <button class="lblbtn" data-lbl="severe"><span class="dot" style="background:var(--severe)"></span>Severe</button>
+        <button class="lblbtn" data-lbl="intact"><span class="dot" style="background:var(--intact)"></span><span><u>1</u> Intact</span></button>
+        <button class="lblbtn" data-lbl="moderate"><span class="dot" style="background:var(--moderate)"></span><span><u>2</u> Moderate</span></button>
+        <button class="lblbtn" data-lbl="severe"><span class="dot" style="background:var(--severe)"></span><span><u>3</u> Severe</span></button>
       </div>
       <div class="lblgrid2">
-        <button class="lblbtn" data-lbl="notthicket"><span class="dot" style="background:var(--nott)"></span>Not thicket / transformed</button>
-        <button class="lblbtn" data-lbl="unsure"><span class="dot" style="background:var(--unsure)"></span>Unsure</button>
+        <button class="lblbtn" data-lbl="notthicket"><span class="dot" style="background:var(--nott)"></span><span><u>4</u> Not thicket / transformed</span></button>
+        <button class="lblbtn" data-lbl="unsure"><span class="dot" style="background:var(--unsure)"></span><span><u>5</u> Unsure</span></button>
       </div>
+      <div class="reviewrow">
+        <button class="btn togglebtn" id="flagBtn" aria-pressed="false">⚑ Flag for second review</button>
+        <div class="confidence" aria-label="Confidence"><button class="btn" data-confidence="high">High</button><button class="btn" data-confidence="medium">Med</button><button class="btn" data-confidence="low">Low</button></div>
+      </div>
+      <div class="quicktags" aria-label="Quick note reasons"><button class="btn" data-tag="edge">edge</button><button class="btn" data-tag="erosion">erosion</button><button class="btn" data-tag="cultivation">cultivation</button><button class="btn" data-tag="cloud">cloud</button><button class="btn" data-tag="shadow">shadow</button><button class="btn" data-tag="mixed pixel">mixed pixel</button></div>
       <textarea class="note" id="note" placeholder="Optional note (species, edge effect, why unsure…)"></textarea>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:5px">
+        <span class="save-status" id="noteStatus" aria-live="polite"></span>
+        <button class="btn hidden" id="clearLabelBtn">Clear label</button>
+      </div>
 
       <div class="seclbl">Guidance</div>
-      <div style="font-size:12px;color:var(--muted);line-height:1.5">
+      <div class="guidance"><details open><summary>Decision guide and edge cases</summary><div style="margin-top:6px">
+        <div class="guidecards" aria-label="Illustrated canopy examples"><div class="guidecard"><div class="guidepic intact"></div>Continuous canopy</div><div class="guidecard"><div class="guidepic moderate"></div>Patchy canopy</div><div class="guidecard"><div class="guidepic severe"></div>Sparse / bare</div></div>
         <b style="color:var(--intact)">Intact</b>: dense, continuous canopy of woody thicket.<br>
         <b style="color:var(--moderate)">Moderate</b>: patchy / thinned canopy, visible bare ground between clumps, browse lines.<br>
         <b style="color:var(--severe)">Severe</b>: mostly bare/eroded, sparse remnant bush, ephemeral herbaceous.<br>
-        Use <b>Not thicket</b> for cultivation, plantation, urban, water, or clearly non-thicket vegetation.
-      </div>
+        Use <b>Not thicket</b> for cultivation, plantation, urban, water, or clearly non-thicket vegetation.<br><br>
+        <b>Decision tree:</b> thicket present? If no → Not thicket. If yes, canopy continuous → Intact; visibly opened but substantial → Moderate; sparse remnants/bare or eroded ground → Severe. If imagery cannot support a decision → Unsure + reason.<br><br>
+        Shadows should not be read as canopy gaps; compare dates. Recent fire can temporarily expose ground—flag it. Regular field geometry indicates cultivation. For mixed pixels, judge the point centre and add the “mixed pixel” tag.
+      </div></details></div>
     </div>
 
     <div class="pfoot">
-      <button class="btn primary wide" id="downloadBtn">⬇ Download labels</button>
+      <button class="btn primary wide" id="downloadBtn">Review &amp; download</button>
       <button class="btn wide" id="uploadBtn">⬆ Upload / resume</button>
       <input type="file" id="uploadInput" accept=".json,.csv" class="hidden" />
-      <button class="btn" id="helpBtn">?</button>
+      <button class="btn" id="helpBtn" aria-label="Keyboard shortcuts and help">?</button>
     </div>
   </div>
 </div>
@@ -265,7 +356,51 @@
       <label style="font-size:12px;color:var(--muted)">Your name / initials (stored with each label)</label>
       <input id="labelerName" placeholder="e.g. SJ" />
     </div>
+    <div class="save-status">Dataset <span id="datasetId">__DATASET_ID__</span> · progress stays in this browser</div>
+    <div style="display:flex;gap:8px;margin:10px 0"><button class="btn wide" id="welcomeUpload">Import backup</button><label style="font-size:12px;color:var(--muted);display:flex;align-items:center;gap:5px"><input type="checkbox" id="allowAnon"> Allow anonymous</label></div>
     <button class="btn primary" id="startBtn" style="width:100%;padding:11px">Start labeling</button>
+  </div>
+</div>
+
+<div id="completionModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="completionTitle">
+  <div class="modalbox large" tabindex="-1">
+    <h2 id="completionTitle">Completion &amp; QA</h2><p id="completionState"></p>
+    <div class="summarygrid" id="finalSummary"></div>
+    <p>Last backup: <b id="lastBackup">Never</b></p>
+    <h3 style="font-size:14px">Needs review</h3><div class="reviewlist" id="reviewList"></div>
+    <div style="display:flex;gap:8px;align-items:center;margin-top:14px"><label for="exportFormat">Format</label><select id="exportFormat"><option value="json">JSON (full fidelity)</option><option value="csv">CSV (spreadsheet)</option></select></div>
+    <div class="modalactions"><button class="btn" id="closeCompletion">Return to labeling</button><button class="btn primary" id="finalDownload">Download final</button></div>
+  </div>
+</div>
+
+<div id="helpModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="helpTitle"><div class="modalbox" tabindex="-1"><h2 id="helpTitle">Keyboard shortcuts</h2><p><kbd>1–5</kbd> label · <kbd>←</kbd>/<kbd>→</kbd> navigate · <kbd>N</kbd> next queue item · <kbd>F</kbd> flag · <kbd>Ctrl/⌘ Z</kbd> undo · <kbd>I/G/S/W</kbd> imagery · <kbd>[</kbd>/<kbd>]</kbd> Wayback dates · <kbd>Esc</kbd> focus map · <kbd>?</kbd> this panel.</p><div class="modalactions"><button class="btn primary" id="closeHelp">Close</button></div></div></div>
+
+<div id="importPreview" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="importTitle">
+  <div class="modalbox">
+    <h2 id="importTitle">Review imported labels</h2>
+    <p id="importFile">Check what will change before applying this backup.</p>
+    <div class="importstats">
+      <div>valid records<b id="impValid">0</b></div>
+      <div>new labels<b id="impNew">0</b></div>
+      <div>conflicts<b id="impConflicts">0</b></div>
+      <div>unchanged<b id="impSame">0</b></div>
+      <div>invalid<b id="impInvalid">0</b></div>
+      <div>wrong point<b id="impMoved">0</b></div>
+      <div>duplicates<b id="impDuplicates">0</b></div>
+    </div>
+    <label for="importStrategy" style="font-size:12px">When a point already has a different local label</label>
+    <select id="importStrategy">
+      <option value="fill">Keep local labels; fill blanks only (recommended)</option>
+      <option value="newer">Keep whichever label is newer</option>
+      <option value="replace">Replace local labels with imported labels</option>
+      <option value="manual">Resolve each conflict below</option>
+    </select>
+    <div class="reviewlist hidden" id="conflictList"></div>
+    <p id="importHint"></p>
+    <div class="modalactions">
+      <button class="btn" id="cancelImport">Cancel</button>
+      <button class="btn primary" id="applyImport">Apply import</button>
+    </div>
   </div>
 </div>
 

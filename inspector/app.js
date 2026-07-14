@@ -16,17 +16,31 @@ const DS_ID = (typeof DATASET_ID === 'string' && !DATASET_ID.startsWith('__'))
   ? DATASET_ID : 'dev';
 // Labels are namespaced by dataset so a new sample draw never shows stale labels.
 const KEY_LABELS = 'thicket-inspector-labels-' + DS_ID;
+const KEY_DRAFTS = 'thicket-inspector-note-drafts-' + DS_ID;
 const KEY_NAME   = 'thicket-inspector-name';
 const KEY_UI     = 'thicket-inspector-ui';
+const KEY_BACKUP = 'thicket-inspector-last-backup-' + DS_ID;
+const KEY_WBCACHE = 'thicket-inspector-wayback-cache-' + DS_ID;
 // Coordinates must match the embedded draw within ~1 m to count as the same point.
 const COORD_EPS = 1e-5;
 
 // ------------------------------------------------------------------ state
 let labels = {};            // id -> {label, note, labeler, ts}
+let noteDrafts = {};        // id -> note text before a point has a label
 let curIdx = -1;            // index into POINTS
 let labeler = '';
 let activeSource = 'esri';
+let blindMode = true;
+let autoAdvance = true;
+let pointFilter = 'all';
+let pendingAdvance = 0;
+let pendingImport = null;
+let undoStack = [];
+let navHistory = [], navHistoryPos = -1;
+let lastBackup = localStorage.getItem(KEY_BACKUP) || '';
+let wbPointCache = {};
 let map;
+let sourceErrors=0, fallbackInProgress=false;
 // Esri Wayback state
 const wb = {
   releases: [],      // [{num,title,date,metaUrl,tileUrl}], newest-first
@@ -44,8 +58,17 @@ let wbCmp = { map:null, f:0.5 };                       // swipe compare map + fr
 // ------------------------------------------------------------------ helpers
 const $ = s => document.querySelector(s);
 const byId = id => POINTS.findIndex(p => p.id === id);
-function toast(msg){ const t=$('#toast'); t.textContent=msg; t.classList.add('show');
-  clearTimeout(toast._t); toast._t=setTimeout(()=>t.classList.remove('show'),1800); }
+function toast(msg, actionLabel, action, duration=2200){
+  const t=$('#toast'); t.textContent='';
+  const span=document.createElement('span'); span.textContent=msg; t.appendChild(span);
+  if(actionLabel && action){
+    const b=document.createElement('button'); b.textContent=actionLabel;
+    b.onclick=()=>{ clearTimeout(toast._t); t.classList.remove('show'); action(); };
+    t.appendChild(b);
+  }
+  t.classList.add('show'); clearTimeout(toast._t);
+  toast._t=setTimeout(()=>t.classList.remove('show'),duration);
+}
 
 // Accept only a plain object of {id -> valid record for a current point}.
 function sanitizeLabels(raw){
@@ -59,6 +82,9 @@ function sanitizeLabels(raw){
     clean[p.id]={ label:r.label, note:String(r.note||''),
                   labeler:String(r.labeler||''),
                   ts:typeof r.ts==='string'?r.ts:'',
+                  flagged:!!r.flagged,
+                  confidence:['high','medium','low'].includes(r.confidence)?r.confidence:'',
+                  reasons:Array.isArray(r.reasons)?r.reasons.map(String).slice(0,12):[],
                   stratum:p.s, lon:p.lon, lat:p.lat };
   }
   return clean;
@@ -67,9 +93,40 @@ function loadStore(){
   let raw={};
   try{ raw = JSON.parse(localStorage.getItem(KEY_LABELS)||'{}'); }catch(e){ raw={}; }
   labels = sanitizeLabels(raw);
+  try{
+    const d=JSON.parse(localStorage.getItem(KEY_DRAFTS)||'{}');
+    if(d && typeof d==='object' && !Array.isArray(d)){
+      Object.entries(d).forEach(([id,note])=>{
+        if(byId(Number(id))>=0 && typeof note==='string') noteDrafts[id]=note.slice(0,5000);
+      });
+    }
+  }catch(e){ noteDrafts={}; }
   labeler = localStorage.getItem(KEY_NAME) || '';
+  try{ wbPointCache=JSON.parse(localStorage.getItem(KEY_WBCACHE)||'{}')||{}; }catch(e){ wbPointCache={}; }
 }
-function saveStore(){ localStorage.setItem(KEY_LABELS, JSON.stringify(labels)); }
+function saveStore(){
+  try{
+    localStorage.setItem(KEY_LABELS, JSON.stringify(labels));
+    localStorage.setItem(KEY_DRAFTS, JSON.stringify(noteDrafts));
+    const el=$('#saveStatus'); if(el) el.textContent='Saved locally · '+new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})+' · backup '+(lastBackup?new Date(lastBackup).toLocaleString():'never');
+    return true;
+  }catch(e){
+    const el=$('#saveStatus'); if(el) el.textContent='⚠ Could not save in this browser';
+    toast('Could not save locally — download a backup'); return false;
+  }
+}
+
+function snapshotUndo(description){
+  undoStack.push({labels:JSON.stringify(labels),drafts:JSON.stringify(noteDrafts),description});
+  if(undoStack.length>30) undoStack.shift();
+}
+function undoLast(){
+  const u=undoStack.pop(); if(!u){ toast('Nothing to undo'); return; }
+  labels=sanitizeLabels(JSON.parse(u.labels));
+  try{ noteDrafts=JSON.parse(u.drafts)||{}; }catch(e){ noteDrafts={}; }
+  saveStore(); refreshPoints(); applyPointFilter(); updateCounts(); if(curIdx>=0) renderPoint();
+  toast(`${u.description||'Change'} undone`);
+}
 
 // ------------------------------------------------------------------ imagery sources
 // All keyless raster XYZ sources so the page stays a shareable static file.
@@ -117,7 +174,11 @@ function initMap(){
     map.addLayer({id:'base-layer', type:'raster', source:'base'}, );
 
     // sample points as GeoJSON
-    map.addSource('pts', {type:'geojson', data: pointsGeoJSON()});
+    map.addSource('pts', {type:'geojson', data: pointsGeoJSON(), cluster:true, clusterMaxZoom:8, clusterRadius:45});
+    map.addLayer({id:'clusters',type:'circle',source:'pts',maxzoom:9,filter:['has','point_count'],paint:{
+      'circle-radius':['step',['get','point_count'],14,20,18,100,24],
+      'circle-color':'#263957','circle-stroke-color':'#8fb5ff','circle-stroke-width':2
+    }});
     map.addLayer({ id:'pts-layer', type:'circle', source:'pts', paint:{
       'circle-radius':['interpolate',['linear'],['zoom'],5,3,10,5,14,7],
       'circle-color':['match',['get','stratum'],
@@ -125,14 +186,22 @@ function initMap(){
         'severe',STRAT_COLOR.severe,'#888'],
       'circle-stroke-width':['case',['get','labeled'],2.5,1],
       'circle-stroke-color':['case',['get','labeled'],'#ffffff','#00000088'],
-      'circle-opacity':0.9
-    }});
+      'circle-opacity':0.55
+    }, filter:['!',['has','point_count']], minzoom:8});
     // selection halo
     map.addLayer({ id:'sel-layer', type:'circle', source:'pts',
       filter:['==',['get','id'],-1], paint:{
-        'circle-radius':['interpolate',['linear'],['zoom'],5,7,14,13],
-        'circle-color':'#00000000','circle-stroke-width':3,'circle-stroke-color':'#4f8cff'
+        'circle-radius':['interpolate',['linear'],['zoom'],5,9,14,16],
+        'circle-color':'#ffffff22','circle-stroke-width':5,'circle-stroke-color':'#67a0ff'
       }});
+
+    map.on('click','clusters',e=>{
+      const f=e.features[0]; map.getSource('pts').getClusterExpansionZoom(f.properties.cluster_id)
+        .then(z=>map.easeTo({center:f.geometry.coordinates,zoom:z}));
+    });
+    map.on('error',e=>{ if(!e||!e.error)return; sourceErrors++; setSourceHealth('Imagery is having trouble loading…',true);
+      if(sourceErrors>=4&&!fallbackInProgress){fallbackInProgress=true;const next=activeSource==='esri'?'google':'esri';toast(`${SOURCES[activeSource].name} unavailable — switching to ${SOURCES[next].name}`);setSource(next);setTimeout(()=>fallbackInProgress=false,3000);}
+    });
 
     map.on('click','pts-layer', e=>{
       const id = e.features[0].properties.id; gotoId(id);
@@ -142,6 +211,7 @@ function initMap(){
 
     fetchWayback();
     refreshPoints();
+    applyPointFilter();
     // Apply the remembered imagery source (base layer above is Esri by default).
     // GEE sources aren't in SOURCES yet — loadGeeLayers() re-applies once baked.
     if(activeSource && activeSource!=='esri' && SOURCES[activeSource]) setSource(activeSource);
@@ -151,11 +221,41 @@ function initMap(){
 function pointsGeoJSON(){
   return { type:'FeatureCollection', features: POINTS.map(p=>({
     type:'Feature', geometry:{type:'Point',coordinates:[p.lon,p.lat]},
-    properties:{ id:p.id, stratum:p.s, labeled: !!labels[p.id] }
+    properties:{ id:p.id, stratum:blindMode?'blind':p.s, labeled: !!labels[p.id],
+                 label:labels[p.id] ? labels[p.id].label : '',
+                 flagged:!!(labels[p.id]&&labels[p.id].flagged),
+                 confidence:labels[p.id] ? labels[p.id].confidence||'' : '' }
   }))};
 }
 function refreshPoints(){
   const src = map && map.getSource('pts'); if(src) src.setData(pointsGeoJSON());
+}
+function applyPointFilter(value=pointFilter){
+  pointFilter=value;
+  const filters={
+    all:null,
+    unlabeled:['==',['get','labeled'],false],
+    labeled:['==',['get','labeled'],true],
+    intact:['==',['get','label'],'intact'],
+    moderate:['==',['get','label'],'moderate'],
+    severe:['==',['get','label'],'severe'],
+    notthicket:['==',['get','label'],'notthicket'],
+    unsure:['==',['get','label'],'unsure'],
+    flagged:['==',['get','flagged'],true],
+    low:['==',['get','confidence'],'low']
+  };
+  if(!Object.hasOwn(filters,pointFilter)) pointFilter='all';
+  const base=['!', ['has','point_count']];
+  if(map && map.getLayer('pts-layer')) map.setFilter('pts-layer',filters[pointFilter]?['all',base,filters[pointFilter]]:base);
+  const sel=$('#pointFilter'); if(sel) sel.value=pointFilter;
+  document.querySelectorAll('.chip[data-filter]').forEach(c=>
+    c.classList.toggle('filter-active',c.dataset.filter===pointFilter));
+  const next=$('#nextUnlabeled');
+  if(next){
+    const names={all:'unlabeled',unlabeled:'unlabeled',labeled:'labeled',notthicket:'not thicket'};
+    next.textContent=`Jump to next ${names[pointFilter]||pointFilter} →`;
+  }
+  saveUI();
 }
 
 // ------------------------------------------------------------------ Esri Wayback
@@ -174,6 +274,8 @@ function isEsriUrl(u){
 }
 
 async function fetchWayback(){
+  const status=$('#wbStatus');
+  if(status){ status.textContent='Loading Wayback releases…'; status.className='statusline'; }
   try{
     const cfg = await fetch(WAYBACK_CONFIG_URL).then(r=>{
       if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); });
@@ -196,7 +298,9 @@ async function fetchWayback(){
     wb.idx = 0; wb.idxB = Math.min(1, wb.releases.length-1);
     fillWbSelect($('#wbSelect'), wb.idx);
     fillWbSelect($('#wbSelectB'), wb.idxB);
-  }catch(e){ wb.releases=[]; }
+    if(status){ status.textContent=`${wb.releases.length} releases available`; status.className='statusline ok'; }
+    if(activeSource==='wayback') applyWayback();
+  }catch(e){ wb.releases=[]; if(status){ status.textContent='Wayback could not be loaded. Check the network or use another source.'; status.className='statusline error'; } }
 }
 
 function fillWbSelect(el, cur){
@@ -223,6 +327,7 @@ function applyWayback(){
   if(src && src.setTiles){ src.setTiles([r.tileUrl]); }
   else { swapBase(rasterSourceDef(SOURCES.wayback, [r.tileUrl])); }
   const sel = $('#wbSelect'); if(sel && wb.view.includes(wb.idx)) sel.value = String(wb.idx);
+  const rd=$('#wbReleaseDate'); if(rd) rd.textContent=r.date;
   lookupCaptureDate(r);
   if(wb.compare) applyWaybackB();
 }
@@ -250,16 +355,21 @@ async function refreshWbLocal(){
     updateWbStepBtns(); return;
   }
   const sel = $('#wbSelect'); if(sel){ sel.disabled = true; }
+  const status=$('#wbStatus'); if(status){ status.textContent='Finding imagery changes at this point…'; status.className='statusline'; }
   const c = map.getCenter();
   try{
-    const set = await wbLocalReleases(c);
+    const pid=curIdx>=0?POINTS[curIdx].id:null;
+    let set;
+    if(pid && wbPointCache[pid]) set=new Set(wbPointCache[pid]);
+    else { set=await wbLocalReleases(c); if(pid){ wbPointCache[pid]=Array.from(set); localStorage.setItem(KEY_WBCACHE,JSON.stringify(wbPointCache)); } }
     if(myId !== wb.localId) return;                // superseded
     const idxs = wb.releases.map((r,i)=> set.has(r.num) ? i : -1).filter(i=>i>=0);
     wb.view = idxs.length ? idxs : wb.releases.map((_,i)=>i);
     if(!wb.view.includes(wb.idx)) { wb.idx = wb.view[0]; applyWayback(); }
     fillWbSelect($('#wbSelect'), wb.idx); fillWbSelect($('#wbSelectB'), wb.idxB);
     updateWbStepBtns();
-  }catch(e){ if(myId===wb.localId){ if(sel) sel.disabled=false; } }
+    if(status){ status.textContent=`${wb.view.length} dates with imagery changes here`; status.className='statusline ok'; }
+  }catch(e){ if(myId===wb.localId){ if(sel) sel.disabled=false; if(status){ status.textContent='Local date filtering failed; showing all releases.'; status.className='statusline error'; } } }
 }
 async function wbLocalReleases(pt){
   const z = Math.max(3, Math.min(18, Math.round(map.getZoom())));
@@ -372,6 +482,13 @@ function disableCompare(){
   document.querySelectorAll('.wb-swipe-label').forEach(e=>e.style.display='none');
 }
 
+function resetDivider(){ if(wbCmp._setX) wbCmp._setX($('#map').clientWidth*0.5); }
+function swapWayback(){ const x=wb.idx; wb.idx=wb.idxB; wb.idxB=x; fillWbSelect($('#wbSelect'),wb.idx); fillWbSelect($('#wbSelectB'),wb.idxB); applyWayback(); applyWaybackB(); }
+let flickerTimer=0;
+function setFlicker(on){ clearInterval(flickerTimer); flickerTimer=0; if(!on) return;
+  let b=false; flickerTimer=setInterval(()=>{ b=!b; const a=wb.releases[b?wb.idxB:wb.idx]; const s=map.getSource(WB_SOURCE); if(a&&s&&s.setTiles)s.setTiles([a.tileUrl]); },650);
+}
+
 function swapBase(def){
   if(map.getLayer(WB_LAYER)) map.removeLayer(WB_LAYER);
   if(map.getSource(WB_SOURCE)) map.removeSource(WB_SOURCE);
@@ -397,6 +514,8 @@ function buildSourceButtons(){
     b.onclick=()=>setSource(k); g.appendChild(b);
   });
 }
+
+function setSourceHealth(msg,error=false){ const el=$('#sourceHealth'); if(el){ el.textContent=msg; el.className='statusline '+(error?'error':'ok'); } }
 
 // A tile URL template must be https; {x}/{y}/{z} placeholders survive the URL parse.
 function isHttpsTileUrl(u){
@@ -428,7 +547,9 @@ async function loadGeeLayers(){
   }catch(e){ /* manifest optional — page works without it */ }
 }
 function setSource(k){
+  if(!SOURCES[k]) return;
   activeSource=k;
+  sourceErrors=0; setSourceHealth(`${SOURCES[k].name} selected`,false);
   document.querySelectorAll('.srcbtn').forEach(b=>b.classList.toggle('active',b.dataset.src===k));
   $('#waybackrow').classList.toggle('hidden', k!=='wayback');
   if(k==='wayback'){
@@ -443,9 +564,15 @@ function setSource(k){
 }
 
 // ------------------------------------------------------------------ navigation
-function gotoIdx(idx){
+function gotoIdx(idx, recordHistory=true){
   if(idx<0||idx>=POINTS.length) return;
+  if(curIdx>=0) saveNote();
+  clearTimeout(pendingAdvance);
   curIdx=idx; const p=POINTS[idx];
+  if(recordHistory && navHistory[navHistoryPos]!==p.id){
+    navHistory=navHistory.slice(0,navHistoryPos+1); navHistory.push(p.id);
+    if(navHistory.length>100) navHistory.shift(); navHistoryPos=navHistory.length-1;
+  }
   map.easeTo({center:[p.lon,p.lat], zoom:Math.max(map.getZoom(),15.5), duration:600});
   map.setFilter('sel-layer',['==',['get','id'],p.id]);
   renderPoint();
@@ -459,6 +586,15 @@ function gotoIdx(idx){
   }
 }
 function gotoId(id){ const i=byId(id); if(i>=0) gotoIdx(i); }
+function historyBack(){ if(navHistoryPos>0){ navHistoryPos--; const i=byId(navHistory[navHistoryPos]); if(i>=0) gotoIdx(i,false); } else toast('No earlier point in history'); }
+function gotoQueue(test,empty){
+  for(let k=1;k<=POINTS.length;k++){ const i=(curIdx+k)%POINTS.length,r=labels[POINTS[i].id]; if(r&&test(r)){gotoIdx(i);return;} }
+  toast(empty);
+}
+function recenter(){ const p=POINTS[curIdx]; if(p) map.easeTo({center:[p.lon,p.lat],duration:350}); }
+async function copyPoint(){ const p=POINTS[curIdx]; if(!p)return; const text=`ID ${p.id}: ${p.lat.toFixed(6)}, ${p.lon.toFixed(6)}`;
+  try{ await navigator.clipboard.writeText(text); toast('Point ID and coordinates copied'); }catch(e){ toast(text); }
+}
 function nextUnlabeled(){
   for(let k=1;k<=POINTS.length;k++){
     const i=(curIdx+k)%POINTS.length;
@@ -466,15 +602,26 @@ function nextUnlabeled(){
   }
   toast('All points labeled 🎉');
 }
+function nextForFilter(){
+  if(pointFilter==='all'||pointFilter==='unlabeled'){ nextUnlabeled(); return; }
+  for(let k=1;k<=POINTS.length;k++){
+    const i=(curIdx+k)%POINTS.length, rec=labels[POINTS[i].id];
+    if((pointFilter==='labeled'&&rec)||(rec&&rec.label===pointFilter)){ gotoIdx(i); return; }
+  }
+  toast(`No ${pointFilter==='labeled'?'labeled':pointFilter} points to review`);
+}
 
 // ------------------------------------------------------------------ render
 function renderPoint(){
   const p=POINTS[curIdx]; if(!p) return;
-  $('#curId').textContent=p.id; $('#totId').textContent=POINTS.length;
-  $('#curStratum').innerHTML = ` · <span class="pill ${p.s}">${p.s}</span>`;
-  $('#mCoord').textContent=`${p.lat.toFixed(5)}, ${p.lon.toFixed(5)}`;
-  $('#mStratum').innerHTML=`<span class="pill ${p.s}">${CLASS_LABEL[p.s]||p.s}</span>`;
+  $('#curId').textContent=p.id; $('#curOrdinal').textContent=curIdx+1; $('#totId').textContent=POINTS.length;
   const rec=labels[p.id];
+  const showPrediction=!blindMode || !!rec;
+  if(showPrediction) $('#curStratum').innerHTML = ` · <span class="pill ${p.s}">${p.s}</span>`;
+  else $('#curStratum').textContent=' · model hidden';
+  $('#mCoord').textContent=`${p.lat.toFixed(5)}, ${p.lon.toFixed(5)}`;
+  if(showPrediction) $('#mStratum').innerHTML=`<span class="pill ${p.s}">${CLASS_LABEL[p.s]||p.s}</span>`;
+  else $('#mStratum').textContent='Hidden until label saved';
   const mLabel=$('#mLabel');
   if(rec && isValidClass(rec.label)){
     const b=document.createElement('b');
@@ -482,11 +629,16 @@ function renderPoint(){
     b.textContent = CLASS_LABEL[rec.label];
     mLabel.textContent=''; mLabel.appendChild(b);
   } else { mLabel.textContent='–'; }
-  $('#note').value = rec ? (rec.note||'') : '';
+  $('#note').value = rec ? (rec.note||'') : (noteDrafts[p.id]||'');
+  autoGrowNote();
+  $('#noteStatus').textContent = noteDrafts[p.id] && !rec ? 'Draft saved locally' : '';
+  $('#clearLabelBtn').classList.toggle('hidden', !rec);
   document.querySelectorAll('.lblbtn').forEach(b=>{
     b.className='lblbtn';
     if(rec && isValidClass(rec.label) && rec.label===b.dataset.lbl) b.classList.add('sel-'+rec.label);
   });
+  $('#flagBtn').setAttribute('aria-pressed',String(!!(rec&&rec.flagged)));
+  document.querySelectorAll('[data-confidence]').forEach(b=>b.classList.toggle('active',!!rec&&rec.confidence===b.dataset.confidence));
   // imagery deep links
   $('#gmapsLink').href = `https://www.google.com/maps/@${p.lat},${p.lon},400m/data=!3m1!1e3`;
   $('#gearthLink').href = `https://earth.google.com/web/@${p.lat},${p.lon},0a,800d,35y,0h,0t,0r`;
@@ -496,31 +648,122 @@ function renderPoint(){
 
 function setLabel(cls){
   if(curIdx<0){ toast('Pick a point first'); return; }
+  if(!isValidClass(cls)) return;
+  clearTimeout(pendingAdvance);
   const p=POINTS[curIdx];
-  if(labels[p.id] && labels[p.id].label===cls){    // toggle off
-    delete labels[p.id];
-  }else{
-    labels[p.id]={ label:cls, note:$('#note').value.trim(),
-                   labeler:labeler, ts:new Date().toISOString(),
-                   stratum:p.s, lon:p.lon, lat:p.lat };
+  if(labels[p.id] && labels[p.id].label===cls){
+    toast(`${CLASS_LABEL[cls]} already selected`); return;
   }
-  saveStore(); renderPoint(); refreshPoints(); updateCounts();
+  const previous=labels[p.id] ? {...labels[p.id]} : null;
+  snapshotUndo('Label change');
+  const previousDraft=noteDrafts[p.id];
+  labels[p.id]={ label:cls, note:$('#note').value.trim(),
+                 labeler:labeler, ts:new Date().toISOString(),
+                 flagged:previous?!!previous.flagged:false,
+                 confidence:previous?previous.confidence||'':'', reasons:previous?previous.reasons||[]:[],
+                 stratum:p.s, lon:p.lon, lat:p.lat };
+  delete noteDrafts[p.id];
+  const saved=saveStore(); renderPoint(); refreshPoints(); updateCounts();
+  const undo=()=>{
+    clearTimeout(pendingAdvance);
+    if(previous) labels[p.id]=previous; else delete labels[p.id];
+    if(previousDraft!=null) noteDrafts[p.id]=previousDraft; else delete noteDrafts[p.id];
+    saveStore(); refreshPoints(); updateCounts(); gotoId(p.id); toast('Change undone');
+  };
+  toast(`Point ${p.id} marked ${CLASS_LABEL[cls]}`, 'Undo', undo, 4200);
+  if(autoAdvance && saved) pendingAdvance=setTimeout(nextUnlabeled, 450);
 }
-function saveNote(){
+function clearLabel(){
   const p=POINTS[curIdx]; if(!p||!labels[p.id]) return;
-  labels[p.id].note=$('#note').value.trim(); saveStore();
+  clearTimeout(pendingAdvance);
+  const previous={...labels[p.id]};
+  snapshotUndo('Clear label');
+  const note=$('#note').value.trim(); if(note) noteDrafts[p.id]=note;
+  delete labels[p.id]; saveStore(); renderPoint(); refreshPoints(); updateCounts();
+  toast(`Label cleared for point ${p.id}`, 'Undo', ()=>{
+    labels[p.id]=previous; delete noteDrafts[p.id]; saveStore(); refreshPoints(); updateCounts();
+    gotoId(p.id); toast('Label restored');
+  }, 4200);
+}
+function updateReviewField(field,value){
+  const p=POINTS[curIdx]; if(!p){return;} if(!labels[p.id]){ toast('Label the point before adding review metadata'); return; }
+  snapshotUndo('Review metadata'); labels[p.id][field]=value; labels[p.id].ts=new Date().toISOString();
+  saveStore(); refreshPoints(); updateCounts(); renderPoint();
+}
+function toggleFlag(){ const p=POINTS[curIdx],r=p&&labels[p.id]; if(!r){toast('Label the point before flagging it');return;} updateReviewField('flagged',!r.flagged); }
+function addReason(tag){
+  const p=POINTS[curIdx]; if(!p)return;
+  const note=$('#note'), token=`[${tag}]`; if(!note.value.includes(token)) note.value=(note.value.trim()+' '+token).trim();
+  autoGrowNote(); saveNote();
+  if(labels[p.id]){ const rs=new Set(labels[p.id].reasons||[]); rs.add(tag); labels[p.id].reasons=Array.from(rs); saveStore(); }
+}
+function autoGrowNote(){ const n=$('#note'); if(!n)return; n.style.height='auto'; n.style.height=Math.min(180,Math.max(44,n.scrollHeight))+'px'; }
+function saveNote(){
+  const p=POINTS[curIdx]; if(!p) return;
+  const note=$('#note').value.trim();
+  if(labels[p.id]){ labels[p.id].note=note; delete noteDrafts[p.id]; }
+  else if(note) noteDrafts[p.id]=note;
+  else delete noteDrafts[p.id];
+  saveStore();
+  $('#noteStatus').textContent=note ? (labels[p.id]?'Note saved':'Draft saved locally') : '';
 }
 
 function updateCounts(){
-  const c={intact:0,moderate:0,severe:0,all:0};
+  const c={intact:0,moderate:0,severe:0,notthicket:0,unsure:0,all:0,flagged:0,low:0};
   Object.values(labels).forEach(r=>{ if(!r||!isValidClass(r.label)) return;
-    c.all++; if(c[r.label]!=null) c[r.label]++; });
+    c.all++; if(c[r.label]!=null) c[r.label]++; if(r.flagged)c.flagged++; if(r.confidence==='low')c.low++; });
   $('#c_all').textContent=c.all; $('#c_intact').textContent=c.intact;
   $('#c_moderate').textContent=c.moderate; $('#c_severe').textContent=c.severe;
+  $('#c_notthicket').textContent=c.notthicket; $('#c_unsure').textContent=c.unsure;
+  $('#c_flagged').textContent=c.flagged; $('#c_low').textContent=c.low;
+  const remaining=Math.max(0,POINTS.length-c.all), pct=POINTS.length?c.all/POINTS.length*100:0;
+  $('#c_remaining').textContent=remaining; $('#progressText').textContent=`${c.all} of ${POINTS.length} labeled`;
+  $('#progressPct').textContent=(pct<10?pct.toFixed(1):Math.round(pct))+'%'; $('#progressFill').style.width=pct+'%';
 }
 
 // ------------------------------------------------------------------ import / export
-function download(){
+function exportRows(){
+  return POINTS.filter(p=>labels[p.id]).map(p=>{ const r=labels[p.id]; return {id:p.id,stratum:p.s,lon:p.lon,lat:p.lat,
+    label:r.label,note:r.note||'',labeler:r.labeler||labeler,ts:r.ts||'',flagged:!!r.flagged,
+    confidence:r.confidence||'',reasons:(r.reasons||[]).join('|')}; });
+}
+function checksumText(text){ let h=2166136261; for(let i=0;i<text.length;i++){h^=text.charCodeAt(i);h=Math.imul(h,16777619);} return ('00000000'+(h>>>0).toString(16)).slice(-8); }
+function download(){ openCompletion(); }
+function openCompletion(){
+  saveNote(); const rows=exportRows(), remaining=POINTS.length-rows.length;
+  const counts={}; CLASSES.forEach(c=>counts[c]=rows.filter(r=>r.label===c).length);
+  const flagged=rows.filter(r=>r.flagged), low=rows.filter(r=>r.confidence==='low'), unsure=rows.filter(r=>r.label==='unsure');
+  $('#completionState').textContent=remaining?`${remaining} point${remaining===1?' is':'s are'} incomplete. You can export a backup now, but final QA is not complete.`:'All points are labeled. Review the items below before final export.';
+  $('#completionState').className=remaining?'statusline error':'statusline ok';
+  const stats=[['Labeled',rows.length],['Remaining',remaining],['Intact',counts.intact],['Moderate',counts.moderate],['Severe',counts.severe],['Not thicket',counts.notthicket],['Unsure',counts.unsure],['Flagged',flagged.length],['Low confidence',low.length]];
+  const grid=$('#finalSummary'); grid.textContent=''; stats.forEach(([n,v])=>{const d=document.createElement('div'),b=document.createElement('b');b.textContent=v;d.append(n,b);grid.appendChild(d);});
+  $('#lastBackup').textContent=lastBackup?new Date(lastBackup).toLocaleString():'Never';
+  $('#finalDownload').textContent=remaining?'Download backup':'Download final';
+  const review=$('#reviewList'); review.textContent='';
+  const ids=new Set([...unsure,...flagged,...low].map(r=>r.id));
+  if(!ids.size){const d=document.createElement('div');d.className='reviewitem';d.textContent='No unsure, flagged, or low-confidence points.';review.appendChild(d);}
+  ids.forEach(id=>{const r=labels[id],d=document.createElement('div');d.className='reviewitem';d.append(`ID ${id} · ${CLASS_LABEL[r.label]}${r.flagged?' · flagged':''}${r.confidence?` · ${r.confidence} confidence`:''}`);const b=document.createElement('button');b.className='btn';b.textContent='Review';b.onclick=()=>{closeDialog('#completionModal');gotoId(id);};d.appendChild(b);review.appendChild(d);});
+  openDialog('#completionModal');
+}
+async function exportFinal(){
+  const rows = exportRows();
+  const exported=new Date().toISOString(), completion={complete:rows.length===POINTS.length,total:POINTS.length,labeled:rows.length,
+    flagged:rows.filter(r=>r.flagged).length,unsure:rows.filter(r=>r.label==='unsure').length,lowConfidence:rows.filter(r=>r.confidence==='low').length};
+  const canonical=JSON.stringify(rows), checksum=checksumText(canonical);
+  const payload={tool:'thicket_inspector',version:2,dataset:DS_ID,labeler,exported,n:rows.length,completion,checksum:{algorithm:'fnv1a-32',value:checksum},labels:rows};
+  const stamp=exported.slice(0,19).replace(/[:T]/g,'-'), safe=(labeler||'anon').replace(/[^A-Za-z0-9_-]/g,'');
+  const format=$('#exportFormat').value;
+  if(format==='json') blobDownload(JSON.stringify(payload,null,2),`thicket_labels_${safe}_${stamp}.json`,'application/json');
+  else {
+    const csvSafe=v=>{let s=String(v==null?'':v);if(/^[=+\-@\t\r]/.test(s))s="'"+s;return s;},q=v=>'"'+String(v==null?'':v).replace(/"/g,'""')+'"',qt=v=>'"'+csvSafe(v).replace(/"/g,'""')+'"';
+    const hdr='dataset,id,stratum,lon,lat,label,note,labeler,ts,flagged,confidence,reasons,checksum';
+    const csv=[hdr].concat(rows.map(r=>[q(DS_ID),q(r.id),q(r.stratum),q(r.lon),q(r.lat),q(r.label),qt(r.note),qt(r.labeler),q(r.ts),q(r.flagged),q(r.confidence),qt(r.reasons),q(checksum)].join(','))).join('\r\n');
+    blobDownload(csv,`thicket_labels_${safe}_${stamp}.csv`,'text/csv');
+  }
+  lastBackup=exported; localStorage.setItem(KEY_BACKUP,lastBackup); closeDialog('#completionModal'); saveStore(); toast(`Downloaded ${rows.length} labels as ${format.toUpperCase()}`);
+}
+/* Legacy two-file export retained below for reference during older file imports. */
+function legacyDownload(){
   const rows = POINTS.filter(p=>labels[p.id]).map(p=>{
     const r=labels[p.id];
     return {id:p.id, stratum:p.s, lon:p.lon, lat:p.lat,
@@ -541,9 +784,9 @@ function download(){
     if(/^[=+\-@\t\r]/.test(s)) s="'"+s; return s; };
   const q=v=>'"'+String(v==null?'':v).replace(/"/g,'""')+'"';       // numeric/enum
   const qt=v=>'"'+csvSafe(v).replace(/"/g,'""')+'"';                // free text
-  const hdr='id,stratum,lon,lat,label,note,labeler,ts';
+  const hdr='dataset,id,stratum,lon,lat,label,note,labeler,ts';
   const csv=[hdr].concat(rows.map(r=>
-    [q(r.id),q(r.stratum),q(r.lon),q(r.lat),q(r.label),qt(r.note||''),qt(r.labeler),q(r.ts)].join(',')
+    [q(DS_ID),q(r.id),q(r.stratum),q(r.lon),q(r.lat),q(r.label),qt(r.note||''),qt(r.labeler),q(r.ts)].join(',')
   )).join('\r\n');
   blobDownload(csv, `thicket_labels_${safe}_${stamp}.csv`,'text/csv');
   toast(`Downloaded ${rows.length} labels (JSON + CSV)`);
@@ -562,43 +805,93 @@ function handleUpload(file){
   fr.onload=()=>{
     try{
       let rows, fileDataset=null;
-      if(file.name.toLowerCase().endsWith('.csv')){ rows=parseCSV(fr.result); }
+      if(file.name.toLowerCase().endsWith('.csv')){
+        rows=parseCSV(fr.result); fileDataset=rows.find(r=>r.dataset)?.dataset||null;
+      }
       else { const j=JSON.parse(fr.result); rows=j.labels||[]; fileDataset=j.dataset||null; }
       if(!Array.isArray(rows)){ toast('Could not read that file'); return; }
 
       // Dataset-mismatch guard: a JSON export from a different sample draw must
       // not silently paint its labels onto these coordinates.
       if(fileDataset && fileDataset !== DS_ID){
-        if(!confirm('This file was made for a different sample draw ('+fileDataset+
-          ') than the current one ('+DS_ID+'). Coordinates may not match. Import anyway?'))
-          { toast('Import cancelled'); return; }
+        toast('Import blocked: file belongs to a different dataset'); return;
       }
 
-      let merged=0, skipped=0, moved=0, kept=0;
+      previewImport(rows,file.name);
+    }catch(e){ toast('Could not read that file'); }
+  };
+  fr.onerror=()=>toast('Could not read that file');
+  fr.readAsText(file);
+}
+function previewImport(rows,fileName){
+      const records=[]; let invalid=0, moved=0, fresh=0, conflicts=0, same=0,duplicates=0; const seen=new Set();
       rows.forEach(r=>{
-        const id=Number(r.id); const i=byId(id); if(i<0){ skipped++; return; }
-        if(!isValidClass(r.label)){ skipped++; return; }
+        const id=Number(r.id); const i=byId(id); if(i<0||!isValidClass(r.label)){ invalid++; return; }
+        if(seen.has(id)){duplicates++;return;} seen.add(id);
         const p=POINTS[i];
+        if(r.stratum && r.stratum!==p.s){ moved++; return; }
         // If the file carries coordinates, they must match the embedded draw.
         if(r.lon!=null && r.lat!=null){
           const dlon=Math.abs(Number(r.lon)-p.lon), dlat=Math.abs(Number(r.lat)-p.lat);
           if(!(dlon<=COORD_EPS && dlat<=COORD_EPS)){ moved++; return; }
         }
-        // Conflict: don't let an older file clobber a newer local label.
-        const cur=labels[id], incTs=typeof r.ts==='string'?r.ts:'';
-        if(cur && cur.ts && incTs && incTs < cur.ts){ kept++; return; }
-        labels[id]={label:r.label, note:String(r.note||''), labeler:String(r.labeler||labeler),
-                    ts:incTs||new Date().toISOString(), stratum:p.s, lon:p.lon, lat:p.lat};
-        merged++;
+        const rec={label:r.label,note:String(r.note||'').slice(0,5000),
+          labeler:String(r.labeler||labeler).slice(0,200),
+          ts:typeof r.ts==='string'?r.ts:'',flagged:r.flagged===true||String(r.flagged).toLowerCase()==='true',
+          confidence:['high','medium','low'].includes(r.confidence)?r.confidence:'',
+          reasons:Array.isArray(r.reasons)?r.reasons:String(r.reasons||'').split('|').filter(Boolean),stratum:p.s,lon:p.lon,lat:p.lat};
+        const cur=labels[id];
+        const unchanged=cur && cur.label===rec.label && (cur.note||'')===rec.note;
+        if(!cur) fresh++; else if(unchanged) same++; else conflicts++;
+        records.push({id,rec,unchanged:!!unchanged});
       });
-      saveStore(); refreshPoints(); updateCounts();
-      if(curIdx>=0) renderPoint();
-      const extra=[skipped&&`${skipped} skipped`, moved&&`${moved} moved`,
-                   kept&&`${kept} kept newer`].filter(Boolean).join(', ');
-      toast(`Loaded ${merged} labels${extra?` (${extra})`:''} — resuming`);
-    }catch(e){ toast('Could not read that file'); }
-  };
-  fr.readAsText(file);
+      pendingImport={records,invalid,moved,fresh,conflicts,same,duplicates,fileName};
+      $('#importFile').textContent=`${fileName} contains ${rows.length} row${rows.length===1?'':'s'}. Nothing changes until you apply it.`+
+        (rows.some(r=>!r.dataset)?' This appears to be a legacy file without a dataset fingerprint; point IDs, strata, and coordinates are validated where present.':'');
+      $('#impValid').textContent=records.length; $('#impNew').textContent=fresh;
+      $('#impConflicts').textContent=conflicts; $('#impSame').textContent=same;
+      $('#impInvalid').textContent=invalid; $('#impMoved').textContent=moved;
+      $('#impDuplicates').textContent=duplicates;
+      $('#importStrategy').value='fill'; $('#importStrategy').disabled=conflicts===0;
+      $('#importHint').textContent=conflicts
+        ? `${conflicts} existing label${conflicts===1?' differs':'s differ'} from this file. Choose how to resolve them.`
+        : 'No conflicting local labels were found.';
+      $('#applyImport').disabled=records.length===0;
+      renderConflictChoices();
+      openDialog('#importPreview'); $('#cancelImport').focus();
+}
+function renderConflictChoices(){
+  const list=$('#conflictList'); list.textContent='';
+  (pendingImport?pendingImport.records:[]).filter(x=>labels[x.id]&&!x.unchanged).forEach(x=>{
+    const d=document.createElement('div');d.className='reviewitem';d.append(`ID ${x.id}: local ${CLASS_LABEL[labels[x.id].label]} / imported ${CLASS_LABEL[x.rec.label]}`);
+    const s=document.createElement('select');s.dataset.conflict=String(x.id);s.innerHTML='<option value="local">Keep local</option><option value="import">Use imported</option>';d.appendChild(s);list.appendChild(d);
+  });
+  list.classList.toggle('hidden',$('#importStrategy').value!=='manual');
+}
+function closeImport(){
+  closeDialog('#importPreview'); pendingImport=null;
+}
+function applyImport(){
+  if(!pendingImport) return;
+  const before=JSON.stringify(labels), strategy=$('#importStrategy').value;
+  snapshotUndo('Import');
+  let applied=0,kept=0;
+  pendingImport.records.forEach(({id,rec,unchanged})=>{
+    const cur=labels[id];
+    if(unchanged){ kept++; return; }
+    let use=!cur;
+    if(cur && strategy==='replace') use=true;
+    else if(cur && strategy==='newer') use=!!rec.ts && (!cur.ts || rec.ts>cur.ts);
+    else if(cur && strategy==='manual'){ const s=document.querySelector(`[data-conflict="${id}"]`); use=!!s&&s.value==='import'; }
+    if(use){ labels[id]={...rec,ts:rec.ts||new Date().toISOString()}; applied++; }
+    else kept++;
+  });
+  closeImport(); saveStore(); refreshPoints(); applyPointFilter(); updateCounts();
+  if(curIdx>=0) renderPoint();
+  toast(`Applied ${applied} label${applied===1?'':'s'} · kept ${kept}`, 'Undo', ()=>{
+    labels=sanitizeLabels(JSON.parse(before)); saveStore(); refreshPoints(); applyPointFilter(); updateCounts();
+    if(curIdx>=0) renderPoint(); toast('Import undone');
+  },5000);
 }
 // Full RFC-4180-ish tokenizer: quotes may contain commas and newlines, "" -> ".
 // Records are split on unquoted CR/LF, so a multiline note stays one record.
@@ -626,30 +919,74 @@ function parseCSV(txt){
   const hdr=rows.shift();
   const ix=n=>hdr.indexOf(n);
   return rows.map(cells=>({
-    id:cells[ix('id')], stratum:cells[ix('stratum')], label:cells[ix('label')],
-    note:cells[ix('note')]||'', labeler:cells[ix('labeler')]||'', ts:cells[ix('ts')]||''
+    dataset:cells[ix('dataset')], id:cells[ix('id')], stratum:cells[ix('stratum')], label:cells[ix('label')],
+    lon:cells[ix('lon')], lat:cells[ix('lat')], note:cells[ix('note')]||'',
+    labeler:cells[ix('labeler')]||'', ts:cells[ix('ts')]||'',
+    flagged:cells[ix('flagged')]||'',confidence:cells[ix('confidence')]||'',reasons:cells[ix('reasons')]||''
   }));
 }
 
 // ------------------------------------------------------------------ UI persistence
-function saveUI(){ localStorage.setItem(KEY_UI, JSON.stringify({src:activeSource})); }
+function saveUI(){ localStorage.setItem(KEY_UI, JSON.stringify({
+  src:activeSource, blind:blindMode, autoAdvance, filter:pointFilter,
+  panelCollapsed:document.body.classList.contains('panel-collapsed')
+})); }
 function loadUI(){ try{const u=JSON.parse(localStorage.getItem(KEY_UI)||'{}');
-  if(u.src&&SOURCES[u.src]) activeSource=u.src;}catch(e){} }
+  if(typeof u.src==='string') activeSource=u.src;
+  if(typeof u.blind==='boolean') blindMode=u.blind;
+  if(typeof u.autoAdvance==='boolean') autoAdvance=u.autoAdvance;
+  if(typeof u.filter==='string') pointFilter=u.filter;
+  if(u.panelCollapsed) document.body.classList.add('panel-collapsed');
+}catch(e){} }
+
+let dialogReturnFocus=null;
+function openDialog(sel){ const d=$(sel);dialogReturnFocus=document.activeElement;d.classList.remove('hidden');const box=d.querySelector('[tabindex="-1"]')||d.querySelector('button');if(box)box.focus(); }
+function closeDialog(sel){ const d=$(sel);d.classList.add('hidden');if(dialogReturnFocus&&dialogReturnFocus.focus)dialogReturnFocus.focus();dialogReturnFocus=null; }
+function trapFocus(e,sel){ if(e.key!=='Tab')return;const els=Array.from($(sel).querySelectorAll('button:not([disabled]),input:not([disabled]),select:not([disabled]),[tabindex="0"]')).filter(x=>x.offsetParent!==null);if(!els.length)return;const a=els[0],z=els[els.length-1];if(e.shiftKey&&document.activeElement===a){z.focus();e.preventDefault();}else if(!e.shiftKey&&document.activeElement===z){a.focus();e.preventDefault();} }
+function setWaybackPreset(kind){ if(!wb.view.length)return; let idx=wb.view[0]; if(kind==='oldest')idx=wb.view[wb.view.length-1]; else if(kind==='5y'){const y=new Date().getFullYear()-5;idx=wb.view.reduce((best,i)=>Math.abs(parseInt(wb.releases[i].date)-y)<Math.abs(parseInt(wb.releases[best].date)-y)?i:best,wb.view[0]);} wb.idx=idx;applyWayback();updateWbStepBtns(); }
 
 // ------------------------------------------------------------------ wiring
 function wire(){
   $('#prevBtn').onclick=()=>gotoIdx(curIdx-1);
   $('#nextBtn').onclick=()=>gotoIdx(curIdx+1);
-  $('#nextUnlabeled').onclick=nextUnlabeled;
+  $('#nextUnlabeled').onclick=nextForFilter;
   document.querySelectorAll('.lblbtn').forEach(b=> b.onclick=()=>setLabel(b.dataset.lbl));
-  $('#note').addEventListener('change', saveNote);
+  let noteTimer=0;
+  $('#note').addEventListener('input', ()=>{
+    $('#noteStatus').textContent='Saving…'; autoGrowNote(); clearTimeout(noteTimer);
+    noteTimer=setTimeout(saveNote, 350);
+  });
+  $('#note').addEventListener('change', ()=>{ clearTimeout(noteTimer); saveNote(); });
+  $('#clearLabelBtn').onclick=clearLabel;
   $('#downloadBtn').onclick=download;
   $('#uploadBtn').onclick=()=>$('#uploadInput').click();
   $('#uploadInput').onchange=e=>{ if(e.target.files[0]) handleUpload(e.target.files[0]); e.target.value=''; };
-  $('#helpBtn').onclick=()=>$('#intro').classList.remove('hidden');
-  $('#hideLabeled').onchange=e=>{
-    map.setFilter('pts-layer', e.target.checked ? ['!',['get','labeled']] : null);
+  $('#helpBtn').onclick=()=>openDialog('#helpModal');
+  $('#closeHelp').onclick=()=>closeDialog('#helpModal');
+  $('#closeCompletion').onclick=()=>closeDialog('#completionModal'); $('#finalDownload').onclick=exportFinal;
+  $('#welcomeUpload').onclick=()=>$('#uploadInput').click();
+  $('#switchLabeller').onclick=()=>{ $('#labelerName').value=labeler; $('#intro').classList.remove('hidden'); $('#labelerName').focus(); };
+  $('#gotoBtn').onclick=()=>{const id=Number($('#gotoInput').value),i=byId(id);if(i>=0)gotoIdx(i);else toast('Point ID not found');};
+  $('#gotoInput').onkeydown=e=>{if(e.key==='Enter')$('#gotoBtn').click();};
+  $('#historyBack').onclick=historyBack; $('#copyPoint').onclick=copyPoint; $('#copyCoords').onclick=copyPoint; $('#recenterBtn').onclick=recenter;
+  $('#nextFlagged').onclick=()=>gotoQueue(r=>r.flagged,'No flagged points');
+  $('#nextLow').onclick=()=>gotoQueue(r=>r.confidence==='low','No low-confidence points');
+  document.querySelectorAll('[data-zoom]').forEach(b=>b.onclick=()=>{recenter();map.easeTo({zoom:+b.dataset.zoom,duration:350});});
+  $('#flagBtn').onclick=toggleFlag;
+  document.querySelectorAll('[data-confidence]').forEach(b=>b.onclick=()=>updateReviewField('confidence',b.dataset.confidence));
+  document.querySelectorAll('[data-tag]').forEach(b=>b.onclick=()=>addReason(b.dataset.tag));
+  $('#panelToggle').onclick=()=>{document.body.classList.toggle('panel-collapsed');setTimeout(()=>map.resize(),20);saveUI();};
+  $('#pointFilter').onchange=e=>applyPointFilter(e.target.value);
+  document.querySelectorAll('.chip[data-filter]').forEach(c=>c.onclick=()=>
+    applyPointFilter(pointFilter===c.dataset.filter?'all':c.dataset.filter));
+  $('#cancelImport').onclick=closeImport; $('#applyImport').onclick=applyImport;
+  $('#importStrategy').onchange=renderConflictChoices;
+  $('#blindMode').onchange=e=>{
+    blindMode=e.target.checked;
+    document.querySelectorAll('.model-key').forEach(x=>x.classList.toggle('hidden',blindMode));
+    refreshPoints(); if(curIdx>=0) renderPoint(); saveUI();
   };
+  $('#autoAdvance').onchange=e=>{ autoAdvance=e.target.checked; saveUI(); };
   // Esri Wayback controls
   $('#wbSelect').onchange=e=>{ wb.idx=+e.target.value; applyWayback(); updateWbStepBtns(); };
   $('#wbPrev').onclick=()=>wbStep(+1);   // older
@@ -665,18 +1002,37 @@ function wire(){
     wb.idxB=wb.view[np]; fillWbSelect($('#wbSelectB'),wb.idxB); applyWaybackB(); };
   $('#wbNextB').onclick=()=>{ const p=wb.view.indexOf(wb.idxB); const np=Math.max(0,(p<0?0:p)-1);
     wb.idxB=wb.view[np]; fillWbSelect($('#wbSelectB'),wb.idxB); applyWaybackB(); };
+  $('#wbSwap').onclick=swapWayback; $('#wbReset').onclick=resetDivider; $('#wbFlicker').onchange=e=>setFlicker(e.target.checked);
+  $('#wbRecent').onclick=()=>setWaybackPreset('recent'); $('#wb5y').onclick=()=>setWaybackPreset('5y'); $('#wbOldest').onclick=()=>setWaybackPreset('oldest');
+
+  const drop=e=>{e.preventDefault();document.body.classList.remove('drop-active');const f=e.dataTransfer&&e.dataTransfer.files[0];if(f)handleUpload(f);};
+  document.addEventListener('dragover',e=>{e.preventDefault();document.body.classList.add('drop-active');});
+  document.addEventListener('dragleave',e=>{if(!e.relatedTarget)document.body.classList.remove('drop-active');});document.addEventListener('drop',drop);
 
   document.addEventListener('keydown', e=>{
-    if(e.target.tagName==='TEXTAREA'||e.target.tagName==='INPUT') return;
+    if(!$('#importPreview').classList.contains('hidden')){
+      if(e.key==='Escape') closeImport(); else trapFocus(e,'#importPreview'); return;
+    }
+    if(!$('#completionModal').classList.contains('hidden')){if(e.key==='Escape')closeDialog('#completionModal');else trapFocus(e,'#completionModal');return;}
+    if(!$('#helpModal').classList.contains('hidden')){if(e.key==='Escape')closeDialog('#helpModal');else trapFocus(e,'#helpModal');return;}
+    if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'){undoLast();e.preventDefault();return;}
+    if(e.target.tagName==='TEXTAREA'||e.target.tagName==='INPUT'||e.target.tagName==='SELECT') return;
     const map5={'1':'intact','2':'moderate','3':'severe','4':'notthicket','5':'unsure'};
     if(map5[e.key]){ setLabel(map5[e.key]); e.preventDefault(); }
     else if(e.key==='ArrowRight'||e.key===' '){ gotoIdx(curIdx+1); e.preventDefault(); }
     else if(e.key==='ArrowLeft'){ gotoIdx(curIdx-1); e.preventDefault(); }
-    else if(e.key.toLowerCase()==='n'){ nextUnlabeled(); e.preventDefault(); }
+    else if(e.key.toLowerCase()==='n'){ nextForFilter(); e.preventDefault(); }
+    else if(e.key.toLowerCase()==='f'){toggleFlag();e.preventDefault();}
+    else if(e.key==='?'){openDialog('#helpModal');e.preventDefault();}
+    else if(e.key==='Escape'){map.getCanvas().focus();}
+    else if(e.key==='['&&activeSource==='wayback'){wbStep(+1);e.preventDefault();}
+    else if(e.key===']'&&activeSource==='wayback'){wbStep(-1);e.preventDefault();}
+    else if(['i','g','s','w'].includes(e.key.toLowerCase())){const x={i:'esri',g:'google',s:'s2',w:'wayback'}[e.key.toLowerCase()];setSource(x);e.preventDefault();}
   });
 
   $('#startBtn').onclick=()=>{
     labeler=($('#labelerName').value||'').trim();
+    if(!labeler&&!$('#allowAnon').checked){toast('Enter a name/initials, or explicitly allow anonymous labeling');$('#labelerName').focus();return;}
     localStorage.setItem(KEY_NAME, labeler);
     $('#intro').classList.add('hidden');
     // first unlabeled, or first point
@@ -692,10 +1048,19 @@ function boot(){
   window.POINTS=POINTS;
   Object.defineProperty(window,'labels',{get:()=>labels});
   $('#labelerName').value = labeler;
+  $('#blindMode').checked=blindMode; $('#autoAdvance').checked=autoAdvance;
+  $('#pointFilter').value=pointFilter;
+  document.querySelectorAll('.model-key').forEach(x=>x.classList.toggle('hidden',blindMode));
+  const savedCount=Object.keys(labels).length;
+  if(labeler && savedCount) $('#startBtn').textContent=`Continue as ${labeler} · ${POINTS.length-savedCount} remaining`;
   buildSourceButtons(); wire(); initMap(); updateCounts();
   loadGeeLayers();   // async; re-renders source buttons if a manifest is present
   // restore hash target after map ready
   const m=location.hash.match(/p=(\d+)/);
   if(m){ const tid=+m[1]; map && map.on('load',()=>gotoId(tid)); }
+  if('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('./sw.js').catch(()=>{});
+  window.addEventListener('online',()=>setSourceHealth('Network restored',false));
+  window.addEventListener('offline',()=>setSourceHealth('Offline: saved labels remain available; uncached imagery may not load.',true));
+  setInterval(()=>{ if(Object.keys(labels).length && (!lastBackup || Date.now()-Date.parse(lastBackup)>30*60*1000)) toast('Backup reminder: download your latest work',null,null,5000); },15*60*1000);
 }
 boot();
