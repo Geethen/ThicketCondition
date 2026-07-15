@@ -10,7 +10,9 @@ shared as a link and run entirely in the browser.
 - Shows all **846 stratified sample points** (from `analysis/results/sample_points.csv`)
   on a satellite basemap, colored by their model stratum.
 - Labelers step through points and record the condition class they observe:
-  **Intact**, **Moderate**, **Severe**, plus **Not thicket / transformed** and **Unsure**.
+  **Intact**, **Moderate**, **Severe**, **Transformed**, **No thicket**, or **Unsure**.
+  Older imports using the former combined class remain visible in a legacy review queue
+  and must be resolved rather than being silently reclassified.
 - Imagery to judge canopy cover: **Esri World Imagery**, **Esri Wayback**, **Google
   Satellite**, and **Sentinel-2 cloudless (10 m)** — all keyless. Plus one-click deep
   links to Google Maps and Google Earth.
@@ -25,6 +27,8 @@ shared as a link and run entirely in the browser.
 - Optional **Earth Engine Sentinel-2 composites** (extra year basemaps) baked offline —
   see *Earth Engine layers* below. Keyless in the browser; no login required.
 - Labels **auto-save to the browser** (localStorage). Nothing is uploaded anywhere.
+- Optional pre-assigned campaigns restrict each personal `?assignment=CODE` link
+  to a deterministic, balanced point list, with deliberate blind QA overlap.
 - **Blind labeling is on by default**: model strata are hidden until a point has
   been labeled, reducing anchoring bias in the reference data.
 - Optional **auto-advance** moves directly to the next unlabeled point. Every
@@ -43,7 +47,7 @@ shared as a link and run entirely in the browser.
   previously downloaded file through a preview that reports conflicts and invalid
   rows before anything changes. Imports support fill-only, keep-newer, and replace
   strategies, and the applied batch can be undone.
-- Keyboard: `1`–`5` set the class, `←/→` or `space` move, `n` advances the active
+- Keyboard: `1`–`6` set the class, `←/→` or `space` move, `n` advances the active
   queue, `f` flags, `Ctrl/Cmd+Z` undoes, `i/g/s/w` switches imagery, and `?` opens
   the persistent shortcut reference.
 - The responsive interface includes map zoom/recenter presets, point-ID/history
@@ -58,6 +62,9 @@ shared as a link and run entirely in the browser.
 | `thicket_inspector.html` | HTML template (with a `__POINTS__` placeholder). |
 | `app.js` | App logic (source of truth; inlined into `index.html` at build). |
 | `build.py` | Regenerates `index.html` from the template + `app.js` + the sample CSV. |
+| `create_assignments.py` | Creates balanced point assignments and shareable links. |
+| `assignment_manifest.json` | Campaign assignments embedded into the built app. |
+| `LABELLER_INSTRUCTIONS.md` | Ready-to-share operating instructions for labellers. |
 | `bake_gee_layers.py` | One-shot Earth Engine bake → `gee_layers.json` (keyless S2 tile URLs). |
 | `gee_layers.json` | **Generated, git-ignored** manifest of baked EE tile URLs the page fetches at runtime. Tokens are temporary — re-bake to refresh. |
 
@@ -84,6 +91,7 @@ node inspector/smoke_test.mjs          # core labeling flow, counts, export, til
 node inspector/verify_wayback.mjs      # Wayback dropdown, capture date, local filter, compare
 node inspector/verify_data_integrity.mjs  # corrupt storage, dataset namespacing,
                                           # CSV round-trip + injection safety, import validation
+node inspector/verify_assignments.mjs     # balanced coverage, links, storage isolation
 ```
 
 ## Deploy (shareable link)
@@ -108,6 +116,11 @@ Each labeler clicks **Review & download**, chooses a format, and sends you their
 `thicket_labels_<name>_<timestamp>.csv` (or `.json`). Merge the CSVs; the `id`
 column joins back to `sample_points.csv`, and `label` is the reference class for
 the Olofsson accuracy/area estimation.
+
+For coordinated campaigns, see [MULTI_LABELLER_OPTIONS.md](MULTI_LABELLER_OPTIONS.md).
+The recommended first step is deterministic, balanced assignments with 10–15%
+intentional blind overlap for agreement QA; a central claim service is the
+long-term option when live coordination becomes necessary.
 
 ## Earth Engine layers (keyless in the browser)
 

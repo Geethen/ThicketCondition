@@ -14,7 +14,7 @@
     --bg:#0f1115; --panel:#171a21; --panel2:#1e222b; --line:#2a2f3a;
     --ink:#e8eaed; --muted:#9aa2af; --accent:#4f8cff;
     --intact:#0a7d34; --moderate:#e0a400; --severe:#c0392b;
-    --unsure:#7a828f; --nott:#5b6472;
+    --transformed:#8c5a2b; --nothicket:#526979; --unsure:#7a828f; --nott:#5b6472;
   }
   *{box-sizing:border-box}
   html,body{height:100%;margin:0}
@@ -41,7 +41,7 @@
          display:flex; gap:8px; flex-wrap:wrap}
 
   /* progress */
-  .prog{display:grid; grid-template-columns:repeat(4,1fr); gap:6px; margin-top:8px}
+  .prog{display:grid; grid-template-columns:repeat(3,1fr); gap:6px; margin-top:8px}
   .chip{text-align:center; padding:6px 4px; border-radius:8px; background:#0c0e13;
         border:1px solid var(--line); font:inherit;font-size:11px;color:var(--ink)}
   .chip[data-filter]{cursor:pointer}
@@ -49,7 +49,7 @@
   .chip b{display:block; font-size:16px; line-height:1.1; margin-top:2px}
   .chip.intact b{color:var(--intact)} .chip.moderate b{color:var(--moderate)}
   .chip.severe b{color:var(--severe)} .chip.all b{color:var(--accent)}
-  .chip.remaining b{color:var(--ink)} .chip.notthicket b{color:var(--nott)}
+  .chip.remaining b{color:var(--ink)} .chip.review b{color:#ffb84d}
   .chip.unsure b{color:var(--unsure)}
   .progressline{display:flex;justify-content:space-between;margin-top:9px;font-size:11px;color:var(--muted)}
   .progressbar{height:5px;background:#0c0e13;border-radius:5px;overflow:hidden;margin-top:4px}
@@ -109,8 +109,8 @@
     border:1px solid var(--line); border-radius:6px; padding:3px 7px; font-size:11px; color:var(--ink)}
   .wb-swipe-label.a{left:10px} .wb-swipe-label.b{right:10px}
 
-  .seclbl{font-size:11px; text-transform:uppercase; letter-spacing:.6px; color:var(--muted);
-    margin:16px 0 6px}
+  .seclbl{font-size:15px; font-weight:700; letter-spacing:.1px; color:var(--ink);
+    margin:20px 0 8px}
 
   /* label buttons */
   .lblgrid{display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px}
@@ -122,9 +122,9 @@
   .lblbtn.sel-intact{background:var(--intact); border-color:var(--intact); color:#fff}
   .lblbtn.sel-moderate{background:var(--moderate); border-color:var(--moderate); color:#101010}
   .lblbtn.sel-severe{background:var(--severe); border-color:var(--severe); color:#fff}
-  .lblbtn.sel-notthicket{background:var(--nott); border-color:var(--nott); color:#fff}
+  .lblbtn.sel-transformed{background:var(--transformed); border-color:var(--transformed); color:#fff}
+  .lblbtn.sel-nothicket{background:var(--nothicket); border-color:var(--nothicket); color:#fff}
   .lblbtn.sel-unsure{background:var(--unsure); border-color:var(--unsure); color:#fff}
-  .lblgrid2{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:8px}
 
   textarea.note{width:100%; margin-top:8px; background:#0c0e13; color:var(--ink);
     border:1px solid var(--line); border-radius:8px; padding:8px; font-size:12px; resize:vertical;
@@ -145,6 +145,8 @@
   .settingsrow{display:flex;gap:12px;flex-wrap:wrap;margin-top:7px;font-size:11px;color:var(--muted)}
   .settingsrow label{cursor:pointer;user-select:none}
   .save-status{font-size:11px;color:var(--muted);margin-top:5px;min-height:14px}
+  .assignment-badge{font-size:11px;color:#b9d2ff;margin-top:6px;padding:5px 7px;border-radius:7px;background:#14233c;border:1px solid #38577d}
+  .assignment-badge.error{color:#ffaaa4;background:#2b1718;border-color:#a94442}
 
   /* legend on map */
   .legend{position:absolute; top:10px; left:10px; background:rgba(16,18,24,.88);
@@ -190,7 +192,11 @@
   .goto{display:flex;gap:5px}.goto input{width:100px;background:#0c0e13;color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:7px}
   .panel-handle{position:absolute;right:380px;top:50%;z-index:8;width:24px;height:48px;border-radius:8px 0 0 8px;padding:0;background:var(--panel2);color:var(--ink);border:1px solid var(--line)}
   body.panel-collapsed #panel{display:none}body.panel-collapsed .panel-handle{right:0;transform:rotate(180deg)}
-  .guidance details{font-size:12px;color:var(--muted);line-height:1.5}.guidance summary{cursor:pointer;color:var(--ink)}
+  .guidance{margin:12px 0 18px;padding:10px 12px;border:1px solid #38577d;border-radius:10px;background:#142034}
+  .guidance details{font-size:13px;color:#c2c9d2;line-height:1.55}.guidance summary{cursor:pointer;color:var(--ink);font-size:15px;font-weight:700}
+  .secondary{margin-top:9px;border:1px solid var(--line);border-radius:9px;padding:0 10px;background:#12151b}
+  .secondary>summary{cursor:pointer;padding:9px 0;color:var(--muted);font-size:12px;font-weight:600}
+  .secondary[open]>summary{color:var(--ink);border-bottom:1px solid var(--line);margin-bottom:8px}
   .guidecards{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:8px 0}.guidecard{border:1px solid var(--line);border-radius:7px;overflow:hidden;text-align:center;font-size:10px}.guidepic{height:38px;background-color:#315f3b}.guidepic.intact{background-image:radial-gradient(circle at 20% 30%,#82a85e 0 5px,transparent 6px),radial-gradient(circle at 70% 60%,#6f934d 0 8px,transparent 9px)}.guidepic.moderate{background-color:#957d50;background-image:radial-gradient(circle,#557543 0 7px,transparent 8px);background-size:25px 25px}.guidepic.severe{background-color:#a78354;background-image:repeating-linear-gradient(25deg,transparent 0 10px,#745c3d 11px 13px)}
   .lblbtn .dot{border:1px solid #fff9}.lblbtn[data-lbl="moderate"] .dot{border-radius:2px}.lblbtn[data-lbl="severe"] .dot{clip-path:polygon(50% 0,100% 100%,0 100%)}
   #shortcutPanel{position:absolute;right:8px;bottom:8px;z-index:7;background:rgba(12,14,19,.92);border:1px solid var(--line);border-radius:8px;padding:7px;font-size:10px;color:var(--muted)}
@@ -217,8 +223,11 @@
           <option value="intact">Labeled intact</option>
           <option value="moderate">Labeled moderate</option>
           <option value="severe">Labeled severe</option>
-          <option value="notthicket">Not thicket</option>
+          <option value="transformed">Transformed</option>
+          <option value="nothicket">No thicket</option>
           <option value="unsure">Unsure / review</option>
+          <option value="notthicket">Legacy combined class (review)</option>
+          <option value="review">All points needing review</option>
           <option value="flagged">Flagged for review</option>
           <option value="low">Low confidence</option>
         </select>
@@ -226,7 +235,7 @@
       </div>
     </div>
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
-    <div id="shortcutPanel"><kbd>1–5</kbd> label · <kbd>N</kbd> next · <kbd>F</kbd> flag · <kbd>?</kbd> help</div>
+    <div id="shortcutPanel"><kbd>1–6</kbd> label · <kbd>N</kbd> next · <kbd>?</kbd> help</div>
   </div>
 
   <button class="panel-handle" id="panelToggle" title="Collapse side panel" aria-label="Collapse side panel">›</button>
@@ -235,16 +244,11 @@
     <div class="phead">
       <h1>Thicket Condition Inspector</h1>
       <div class="sub">South African solid thicket · reference labeling</div>
+      <div class="assignment-badge" id="assignmentStatus"></div>
       <div class="prog">
         <button class="chip all" data-filter="labeled" title="Show labeled points">labeled<b id="c_all">0</b></button>
         <button class="chip remaining" data-filter="unlabeled" title="Show unlabeled points">remaining<b id="c_remaining">0</b></button>
-        <button class="chip intact" data-filter="intact" title="Show intact labels">intact<b id="c_intact">0</b></button>
-        <button class="chip moderate" data-filter="moderate" title="Show moderate labels">moderate<b id="c_moderate">0</b></button>
-        <button class="chip severe" data-filter="severe" title="Show severe labels">severe<b id="c_severe">0</b></button>
-        <button class="chip notthicket" data-filter="notthicket" title="Show not-thicket labels">not thicket<b id="c_notthicket">0</b></button>
-        <button class="chip unsure" data-filter="unsure" title="Show unsure labels">unsure<b id="c_unsure">0</b></button>
-        <button class="chip" data-filter="flagged" title="Show flagged points">flagged<b id="c_flagged">0</b></button>
-        <button class="chip" data-filter="low" title="Show low-confidence points">low conf.<b id="c_low">0</b></button>
+        <button class="chip review" data-filter="review" title="Show unsure, flagged, low-confidence, and legacy labels">to review<b id="c_review">0</b></button>
       </div>
       <div class="progressline"><span id="progressText">0 of 0 labeled</span><span id="progressPct">0%</span></div>
       <div class="progressbar"><span id="progressFill"></span></div>
@@ -253,6 +257,16 @@
     </div>
 
     <div class="pbody">
+      <div class="guidance"><details open><summary>Field guidance</summary><div style="margin-top:8px">
+        <div class="guidecards" aria-label="Illustrated canopy examples"><div class="guidecard"><div class="guidepic intact"></div>Continuous canopy</div><div class="guidecard"><div class="guidepic moderate"></div>Patchy canopy</div><div class="guidecard"><div class="guidepic severe"></div>Sparse / bare</div></div>
+        <b style="color:var(--intact)">Intact</b>: dense, continuous woody-thicket canopy.<br>
+        <b style="color:var(--moderate)">Moderate</b>: opened or patchy canopy, but substantial thicket remains.<br>
+        <b style="color:var(--severe)">Severe</b>: sparse remnants, extensive bare or eroded ground.<br>
+        <b style="color:#d79659">Transformed</b>: thicket has been replaced by a human land use such as cultivation, plantation, settlement, road or quarry.<br>
+        <b style="color:#8bb2c9">No thicket</b>: naturally non-thicket habitat or a point outside the target ecosystem; do not infer transformation without evidence.<br><br>
+        Judge the point centre. Compare dates when shadows, fire, seasonality or land-use history make the class unclear. Use <b>Unsure</b> and add a reason when the imagery cannot support a defensible decision.
+      </div></details></div>
+
       <div class="navrow">
         <button class="nav" id="prevBtn">‹ Prev</button>
         <div class="idlbl">Sample <b id="curOrdinal">–</b> of <span id="totId">0</span> · ID <b id="curId">–</b>
@@ -262,13 +276,14 @@
       <div style="display:flex;gap:8px;margin-bottom:8px">
         <button class="btn wide" id="nextUnlabeled">Jump to next unlabeled →</button>
       </div>
-      <div class="toolbar">
+      <details class="secondary"><summary>More navigation and map tools</summary><div class="toolbar">
         <div class="goto"><input id="gotoInput" inputmode="numeric" placeholder="Point ID" aria-label="Point ID"><button class="btn" id="gotoBtn">Go</button></div>
         <button class="btn" id="historyBack" title="Previous visited point">History ←</button>
         <button class="btn" id="copyPoint">Copy ID + coordinates</button>
         <button class="btn" id="recenterBtn">Recenter</button>
       </div>
       <div class="toolbar"><button class="btn" id="nextFlagged">Next flagged</button><button class="btn" id="nextLow">Next low-confidence</button><button class="btn" data-zoom="12">Context</button><button class="btn" data-zoom="15.5">Canopy</button><button class="btn" data-zoom="18">Close-up</button></div>
+      </details>
 
       <div class="metarow"><span>Coordinates</span><span id="mCoord">–</span></div>
       <div class="metarow"><span>Map stratum (model)</span><span id="mStratum">–</span></div>
@@ -302,11 +317,11 @@
         <button class="lblbtn" data-lbl="intact"><span class="dot" style="background:var(--intact)"></span><span><u>1</u> Intact</span></button>
         <button class="lblbtn" data-lbl="moderate"><span class="dot" style="background:var(--moderate)"></span><span><u>2</u> Moderate</span></button>
         <button class="lblbtn" data-lbl="severe"><span class="dot" style="background:var(--severe)"></span><span><u>3</u> Severe</span></button>
+        <button class="lblbtn" data-lbl="transformed"><span class="dot" style="background:var(--transformed)"></span><span><u>4</u> Transformed</span></button>
+        <button class="lblbtn" data-lbl="nothicket"><span class="dot" style="background:var(--nothicket)"></span><span><u>5</u> No thicket</span></button>
+        <button class="lblbtn" data-lbl="unsure"><span class="dot" style="background:var(--unsure)"></span><span><u>6</u> Unsure</span></button>
       </div>
-      <div class="lblgrid2">
-        <button class="lblbtn" data-lbl="notthicket"><span class="dot" style="background:var(--nott)"></span><span><u>4</u> Not thicket / transformed</span></button>
-        <button class="lblbtn" data-lbl="unsure"><span class="dot" style="background:var(--unsure)"></span><span><u>5</u> Unsure</span></button>
-      </div>
+      <details class="secondary"><summary>Notes and review options</summary>
       <div class="reviewrow">
         <button class="btn togglebtn" id="flagBtn" aria-pressed="false">⚑ Flag for second review</button>
         <div class="confidence" aria-label="Confidence"><button class="btn" data-confidence="high">High</button><button class="btn" data-confidence="medium">Med</button><button class="btn" data-confidence="low">Low</button></div>
@@ -317,17 +332,7 @@
         <span class="save-status" id="noteStatus" aria-live="polite"></span>
         <button class="btn hidden" id="clearLabelBtn">Clear label</button>
       </div>
-
-      <div class="seclbl">Guidance</div>
-      <div class="guidance"><details open><summary>Decision guide and edge cases</summary><div style="margin-top:6px">
-        <div class="guidecards" aria-label="Illustrated canopy examples"><div class="guidecard"><div class="guidepic intact"></div>Continuous canopy</div><div class="guidecard"><div class="guidepic moderate"></div>Patchy canopy</div><div class="guidecard"><div class="guidepic severe"></div>Sparse / bare</div></div>
-        <b style="color:var(--intact)">Intact</b>: dense, continuous canopy of woody thicket.<br>
-        <b style="color:var(--moderate)">Moderate</b>: patchy / thinned canopy, visible bare ground between clumps, browse lines.<br>
-        <b style="color:var(--severe)">Severe</b>: mostly bare/eroded, sparse remnant bush, ephemeral herbaceous.<br>
-        Use <b>Not thicket</b> for cultivation, plantation, urban, water, or clearly non-thicket vegetation.<br><br>
-        <b>Decision tree:</b> thicket present? If no → Not thicket. If yes, canopy continuous → Intact; visibly opened but substantial → Moderate; sparse remnants/bare or eroded ground → Severe. If imagery cannot support a decision → Unsure + reason.<br><br>
-        Shadows should not be read as canopy gaps; compare dates. Recent fire can temporarily expose ground—flag it. Regular field geometry indicates cultivation. For mixed pixels, judge the point centre and add the “mixed pixel” tag.
-      </div></details></div>
+      </details>
     </div>
 
     <div class="pfoot">
@@ -343,12 +348,12 @@
   <div id="introbox">
     <h2>Thicket Condition Inspector</h2>
     <p>You're helping build reference data for a map of South African thicket condition.
-       For each sample point, look at the imagery and record whether the thicket is
-       <b>intact</b>, <b>moderate</b>, or <b>severely</b> degraded.</p>
+       For each sample point, use the imagery to classify thicket condition, transformation,
+       or naturally non-thicket habitat.</p>
     <ol>
       <li>Click a point (or use <kbd>Next ›</kbd>) — the map zooms to it.</li>
       <li>Switch imagery sources & Wayback dates to judge canopy cover.</li>
-      <li>Press a condition button, or keys <kbd>1</kbd> intact <kbd>2</kbd> moderate <kbd>3</kbd> severe <kbd>4</kbd> not-thicket <kbd>5</kbd> unsure.</li>
+      <li>Press a condition button, or keys <kbd>1</kbd> intact <kbd>2</kbd> moderate <kbd>3</kbd> severe <kbd>4</kbd> transformed <kbd>5</kbd> no thicket <kbd>6</kbd> unsure.</li>
       <li>Your work is auto-saved in this browser. <b>Download</b> the file when done and send it back.</li>
       <li>Returning? Click <b>Upload / resume</b> to continue from a saved file.</li>
     </ol>
@@ -356,6 +361,7 @@
       <label style="font-size:12px;color:var(--muted)">Your name / initials (stored with each label)</label>
       <input id="labelerName" placeholder="e.g. SJ" />
     </div>
+    <div class="assignment-badge" id="introAssignment"></div>
     <div class="save-status">Dataset <span id="datasetId">__DATASET_ID__</span> · progress stays in this browser</div>
     <div style="display:flex;gap:8px;margin:10px 0"><button class="btn wide" id="welcomeUpload">Import backup</button><label style="font-size:12px;color:var(--muted);display:flex;align-items:center;gap:5px"><input type="checkbox" id="allowAnon"> Allow anonymous</label></div>
     <button class="btn primary" id="startBtn" style="width:100%;padding:11px">Start labeling</button>
@@ -373,7 +379,7 @@
   </div>
 </div>
 
-<div id="helpModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="helpTitle"><div class="modalbox" tabindex="-1"><h2 id="helpTitle">Keyboard shortcuts</h2><p><kbd>1–5</kbd> label · <kbd>←</kbd>/<kbd>→</kbd> navigate · <kbd>N</kbd> next queue item · <kbd>F</kbd> flag · <kbd>Ctrl/⌘ Z</kbd> undo · <kbd>I/G/S/W</kbd> imagery · <kbd>[</kbd>/<kbd>]</kbd> Wayback dates · <kbd>Esc</kbd> focus map · <kbd>?</kbd> this panel.</p><div class="modalactions"><button class="btn primary" id="closeHelp">Close</button></div></div></div>
+<div id="helpModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="helpTitle"><div class="modalbox" tabindex="-1"><h2 id="helpTitle">Keyboard shortcuts</h2><p><kbd>1–6</kbd> label · <kbd>←</kbd>/<kbd>→</kbd> navigate · <kbd>N</kbd> next queue item · <kbd>F</kbd> flag · <kbd>Ctrl/⌘ Z</kbd> undo · <kbd>I/G/S/W</kbd> imagery · <kbd>[</kbd>/<kbd>]</kbd> Wayback dates · <kbd>Esc</kbd> focus map · <kbd>?</kbd> this panel.</p><div class="modalactions"><button class="btn primary" id="closeHelp">Close</button></div></div></div>
 
 <div id="importPreview" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="importTitle">
   <div class="modalbox">
@@ -410,7 +416,8 @@
 <script>
 // ============================================================ embedded sample
 const DATASET_ID = '__DATASET_ID__';
-const POINTS = [__POINTS__];
+const ALL_POINTS = [__POINTS__];
+const ASSIGNMENT_MANIFEST = __ASSIGNMENTS__;
 </script>
 <script src="app.js"></script>
 </body>

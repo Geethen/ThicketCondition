@@ -22,7 +22,7 @@ const server = http.createServer(async (req, res) => {
 });
 await new Promise(r => server.listen(0, r));
 const port = server.address().port;
-const base = `http://127.0.0.1:${port}/index.html`;
+const base = `http://127.0.0.1:${port}/index.html?mode=coordinator`;
 
 const results = [];
 const check = (name, ok, extra='') => { results.push({ name, ok });
@@ -140,7 +140,7 @@ const start = async page => { await page.fill('#labelerName','QA'); await page.c
     const COORD_EPS = 1e-5; let merged=0, skipped=0, moved=0;
     file.labels.forEach(r => {
       const i = POINTS.findIndex(pp => pp.id === Number(r.id)); if (i<0){ skipped++; return; }
-      if (!['intact','moderate','severe','notthicket','unsure'].includes(r.label)){ skipped++; return; }
+      if (!['intact','moderate','severe','transformed','nothicket','notthicket','unsure'].includes(r.label)){ skipped++; return; }
       const p = POINTS[i];
       if (r.lon!=null && r.lat!=null){
         if (!(Math.abs(r.lon-p.lon)<=COORD_EPS && Math.abs(r.lat-p.lat)<=COORD_EPS)){ moved++; return; }

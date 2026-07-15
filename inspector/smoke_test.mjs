@@ -6,7 +6,7 @@ import { fileURLToPath } from 'url';
 import path from 'path';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
-const url = 'file://' + path.join(here, 'index.html').replace(/\\/g, '/');
+const url = 'file://' + path.join(here, 'index.html').replace(/\\/g, '/') + '?mode=coordinator';
 
 const browser = await chromium.launch();
 const page = await browser.newPage();
@@ -19,6 +19,16 @@ await page.goto(url, { waitUntil: 'load' });
 // start screen -> enter name -> start
 await page.fill('#labelerName', 'TEST');
 await page.click('#startBtn');
+
+const simplifiedUiOK = await page.evaluate(() => {
+  const body = document.querySelector('.pbody');
+  const labels = [...document.querySelectorAll('.lblbtn')].map(b => b.dataset.lbl);
+  return body.firstElementChild.classList.contains('guidance')
+    && labels.join(',') === 'intact,moderate,severe,transformed,nothicket,unsure'
+    && getComputedStyle(document.querySelector('.seclbl')).fontSize === '15px'
+    && !document.querySelector('.secondary').open;
+});
+console.log('simplified ecological workflow:', simplifiedUiOK);
 
 // wait for maplibre map to finish loading its first render
 await page.waitForFunction(() => window.map && window.map.loaded && window.map.loaded(), { timeout: 15000 })
@@ -41,6 +51,7 @@ const blindOK = await page.evaluate(() => {
 console.log('blind labeling default:', blindOK);
 
 // Notes typed before choosing a class persist as a local draft.
+await page.getByText('Notes and review options').click();
 await page.fill('#note', 'edge effect draft');
 await page.waitForTimeout(500);
 const draftOK = await page.evaluate(() => {
@@ -53,7 +64,7 @@ console.log('unlabeled note draft saved:', !!draftOK);
 await page.click('.phead h1'); // leave the textarea so global shortcuts are active
 await page.keyboard.press('2');
 await page.waitForTimeout(650);
-const cModerate = await page.textContent('#c_moderate');
+const cModerate = await page.evaluate(() => Object.values(window.labels).filter(r => r.label === 'moderate').length.toString());
 const cAll = await page.textContent('#c_all');
 const autoAdvancedTo = await page.textContent('#curId');
 console.log('after key "2": moderate =', cModerate, ' all =', cAll, ' current =', autoAdvancedTo);
@@ -77,7 +88,7 @@ await page.uncheck('#autoAdvance');
 await page.click('#nextBtn');
 await page.keyboard.press('3');
 await page.waitForTimeout(200);
-const cSevere = await page.textContent('#c_severe');
+const cSevere = await page.evaluate(() => Object.values(window.labels).filter(r => r.label === 'severe').length.toString());
 console.log('after key "3" on next point: severe =', cSevere);
 
 const progressOK = await page.evaluate(() =>
@@ -130,14 +141,14 @@ await page.selectOption('#pointFilter', 'labeled');
 const selectFilterOK = await page.evaluate(() =>
   document.querySelector('#pointFilter').value === 'labeled'
   && document.querySelector('.chip.all').classList.contains('filter-active'));
-await page.click('.chip.moderate');
+await page.selectOption('#pointFilter', 'moderate');
 const chipFilterOK = await page.evaluate(() =>
   document.querySelector('#pointFilter').value === 'moderate'
-  && document.querySelector('.chip.moderate').classList.contains('filter-active')
   && document.querySelector('#nextUnlabeled').textContent.includes('next moderate'));
 await page.click('#nextUnlabeled');
 const filteredNavOK = await page.textContent('#curId') === '0';
-await page.click('.chip.moderate'); // clicking the active chip returns to All
+await page.click('.chip.all');
+await page.click('.chip.all'); // clicking the active summary chip returns to All
 const filterResetOK = await page.evaluate(() => document.querySelector('#pointFilter').value === 'all');
 console.log('select/chip/navigation/reset filters:', selectFilterOK, chipFilterOK, filteredNavOK, filterResetOK);
 
@@ -159,7 +170,7 @@ console.log('basemap tile requests:', tileOK);
 
 console.log('JS errors:', errors.length ? errors : 'none');
 const pass = nPts === 846 && cModerate === '1' && cSevere === '1'
-  && blindOK && draftOK && autoAdvancedTo === '1'
+  && simplifiedUiOK && blindOK && draftOK && autoAdvancedTo === '1'
   && repeatKept === '1' && afterClear === '0' && afterUndo === '1'
   && progressOK && mismatchBlocked && previewOK && fillOK && importUndoOK
   && selectFilterOK && chipFilterOK && filteredNavOK && filterResetOK

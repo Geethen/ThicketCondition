@@ -22,7 +22,7 @@ const server = http.createServer(async (req, res) => {
 });
 await new Promise(r => server.listen(0, r));
 const port = server.address().port;
-const base = `http://127.0.0.1:${port}/index.html`;
+const base = `http://127.0.0.1:${port}/index.html?mode=coordinator`;
 
 const errors = [];
 const browser = await chromium.launch();

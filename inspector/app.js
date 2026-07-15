@@ -2,24 +2,45 @@
    Labels persist in localStorage and export/import as JSON or CSV. */
 'use strict';
 
-const CLASSES = ['intact','moderate','severe','notthicket','unsure'];
-const CLASS_SET = new Set(CLASSES);
+const URL_PARAMS=new URLSearchParams(location.search);
+const ASSIGNMENT_REQUEST=(URL_PARAMS.get('assignment')||'').trim();
+const COORDINATOR_MODE=URL_PARAMS.get('mode')==='coordinator';
+const ASSIGNMENT_CODES=Object.keys((ASSIGNMENT_MANIFEST&&ASSIGNMENT_MANIFEST.labelers)||{});
+const ASSIGNMENT_CODE=ASSIGNMENT_REQUEST
+  ? ASSIGNMENT_CODES.find(c=>c.toLowerCase()===ASSIGNMENT_REQUEST.toLowerCase())||'' : '';
+const ASSIGNMENT_RECORD=ASSIGNMENT_CODE?ASSIGNMENT_MANIFEST.labelers[ASSIGNMENT_CODE]:null;
+const ASSIGNMENT_ERROR=ASSIGNMENT_REQUEST&&!ASSIGNMENT_RECORD
+  ? `Assignment “${ASSIGNMENT_REQUEST}” was not found. Ask the coordinator for the correct link.`
+  : (!ASSIGNMENT_REQUEST&&ASSIGNMENT_CODES.length&&!COORDINATOR_MODE
+    ? 'A personal assignment link is required for this campaign. Ask the coordinator for your link.' : '');
+const ASSIGNED_IDS=new Set(ASSIGNMENT_RECORD?ASSIGNMENT_RECORD.point_ids:[]);
+const POINTS=ASSIGNMENT_RECORD?ALL_POINTS.filter(p=>ASSIGNED_IDS.has(p.id)):
+  (ASSIGNMENT_ERROR?[]:ALL_POINTS);
+const ASSIGNMENT_ID=ASSIGNMENT_RECORD?ASSIGNMENT_RECORD.assignment_id||'':'';
+const CAMPAIGN=String((ASSIGNMENT_MANIFEST&&ASSIGNMENT_MANIFEST.campaign)||'');
+
+const CLASSES = ['intact','moderate','severe','transformed','nothicket','unsure'];
+const LEGACY_CLASS = 'notthicket';
+const CLASS_SET = new Set([...CLASSES, LEGACY_CLASS]);
 const CLASS_LABEL = {intact:'Intact',moderate:'Moderate',severe:'Severe',
-                     notthicket:'Not thicket',unsure:'Unsure'};
+                     transformed:'Transformed',nothicket:'No thicket',unsure:'Unsure',
+                     notthicket:'Legacy: no thicket / transformed'};
 // Only ever trust a label that is one of our known classes. Imported files are
 // untrusted input, and labels flow into innerHTML / classList below.
 const isValidClass = c => CLASS_SET.has(c);
-const STRAT_COLOR = {intact:'#0a7d34',moderate:'#e0a400',severe:'#c0392b'};
+const STRAT_COLOR = {intact:'#0a7d34',moderate:'#e0a400',severe:'#c0392b',
+                     transformed:'#8c5a2b',nothicket:'#526979',notthicket:'#ffb84d'};
 // DATASET_ID is injected by build.py; if the page is opened unbuilt it stays the
 // literal placeholder, which still works as a (single) stable key.
 const DS_ID = (typeof DATASET_ID === 'string' && !DATASET_ID.startsWith('__'))
   ? DATASET_ID : 'dev';
-// Labels are namespaced by dataset so a new sample draw never shows stale labels.
-const KEY_LABELS = 'thicket-inspector-labels-' + DS_ID;
-const KEY_DRAFTS = 'thicket-inspector-note-drafts-' + DS_ID;
+// Assignment IDs isolate campaigns and regenerated point lists in browser storage.
+const STORAGE_SCOPE = DS_ID + (ASSIGNMENT_ID?'-assignment-'+ASSIGNMENT_ID:'');
+const KEY_LABELS = 'thicket-inspector-labels-' + STORAGE_SCOPE;
+const KEY_DRAFTS = 'thicket-inspector-note-drafts-' + STORAGE_SCOPE;
 const KEY_NAME   = 'thicket-inspector-name';
-const KEY_UI     = 'thicket-inspector-ui';
-const KEY_BACKUP = 'thicket-inspector-last-backup-' + DS_ID;
+const KEY_UI     = 'thicket-inspector-ui' + (ASSIGNMENT_ID?'-'+ASSIGNMENT_ID:'');
+const KEY_BACKUP = 'thicket-inspector-last-backup-' + STORAGE_SCOPE;
 const KEY_WBCACHE = 'thicket-inspector-wayback-cache-' + DS_ID;
 // Coordinates must match the embedded draw within ~1 m to count as the same point.
 const COORD_EPS = 1e-5;
@@ -239,8 +260,11 @@ function applyPointFilter(value=pointFilter){
     intact:['==',['get','label'],'intact'],
     moderate:['==',['get','label'],'moderate'],
     severe:['==',['get','label'],'severe'],
+    transformed:['==',['get','label'],'transformed'],
+    nothicket:['==',['get','label'],'nothicket'],
     notthicket:['==',['get','label'],'notthicket'],
     unsure:['==',['get','label'],'unsure'],
+    review:['any',['==',['get','flagged'],true],['==',['get','confidence'],'low'],['==',['get','label'],'unsure'],['==',['get','label'],LEGACY_CLASS]],
     flagged:['==',['get','flagged'],true],
     low:['==',['get','confidence'],'low']
   };
@@ -252,7 +276,7 @@ function applyPointFilter(value=pointFilter){
     c.classList.toggle('filter-active',c.dataset.filter===pointFilter));
   const next=$('#nextUnlabeled');
   if(next){
-    const names={all:'unlabeled',unlabeled:'unlabeled',labeled:'labeled',notthicket:'not thicket'};
+    const names={all:'unlabeled',unlabeled:'unlabeled',labeled:'labeled',review:'review item',nothicket:'no thicket',notthicket:'legacy combined'};
     next.textContent=`Jump to next ${names[pointFilter]||pointFilter} →`;
   }
   saveUI();
@@ -606,6 +630,7 @@ function nextForFilter(){
   if(pointFilter==='all'||pointFilter==='unlabeled'){ nextUnlabeled(); return; }
   for(let k=1;k<=POINTS.length;k++){
     const i=(curIdx+k)%POINTS.length, rec=labels[POINTS[i].id];
+    if(pointFilter==='review'&&rec&&(rec.flagged||rec.confidence==='low'||rec.label==='unsure'||rec.label===LEGACY_CLASS)){ gotoIdx(i); return; }
     if((pointFilter==='labeled'&&rec)||(rec&&rec.label===pointFilter)){ gotoIdx(i); return; }
   }
   toast(`No ${pointFilter==='labeled'?'labeled':pointFilter} points to review`);
@@ -709,13 +734,11 @@ function saveNote(){
 }
 
 function updateCounts(){
-  const c={intact:0,moderate:0,severe:0,notthicket:0,unsure:0,all:0,flagged:0,low:0};
+  const c={intact:0,moderate:0,severe:0,transformed:0,nothicket:0,notthicket:0,unsure:0,all:0,flagged:0,low:0};
   Object.values(labels).forEach(r=>{ if(!r||!isValidClass(r.label)) return;
     c.all++; if(c[r.label]!=null) c[r.label]++; if(r.flagged)c.flagged++; if(r.confidence==='low')c.low++; });
-  $('#c_all').textContent=c.all; $('#c_intact').textContent=c.intact;
-  $('#c_moderate').textContent=c.moderate; $('#c_severe').textContent=c.severe;
-  $('#c_notthicket').textContent=c.notthicket; $('#c_unsure').textContent=c.unsure;
-  $('#c_flagged').textContent=c.flagged; $('#c_low').textContent=c.low;
+  $('#c_all').textContent=c.all;
+  $('#c_review').textContent=new Set(Object.entries(labels).filter(([,r])=>r.flagged||r.confidence==='low'||r.label==='unsure'||r.label===LEGACY_CLASS).map(([id])=>id)).size;
   const remaining=Math.max(0,POINTS.length-c.all), pct=POINTS.length?c.all/POINTS.length*100:0;
   $('#c_remaining').textContent=remaining; $('#progressText').textContent=`${c.all} of ${POINTS.length} labeled`;
   $('#progressPct').textContent=(pct<10?pct.toFixed(1):Math.round(pct))+'%'; $('#progressFill').style.width=pct+'%';
@@ -732,33 +755,36 @@ function download(){ openCompletion(); }
 function openCompletion(){
   saveNote(); const rows=exportRows(), remaining=POINTS.length-rows.length;
   const counts={}; CLASSES.forEach(c=>counts[c]=rows.filter(r=>r.label===c).length);
-  const flagged=rows.filter(r=>r.flagged), low=rows.filter(r=>r.confidence==='low'), unsure=rows.filter(r=>r.label==='unsure');
-  $('#completionState').textContent=remaining?`${remaining} point${remaining===1?' is':'s are'} incomplete. You can export a backup now, but final QA is not complete.`:'All points are labeled. Review the items below before final export.';
-  $('#completionState').className=remaining?'statusline error':'statusline ok';
-  const stats=[['Labeled',rows.length],['Remaining',remaining],['Intact',counts.intact],['Moderate',counts.moderate],['Severe',counts.severe],['Not thicket',counts.notthicket],['Unsure',counts.unsure],['Flagged',flagged.length],['Low confidence',low.length]];
+  const flagged=rows.filter(r=>r.flagged), low=rows.filter(r=>r.confidence==='low'), unsure=rows.filter(r=>r.label==='unsure'), legacy=rows.filter(r=>r.label===LEGACY_CLASS);
+  const qaIncomplete=remaining||legacy.length;
+  $('#completionState').textContent=remaining?`${remaining} point${remaining===1?' is':'s are'} incomplete. You can export a backup now, but final QA is not complete.`:legacy.length?`${legacy.length} label${legacy.length===1?' uses':'s use'} the old combined class. Review and replace ${legacy.length===1?'it':'them'} with Transformed or No thicket before final export.`:'All points are labeled. Review the items below before final export.';
+  $('#completionState').className=qaIncomplete?'statusline error':'statusline ok';
+  const stats=[['Labeled',rows.length],['Remaining',remaining],['Intact',counts.intact],['Moderate',counts.moderate],['Severe',counts.severe],['Transformed',counts.transformed],['No thicket',counts.nothicket],['Unsure',counts.unsure],['Legacy review',legacy.length],['Flagged',flagged.length],['Low confidence',low.length]];
   const grid=$('#finalSummary'); grid.textContent=''; stats.forEach(([n,v])=>{const d=document.createElement('div'),b=document.createElement('b');b.textContent=v;d.append(n,b);grid.appendChild(d);});
   $('#lastBackup').textContent=lastBackup?new Date(lastBackup).toLocaleString():'Never';
-  $('#finalDownload').textContent=remaining?'Download backup':'Download final';
+  $('#finalDownload').textContent=qaIncomplete?'Download backup':'Download final';
   const review=$('#reviewList'); review.textContent='';
-  const ids=new Set([...unsure,...flagged,...low].map(r=>r.id));
+  const ids=new Set([...unsure,...legacy,...flagged,...low].map(r=>r.id));
   if(!ids.size){const d=document.createElement('div');d.className='reviewitem';d.textContent='No unsure, flagged, or low-confidence points.';review.appendChild(d);}
   ids.forEach(id=>{const r=labels[id],d=document.createElement('div');d.className='reviewitem';d.append(`ID ${id} · ${CLASS_LABEL[r.label]}${r.flagged?' · flagged':''}${r.confidence?` · ${r.confidence} confidence`:''}`);const b=document.createElement('button');b.className='btn';b.textContent='Review';b.onclick=()=>{closeDialog('#completionModal');gotoId(id);};d.appendChild(b);review.appendChild(d);});
   openDialog('#completionModal');
 }
 async function exportFinal(){
   const rows = exportRows();
-  const exported=new Date().toISOString(), completion={complete:rows.length===POINTS.length,total:POINTS.length,labeled:rows.length,
-    flagged:rows.filter(r=>r.flagged).length,unsure:rows.filter(r=>r.label==='unsure').length,lowConfidence:rows.filter(r=>r.confidence==='low').length};
+  const legacyCount=rows.filter(r=>r.label===LEGACY_CLASS).length;
+  const exported=new Date().toISOString(), completion={complete:rows.length===POINTS.length&&!legacyCount,total:POINTS.length,labeled:rows.length,
+    flagged:rows.filter(r=>r.flagged).length,unsure:rows.filter(r=>r.label==='unsure').length,legacyCombined:legacyCount,lowConfidence:rows.filter(r=>r.confidence==='low').length};
   const canonical=JSON.stringify(rows), checksum=checksumText(canonical);
-  const payload={tool:'thicket_inspector',version:2,dataset:DS_ID,labeler,exported,n:rows.length,completion,checksum:{algorithm:'fnv1a-32',value:checksum},labels:rows};
-  const stamp=exported.slice(0,19).replace(/[:T]/g,'-'), safe=(labeler||'anon').replace(/[^A-Za-z0-9_-]/g,'');
+  const assignment=ASSIGNMENT_RECORD?{campaign:CAMPAIGN,code:ASSIGNMENT_CODE,id:ASSIGNMENT_ID,assigned:POINTS.length}:null;
+  const payload={tool:'thicket_inspector',version:4,dataset:DS_ID,assignment,labeler,exported,n:rows.length,completion,checksum:{algorithm:'fnv1a-32',value:checksum},labels:rows};
+  const stamp=exported.slice(0,19).replace(/[:T]/g,'-'), safe=(labeler||'anon').replace(/[^A-Za-z0-9_-]/g,''), assignmentSafe=ASSIGNMENT_CODE?`_${ASSIGNMENT_CODE}`:'';
   const format=$('#exportFormat').value;
-  if(format==='json') blobDownload(JSON.stringify(payload,null,2),`thicket_labels_${safe}_${stamp}.json`,'application/json');
+  if(format==='json') blobDownload(JSON.stringify(payload,null,2),`thicket_labels_${safe}${assignmentSafe}_${stamp}.json`,'application/json');
   else {
     const csvSafe=v=>{let s=String(v==null?'':v);if(/^[=+\-@\t\r]/.test(s))s="'"+s;return s;},q=v=>'"'+String(v==null?'':v).replace(/"/g,'""')+'"',qt=v=>'"'+csvSafe(v).replace(/"/g,'""')+'"';
-    const hdr='dataset,id,stratum,lon,lat,label,note,labeler,ts,flagged,confidence,reasons,checksum';
-    const csv=[hdr].concat(rows.map(r=>[q(DS_ID),q(r.id),q(r.stratum),q(r.lon),q(r.lat),q(r.label),qt(r.note),qt(r.labeler),q(r.ts),q(r.flagged),q(r.confidence),qt(r.reasons),q(checksum)].join(','))).join('\r\n');
-    blobDownload(csv,`thicket_labels_${safe}_${stamp}.csv`,'text/csv');
+    const hdr='dataset,id,stratum,lon,lat,label,note,labeler,ts,flagged,confidence,reasons,checksum,campaign,assignment,assignment_id';
+    const csv=[hdr].concat(rows.map(r=>[q(DS_ID),q(r.id),q(r.stratum),q(r.lon),q(r.lat),q(r.label),qt(r.note),qt(r.labeler),q(r.ts),q(r.flagged),q(r.confidence),qt(r.reasons),q(checksum),qt(CAMPAIGN),q(ASSIGNMENT_CODE),q(ASSIGNMENT_ID)].join(','))).join('\r\n');
+    blobDownload(csv,`thicket_labels_${safe}${assignmentSafe}_${stamp}.csv`,'text/csv');
   }
   lastBackup=exported; localStorage.setItem(KEY_BACKUP,lastBackup); closeDialog('#completionModal'); saveStore(); toast(`Downloaded ${rows.length} labels as ${format.toUpperCase()}`);
 }
@@ -804,17 +830,26 @@ function handleUpload(file){
   const fr=new FileReader();
   fr.onload=()=>{
     try{
-      let rows, fileDataset=null;
+      let rows, fileDataset=null, fileAssignment='', fileCampaign='';
       if(file.name.toLowerCase().endsWith('.csv')){
         rows=parseCSV(fr.result); fileDataset=rows.find(r=>r.dataset)?.dataset||null;
+        fileAssignment=rows.find(r=>r.assignment)?.assignment||'';
+        fileCampaign=rows.find(r=>r.campaign)?.campaign||'';
       }
-      else { const j=JSON.parse(fr.result); rows=j.labels||[]; fileDataset=j.dataset||null; }
+      else { const j=JSON.parse(fr.result); rows=j.labels||[]; fileDataset=j.dataset||null;
+        fileAssignment=j.assignment&&j.assignment.code||''; fileCampaign=j.assignment&&j.assignment.campaign||''; }
       if(!Array.isArray(rows)){ toast('Could not read that file'); return; }
 
       // Dataset-mismatch guard: a JSON export from a different sample draw must
       // not silently paint its labels onto these coordinates.
       if(fileDataset && fileDataset !== DS_ID){
         toast('Import blocked: file belongs to a different dataset'); return;
+      }
+      if(ASSIGNMENT_CODE&&fileAssignment&&fileAssignment.toLowerCase()!==ASSIGNMENT_CODE.toLowerCase()){
+        toast('Import blocked: file belongs to a different assignment'); return;
+      }
+      if(ASSIGNMENT_CODE&&fileCampaign&&CAMPAIGN&&fileCampaign!==CAMPAIGN){
+        toast('Import blocked: file belongs to a different campaign'); return;
       }
 
       previewImport(rows,file.name);
@@ -922,7 +957,8 @@ function parseCSV(txt){
     dataset:cells[ix('dataset')], id:cells[ix('id')], stratum:cells[ix('stratum')], label:cells[ix('label')],
     lon:cells[ix('lon')], lat:cells[ix('lat')], note:cells[ix('note')]||'',
     labeler:cells[ix('labeler')]||'', ts:cells[ix('ts')]||'',
-    flagged:cells[ix('flagged')]||'',confidence:cells[ix('confidence')]||'',reasons:cells[ix('reasons')]||''
+    flagged:cells[ix('flagged')]||'',confidence:cells[ix('confidence')]||'',reasons:cells[ix('reasons')]||'',
+    campaign:cells[ix('campaign')]||'',assignment:cells[ix('assignment')]||'',assignment_id:cells[ix('assignment_id')]||''
   }));
 }
 
@@ -1017,8 +1053,8 @@ function wire(){
     if(!$('#helpModal').classList.contains('hidden')){if(e.key==='Escape')closeDialog('#helpModal');else trapFocus(e,'#helpModal');return;}
     if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'){undoLast();e.preventDefault();return;}
     if(e.target.tagName==='TEXTAREA'||e.target.tagName==='INPUT'||e.target.tagName==='SELECT') return;
-    const map5={'1':'intact','2':'moderate','3':'severe','4':'notthicket','5':'unsure'};
-    if(map5[e.key]){ setLabel(map5[e.key]); e.preventDefault(); }
+    const map6={'1':'intact','2':'moderate','3':'severe','4':'transformed','5':'nothicket','6':'unsure'};
+    if(map6[e.key]){ setLabel(map6[e.key]); e.preventDefault(); }
     else if(e.key==='ArrowRight'||e.key===' '){ gotoIdx(curIdx+1); e.preventDefault(); }
     else if(e.key==='ArrowLeft'){ gotoIdx(curIdx-1); e.preventDefault(); }
     else if(e.key.toLowerCase()==='n'){ nextForFilter(); e.preventDefault(); }
@@ -1046,8 +1082,14 @@ function boot(){
   loadStore(); loadUI();
   // expose for tooling / debugging (harmless in production)
   window.POINTS=POINTS;
+  window.ASSIGNMENT=ASSIGNMENT_RECORD?{campaign:CAMPAIGN,code:ASSIGNMENT_CODE,id:ASSIGNMENT_ID,assigned:POINTS.length}:null;
   Object.defineProperty(window,'labels',{get:()=>labels});
   $('#labelerName').value = labeler;
+  const assignmentText=ASSIGNMENT_RECORD
+    ? `${CAMPAIGN||'Campaign'} · assignment ${ASSIGNMENT_CODE} · ${POINTS.length} points`
+    : ASSIGNMENT_ERROR||(ASSIGNMENT_CODES.length?`Coordinator mode · all ${POINTS.length} points`:`No assignment campaign · all ${POINTS.length} points`);
+  ['#assignmentStatus','#introAssignment'].forEach(sel=>{const el=$(sel);el.textContent=assignmentText;el.classList.toggle('error',!!ASSIGNMENT_ERROR);});
+  if(ASSIGNMENT_ERROR){ $('#startBtn').disabled=true; $('#welcomeUpload').disabled=true; }
   $('#blindMode').checked=blindMode; $('#autoAdvance').checked=autoAdvance;
   $('#pointFilter').value=pointFilter;
   document.querySelectorAll('.model-key').forEach(x=>x.classList.toggle('hidden',blindMode));
