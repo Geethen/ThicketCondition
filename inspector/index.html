@@ -1687,25 +1687,46 @@ async function wbLocalReleases(pt){
 
 // True acquisition date (not release date) from the release metadata MapServer.
 const _wbCapCache = new Map();
+function formatWbCaptureDate(a){
+  if(!a) return '';
+  // Esri commonly supplies SRC_DATE2 as M/D/YYYY and SRC_DATE as YYYYMMDD.
+  // Normalize both to an unambiguous format that matches the release selector.
+  const readable = String(a.SRC_DATE2 || '').trim();
+  let m = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/.exec(readable);
+  if(m) return `${m[3]}-${m[1].padStart(2,'0')}-${m[2].padStart(2,'0')}`;
+  const compact = String(a.SRC_DATE || '').trim();
+  m = /^(\d{4})(\d{2})(\d{2})$/.exec(compact);
+  if(m) return `${m[1]}-${m[2]}-${m[3]}`;
+  return readable || compact;
+}
 async function lookupCaptureDate(rel){
   const el = $('#wbCapDate'); if(!el) return;
+  // Invalidate every older request before taking a synchronous cache/fallback
+  // path. Otherwise a slow response for the previously selected release can
+  // overwrite the date we display for this one.
+  const myId = ++wb.capId;
   if(!rel.metaUrl){ el.textContent = rel.date + ' (release)'; return; }
   const c = map.getCenter();
-  const key = rel.num + '@' + c.lng.toFixed(4) + ',' + c.lat.toFixed(4);
+  // Capture footprints can have sharp boundaries; do not share cached results
+  // between points that are several metres apart.
+  const key = rel.num + '@' + c.lng.toFixed(6) + ',' + c.lat.toFixed(6);
   if(_wbCapCache.has(key)){ el.textContent = _wbCapCache.get(key); return; }
-  const myId = ++wb.capId;
   el.innerHTML = '<span class="wbspin"></span>';
   try{
     let a = await _wbIdentify(rel, c, 'top');
-    if(!a || a.SRC_DATE==null) a = await _wbIdentify(rel, c, 'all');
+    if(!a || (a.SRC_DATE==null && !a.SRC_DATE2)) a = await _wbIdentify(rel, c, 'all');
     if(myId !== wb.capId) return;
-    const d = a && (a.SRC_DATE || a.SRC_DATE2 || a.SAMP_RES);
+    // SAMP_RES is spatial resolution, not a date, and must never be shown here.
+    const d = formatWbCaptureDate(a);
     const txt = d ? String(d) : (rel.date + ' (release)');
     _wbCapCache.set(key, txt); el.textContent = txt;
   }catch(e){ if(myId===wb.capId) el.textContent = rel.date + ' (release)'; }
 }
 async function _wbIdentify(rel, pt, layersMode){
-  const z = map.getZoom();
+  // Esri's metadata layers stop being visible above roughly level 17. The
+  // imagery tiles continue to zoom further, so identify at the highest scale
+  // for which the capture-footprint layers are still queryable.
+  const z = Math.min(map.getZoom(), 17);
   const half = 360/Math.pow(2,z)/2;
   const ext = [pt.lng-half, pt.lat-half, pt.lng+half, pt.lat+half];
   const qs = new URLSearchParams({
@@ -1715,7 +1736,11 @@ async function _wbIdentify(rel, pt, layersMode){
     returnGeometry:'false', mapExtent: ext.join(','), imageDisplay:'512,512,96',
     layers: layersMode
   });
-  const j = await fetch(rel.metaUrl + '/identify?' + qs).then(r=>r.json());
+  const j = await fetch(rel.metaUrl + '/identify?' + qs).then(r=>{
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    return r.json();
+  });
+  if(j && j.error) throw new Error(j.error.message || 'Wayback identify failed');
   return j && j.results && j.results[0] && j.results[0].attributes;
 }
 
