@@ -422,9 +422,16 @@ async function wbLocalReleases(pt){
 const _wbCapCache = new Map();
 function formatWbCaptureDate(a){
   if(!a) return '';
-  // Esri commonly supplies SRC_DATE2 as M/D/YYYY and SRC_DATE as YYYYMMDD.
-  // Normalize both to an unambiguous format that matches the release selector.
-  const readable = String(a.SRC_DATE2 || '').trim();
+  // /query returns date fields as epoch milliseconds; older services and the
+  // former /identify path may supply M/D/YYYY or compact YYYYMMDD instead.
+  const sourceDate2 = a.SRC_DATE2;
+  const epoch = typeof sourceDate2==='number' ? sourceDate2
+    : (/^\d{12,}$/.test(String(sourceDate2||'')) ? Number(sourceDate2) : NaN);
+  if(Number.isFinite(epoch)){
+    const d = new Date(epoch);
+    if(!Number.isNaN(d.getTime())) return d.toISOString().slice(0,10);
+  }
+  const readable = String(sourceDate2 || '').trim();
   let m = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/.exec(readable);
   if(m) return `${m[3]}-${m[1].padStart(2,'0')}-${m[2].padStart(2,'0')}`;
   const compact = String(a.SRC_DATE || '').trim();
@@ -440,14 +447,14 @@ async function lookupCaptureDate(rel){
   const myId = ++wb.capId;
   if(!rel.metaUrl){ el.textContent = rel.date + ' (release)'; return; }
   const c = map.getCenter();
+  const layerId = Math.max(0, Math.min(13, 23-Math.round(map.getZoom())));
   // Capture footprints can have sharp boundaries; do not share cached results
-  // between points that are several metres apart.
-  const key = rel.num + '@' + c.lng.toFixed(6) + ',' + c.lat.toFixed(6);
+  // between points that are several metres apart or different resolution bands.
+  const key = rel.num + '@' + c.lng.toFixed(6) + ',' + c.lat.toFixed(6) + '/'+layerId;
   if(_wbCapCache.has(key)){ el.textContent = _wbCapCache.get(key); return; }
   el.innerHTML = '<span class="wbspin"></span>';
   try{
-    let a = await _wbIdentify(rel, c, 'top');
-    if(!a || (a.SRC_DATE==null && !a.SRC_DATE2)) a = await _wbIdentify(rel, c, 'all');
+    const a = await _wbQueryMetadata(rel, c, layerId);
     if(myId !== wb.capId) return;
     // SAMP_RES is spatial resolution, not a date, and must never be shown here.
     const d = formatWbCaptureDate(a);
@@ -455,26 +462,26 @@ async function lookupCaptureDate(rel){
     _wbCapCache.set(key, txt); el.textContent = txt;
   }catch(e){ if(myId===wb.capId) el.textContent = rel.date + ' (release)'; }
 }
-async function _wbIdentify(rel, pt, layersMode){
-  // Esri's metadata layers stop being visible above roughly level 17. The
-  // imagery tiles continue to zoom further, so identify at the highest scale
-  // for which the capture-footprint layers are still queryable.
-  const z = Math.min(map.getZoom(), 17);
-  const half = 360/Math.pow(2,z)/2;
-  const ext = [pt.lng-half, pt.lat-half, pt.lng+half, pt.lat+half];
-  const qs = new URLSearchParams({
-    f:'json',
-    geometry: JSON.stringify({x:pt.lng, y:pt.lat, spatialReference:{wkid:4326}}),
-    geometryType:'esriGeometryPoint', sr:'4326', tolerance:'2',
-    returnGeometry:'false', mapExtent: ext.join(','), imageDisplay:'512,512,96',
-    layers: layersMode
-  });
-  const j = await fetch(rel.metaUrl + '/identify?' + qs).then(r=>{
-    if(!r.ok) throw new Error('HTTP '+r.status);
-    return r.json();
-  });
-  if(j && j.error) throw new Error(j.error.message || 'Wayback identify failed');
-  return j && j.results && j.results[0] && j.results[0].attributes;
+async function _wbQueryMetadata(rel, pt, firstLayer){
+  // Match @esri/wayback-core: point-intersects query on metadata sublayer
+  // 23 - zoom. Some old releases have gaps in fine bands, so walk toward the
+  // coarser bands only when the matching band has no footprint at this point.
+  for(let layerId=firstLayer; layerId<=13; layerId++){
+    const qs = new URLSearchParams({
+      f:'json', where:'1=1', outFields:'SRC_DATE,SRC_DATE2',
+      geometry:JSON.stringify({x:pt.lng,y:pt.lat,spatialReference:{wkid:4326}}),
+      geometryType:'esriGeometryPoint', inSR:'4326',
+      spatialRel:'esriSpatialRelIntersects', returnGeometry:'false'
+    });
+    const j = await fetch(rel.metaUrl+'/'+layerId+'/query?'+qs).then(r=>{
+      if(!r.ok) throw new Error('HTTP '+r.status);
+      return r.json();
+    });
+    if(j && j.error) throw new Error(j.error.message || 'Wayback metadata query failed');
+    const a = j && j.features && j.features[0] && j.features[0].attributes;
+    if(a && (a.SRC_DATE!=null || a.SRC_DATE2!=null)) return a;
+  }
+  return null;
 }
 
 // ---- swipe compare: a second, non-interactive map clipped by a draggable divider
