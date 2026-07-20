@@ -1,0 +1,1168 @@
+{
+  "sensitivity_adjudication": {
+    "ARP": {
+      "adjudicate": "ARP",
+      "part": "2b - EFG x class area, all Part-1 methods (per EFG)",
+      "n_unique_points": 462,
+      "qa_agreement": {
+        "n_duplicated": 12,
+        "n_agree": 8,
+        "n_disagree": 4,
+        "disagreements": [
+          {
+            "id": 150,
+            "stratum": "intact",
+            "ARP": "moderate",
+            "SVM": "intact"
+          },
+          {
+            "id": 211,
+            "stratum": "intact",
+            "ARP": "moderate",
+            "SVM": "intact"
+          },
+          {
+            "id": 291,
+            "stratum": "moderate",
+            "ARP": "moderate",
+            "SVM": "intact"
+          },
+          {
+            "id": 550,
+            "stratum": "severe",
+            "ARP": "nothicket",
+            "SVM": "severe"
+          }
+        ]
+      },
+      "methods": [
+        "olofsson",
+        "ppi_continuous",
+        "ppi_bootstrap",
+        "crossppi",
+        "label_shift",
+        "classical"
+      ],
+      "baseline_method": "olofsson",
+      "scenarios": {
+        "A_nothicket_class": {
+          "nothicket_mode": "class",
+          "efg": {
+            "Arid": {
+              "n": 174,
+              "n_cell": {
+                "10": 24,
+                "11": 41,
+                "12": 109
+              },
+              "non_estimable": false,
+              "classes": {
+                "intact": {
+                  "olofsson": {
+                    "area": 94849.67628796386,
+                    "se_area": 11291.895970576226
+                  },
+                  "classical": {
+                    "area": 94849.67628796386,
+                    "se_area": 17586.965022407414
+                  },
+                  "ppi_continuous": {
+                    "area": 93493.12714378365,
+                    "se_area": 12962.550894621747
+                  },
+                  "ppi_bootstrap": {
+                    "area": null,
+                    "se_area": 14334.46477948418
+                  },
+                  "crossppi": {
+                    "area": 93260.68812546662,
+                    "se_area": 14040.213672536425
+                  },
+                  "label_shift": {
+                    "error": "skipped: nothicket ref not in K=3 model"
+                  }
+                },
+                "moderate": {
+                  "olofsson": {
+                    "area": 188565.25977960127,
+                    "se_area": 23504.721701211205
+                  },
+                  "classical": {
+                    "area": 188565.2597796012,
+                    "se_area": 24617.225289177208
+                  },
+                  "ppi_continuous": {
+                    "area": 191219.9707981412,
+                    "se_area": 23216.13511794142
+                  },
+                  "ppi_bootstrap": {
+                    "area": null,
+                    "se_area": 24725.50776831325
+                  },
+                  "crossppi": {
+                    "area": 186753.24774309903,
+                    "se_area": 23355.42224922438
+                  },
+                  "label_shift": {
+                    "error": "skipped: nothicket ref not in K=3 model"
+                  }
+                },
+                "severe": {
+                  "olofsson": {
+                    "area": 372559.707849354,
+                    "se_area": 26212.23685197929
+                  },
+                  "classical": {
+                    "area": 372559.70784935384,
+                    "se_area": 29249.138956582032
+                  },
+                  "ppi_continuous": {
+                    "area": 371415.77741526935,
+                    "se_area": 26760.63979333487
+                  },
+                  "ppi_bootstrap": {
+                    "area": null,
+                    "se_area": 30622.67390623647
+                  },
+                  "crossppi": {
+                    "area": 379544.937803352,
+                    "se_area": 26691.285501528902
+                  },
+                  "label_shift": {
+                    "error": "skipped: nothicket ref not in K=3 model"
+                  }
+                }
+              }
+            },
+            "Valley": {
+              "n": 215,
+              "n_cell": {
+                "20": 62,
+                "21": 78,
+                "22": 75
+              },
+              "non_estimable": false,
+              "classes": {
+                "intact": {
+                  "olofsson": {
+                    "area": 288600.9335679571,
+                    "se_area": 18245.680731076434
+                  },
+                  "classical": {
+                    "area": 288600.9335679571,
+                    "se_area": 29771.08109550617
+                  },
+                  "ppi_continuous": {
+                    "area": 286692.9552740742,
+                    "se_area": 18572.9690905031
+                  },
+                  "ppi_bootstrap": {
+                    "area": null,
+                    "se_area": 17987.15288935932
+                  },
+                  "crossppi": {
+                    "area": 276378.0504023399,
+                    "se_area": 18347.603337600278
+                  },
+                  "label_shift": {
+                    "error": "skipped: nothicket ref not in K=3 model"
+                  }
+                },
+                "moderate": {
+                  "olofsson": {
+                    "area": 263164.70395447296,
+                    "se_area": 23749.96117686956
+                  },
+                  "classical": {
+                    "area": 263164.7039544731,
+                    "se_area": 26022.424833347246
+                  },
+                  "ppi_continuous": {
+                    "area": 253573.7006984658,
+                    "se_area": 23516.183644541317
+                  },
+                  "ppi_bootstrap": {
+                    "area": null,
+                    "se_area": 23350.044512843706
+                  },
+                  "crossppi": {
+                    "area": 260657.6754921132,
+                    "se_area": 24246.10389784332
+                  },
+                  "label_shift": {
+                    "error": "skipped: nothicket ref not in K=3 model"
+                  }
+                },
+                "severe": {
+                  "olofsson": {
+                    "area": 265736.012500792,
+                    "se_area": 19768.273766634178
+                  },
+                  "classical": {
+                    "area": 265736.012500792,
+                    "se_area": 26992.167182573998
+                  },
+                  "ppi_continuous": {
+                    "area": 277234.99389947666,
+                    "se_area": 20076.14652519032
+                  },
+                  "ppi_bootstrap": {
+                    "area": null,
+                    "se_area": 18443.5199062793
+                  },
+                  "crossppi": {
+                    "area": 279922.52860496024,
+                    "se_area": 20895.462282005927
+                  },
+                  "label_shift": {
+                    "error": "skipped: nothicket ref not in K=3 model"
+                  }
+                }
+              }
+            },
+            "Mesic": {
+              "n": 73,
+              "n_cell": {
+                "30": 38,
+                "31": 32,
+                "32": 3
+              },
+              "non_estimable": false,
+              "classes": {
+                "intact": {
+                  "olofsson": {
+                    "area": 158102.05973185442,
+                    "se_area": 7920.57208782114
+                  },
+                  "classical": {
+                    "area": 158102.05973185442,
+                    "se_area": 17337.852734280936
+                  },
+                  "ppi_continuous": {
+                    "area": 159322.51392387948,
+                    "se_area": 10604.652381999758
+                  },
+                  "ppi_bootstrap": {
+                    "area": null,
+                    "se_area": 10065.076745154896
+                  },
+                  "crossppi": {
+                    "area": 156088.80633152678,
+                    "se_area": 10841.77210036425
+                  },
+                  "label_shift": {
+                    "error": "skipped: nothicket ref not in K=3 model"
+                  }
+                },
+                "moderate": {
+                  "olofsson": {
+                    "area": 73296.62726816084,
+                    "se_area": 10721.719201834458
+                  },
+                  "classical": {
+                    "area": 73296.62726816085,
+                    "se_area": 13113.918879011255
+                  },
+                  "ppi_continuous": {
+                    "area": 72534.22835725317,
+                    "se_area": 11982.580701663295
+                  },
+                  "ppi_bootstrap": {
+                    "area": null,
+                    "se_area": 12232.982999599639
+                  },
+                  "crossppi": {
+                    "area": 79031.82881310863,
+                    "se_area": 12667.952284073754
+                  },
+                  "label_shift": {
+                    "error": "skipped: nothicket ref not in K=3 model"
+                  }
+                },
+                "severe": {
+                  "olofsson": {
+                    "area": 41081.13206766764,
+                    "se_area": 11055.504050355925
+                  },
+                  "classical": {
+                    "area": 41081.13206766765,
+                    "se_area": 13225.434478231715
+                  },
+                  "ppi_continuous": {
+                    "area": 40623.07626712252,
+                    "se_area": 10252.589163576014
+                  },
+                  "ppi_bootstrap": {
+                    "area": null,
+                    "se_area": 10974.494324895328
+                  },
+                  "crossppi": {
+                    "area": 40380.84795527599,
+                    "se_area": 10351.525908045802
+                  },
+                  "label_shift": {
+                    "error": "skipped: nothicket ref not in K=3 model"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "B_nothicket_to_severe": {
+          "nothicket_mode": "severe",
+          "efg": {
+            "Arid": {
+              "n": 174,
+              "n_cell": {
+                "10": 24,
+                "11": 41,
+                "12": 109
+              },
+              "non_estimable": false,
+              "classes": {
+                "intact": {
+                  "olofsson": {
+                    "area": 94849.67628796386,
+                    "se_area": 11291.895970576226
+                  },
+                  "classical": {
+                    "area": 94849.67628796386,
+                    "se_area": 17586.965022407414
+                  },
+                  "ppi_continuous": {
+                    "area": 93493.12714378365,
+                    "se_area": 12962.550894621747
+                  },
+                  "ppi_bootstrap": {
+                    "area": null,
+                    "se_area": 13411.471103868775
+                  },
+                  "crossppi": {
+                    "area": 93351.31311433366,
+                    "se_area": 14040.54409816776
+                  },
+                  "label_shift": {
+                    "area": 142671.24922258718,
+                    "se_area": 72792.79126961506
+                  }
+                },
+                "moderate": {
+                  "olofsson": {
+                    "area": 188565.25977960127,
+                    "se_area": 23504.721701211205
+                  },
+                  "classical": {
+                    "area": 188565.2597796012,
+                    "se_area": 24617.225289177208
+                  },
+                  "ppi_continuous": {
+                    "area": 191219.9707981412,
+                    "se_area": 23216.13511794142
+                  },
+                  "ppi_bootstrap": {
+                    "area": null,
+                    "se_area": 25070.704918152263
+                  },
+                  "crossppi": {
+                    "area": 187927.86643407642,
+                    "se_area": 23355.67775957426
+                  },
+                  "label_shift": {
+                    "area": 173201.01092645215,
+                    "se_area": 88369.48652762991
+                  }
+                },
+                "severe": {
+                  "olofsson": {
+                    "area": 466671.62572359707,
+                    "se_area": 22177.01624126221
+                  },
+                  "classical": {
+                    "area": 466671.6257235968,
+                    "se_area": 28694.231418855736
+                  },
+                  "ppi_continuous": {
+                    "area": 464958.78064644826,
+                    "se_area": 22315.556570075045
+                  },
+                  "ppi_bootstrap": {
+                    "area": null,
+                    "se_area": 21096.183475434173
+                  },
+                  "crossppi": {
+                    "area": 468807.3824435908,
+                    "se_area": 22024.23923851754
+                  },
+                  "label_shift": {
+                    "area": 514367.1953371545,
+                    "se_area": 101028.68138595065
+                  }
+                }
+              }
+            },
+            "Valley": {
+              "n": 215,
+              "n_cell": {
+                "20": 62,
+                "21": 78,
+                "22": 75
+              },
+              "non_estimable": false,
+              "classes": {
+                "intact": {
+                  "olofsson": {
+                    "area": 288600.9335679571,
+                    "se_area": 18245.680731076434
+                  },
+                  "classical": {
+                    "area": 288600.9335679571,
+                    "se_area": 29771.08109550617
+                  },
+                  "ppi_continuous": {
+                    "area": 286692.9552740742,
+                    "se_area": 18572.9690905031
+                  },
+                  "ppi_bootstrap": {
+                    "area": null,
+                    "se_area": 15789.001354223918
+                  },
+                  "crossppi": {
+                    "area": 273715.9314437764,
+                    "se_area": 18346.858955593543
+                  },
+                  "label_shift": {
+                    "area": 319620.60546485963,
+                    "se_area": 68229.6919475355
+                  }
+                },
+                "moderate": {
+                  "olofsson": {
+                    "area": 263164.70395447296,
+                    "se_area": 23749.96117686956
+                  },
+                  "classical": {
+                    "area": 263164.7039544731,
+                    "se_area": 26022.424833347246
+                  },
+                  "ppi_continuous": {
+                    "area": 253573.7006984658,
+                    "se_area": 23516.183644541317
+                  },
+                  "ppi_bootstrap": {
+                    "area": null,
+                    "se_area": 23656.29692466768
+                  },
+                  "crossppi": {
+                    "area": 260972.90107306055,
+                    "se_area": 24246.16262645348
+                  },
+                  "label_shift": {
+                    "area": 198035.57073995552,
+                    "se_area": 68229.69194753547
+                  }
+                },
+                "severe": {
+                  "olofsson": {
+                    "area": 313485.7158951481,
+                    "se_area": 19031.145578714306
+                  },
+                  "classical": {
+                    "area": 313485.71589514817,
+                    "se_area": 28124.402722658226
+                  },
+                  "ppi_continuous": {
+                    "area": 324984.6972938327,
+                    "se_area": 19959.54207651513
+                  },
+                  "ppi_bootstrap": {
+                    "area": null,
+                    "se_area": 21764.390658491004
+                  },
+                  "crossppi": {
+                    "area": 330562.52061310364,
+                    "se_area": 20845.013414601686
+                  },
+                  "label_shift": {
+                    "area": 347595.17721276305,
+                    "se_area": 68229.6919475355
+                  }
+                }
+              }
+            },
+            "Mesic": {
+              "n": 73,
+              "n_cell": {
+                "30": 38,
+                "31": 32,
+                "32": 3
+              },
+              "non_estimable": false,
+              "classes": {
+                "intact": {
+                  "olofsson": {
+                    "area": 158102.05973185442,
+                    "se_area": 7920.57208782114
+                  },
+                  "classical": {
+                    "area": 158102.05973185442,
+                    "se_area": 17337.852734280936
+                  },
+                  "ppi_continuous": {
+                    "area": 159322.51392387948,
+                    "se_area": 10604.652381999758
+                  },
+                  "ppi_bootstrap": {
+                    "area": null,
+                    "se_area": 9402.719941151518
+                  },
+                  "crossppi": {
+                    "area": 155232.45489470416,
+                    "se_area": 10841.886817468412
+                  },
+                  "label_shift": {
+                    "area": 166939.713706518,
+                    "se_area": 58245.79185532055
+                  }
+                },
+                "moderate": {
+                  "olofsson": {
+                    "area": 73296.62726816084,
+                    "se_area": 10721.719201834458
+                  },
+                  "classical": {
+                    "area": 73296.62726816085,
+                    "se_area": 13113.918879011255
+                  },
+                  "ppi_continuous": {
+                    "area": 72534.22835725317,
+                    "se_area": 11982.580701663295
+                  },
+                  "ppi_bootstrap": {
+                    "area": null,
+                    "se_area": 11359.493970065103
+                  },
+                  "crossppi": {
+                    "area": 79151.82179739357,
+                    "se_area": 12667.97341287522
+                  },
+                  "label_shift": {
+                    "area": 69004.30624780702,
+                    "se_area": 35206.92563338112
+                  }
+                },
+                "severe": {
+                  "olofsson": {
+                    "area": 51863.40204187927,
+                    "se_area": 8405.37436695094
+                  },
+                  "classical": {
+                    "area": 51863.40204187928,
+                    "se_area": 15114.824356155428
+                  },
+                  "ppi_continuous": {
+                    "area": 51405.34624133414,
+                    "se_area": 10749.702191707429
+                  },
+                  "ppi_bootstrap": {
+                    "area": null,
+                    "se_area": 9388.580255085137
+                  },
+                  "crossppi": {
+                    "area": 48877.81160419123,
+                    "se_area": 10772.063194059961
+                  },
+                  "label_shift": {
+                    "area": 103316.53570732592,
+                    "se_area": 52713.486840714206
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "SVM": {
+      "adjudicate": "SVM",
+      "part": "2b - EFG x class area, all Part-1 methods (per EFG)",
+      "n_unique_points": 462,
+      "qa_agreement": {
+        "n_duplicated": 12,
+        "n_agree": 8,
+        "n_disagree": 4,
+        "disagreements": [
+          {
+            "id": 150,
+            "stratum": "intact",
+            "ARP": "moderate",
+            "SVM": "intact"
+          },
+          {
+            "id": 211,
+            "stratum": "intact",
+            "ARP": "moderate",
+            "SVM": "intact"
+          },
+          {
+            "id": 291,
+            "stratum": "moderate",
+            "ARP": "moderate",
+            "SVM": "intact"
+          },
+          {
+            "id": 550,
+            "stratum": "severe",
+            "ARP": "nothicket",
+            "SVM": "severe"
+          }
+        ]
+      },
+      "methods": [
+        "olofsson",
+        "ppi_continuous",
+        "ppi_bootstrap",
+        "crossppi",
+        "label_shift",
+        "classical"
+      ],
+      "baseline_method": "olofsson",
+      "scenarios": {
+        "A_nothicket_class": {
+          "nothicket_mode": "class",
+          "efg": {
+            "Arid": {
+              "n": 174,
+              "n_cell": {
+                "10": 24,
+                "11": 41,
+                "12": 109
+              },
+              "non_estimable": false,
+              "classes": {
+                "intact": {
+                  "olofsson": {
+                    "area": 94849.67628796386,
+                    "se_area": 11291.895970576226
+                  },
+                  "classical": {
+                    "area": 94849.67628796386,
+                    "se_area": 17586.965022407414
+                  },
+                  "ppi_continuous": {
+                    "area": 93493.12714378365,
+                    "se_area": 12962.550894621747
+                  },
+                  "ppi_bootstrap": {
+                    "area": null,
+                    "se_area": 13305.038218559845
+                  },
+                  "crossppi": {
+                    "area": 93307.16868700781,
+                    "se_area": 14040.478902393832
+                  },
+                  "label_shift": {
+                    "error": "skipped: nothicket ref not in K=3 model"
+                  }
+                },
+                "moderate": {
+                  "olofsson": {
+                    "area": 188565.25977960127,
+                    "se_area": 23504.721701211205
+                  },
+                  "classical": {
+                    "area": 188565.2597796012,
+                    "se_area": 24617.225289177208
+                  },
+                  "ppi_continuous": {
+                    "area": 191219.9707981412,
+                    "se_area": 23216.13511794142
+                  },
+                  "ppi_bootstrap": {
+                    "area": null,
+                    "se_area": 26488.785487173715
+                  },
+                  "crossppi": {
+                    "area": 187066.05067932484,
+                    "se_area": 23355.39006260103
+                  },
+                  "label_shift": {
+                    "error": "skipped: nothicket ref not in K=3 model"
+                  }
+                },
+                "severe": {
+                  "olofsson": {
+                    "area": 377041.22774812754,
+                    "se_area": 26105.60219899721
+                  },
+                  "classical": {
+                    "area": 377041.22774812736,
+                    "se_area": 29262.425265801532
+                  },
+                  "ppi_continuous": {
+                    "area": 375856.043798414,
+                    "se_area": 26594.49508735155
+                  },
+                  "ppi_bootstrap": {
+                    "area": null,
+                    "se_area": 26227.11950925855
+                  },
+                  "crossppi": {
+                    "area": 383496.4965534649,
+                    "se_area": 26466.673505498544
+                  },
+                  "label_shift": {
+                    "error": "skipped: nothicket ref not in K=3 model"
+                  }
+                }
+              }
+            },
+            "Valley": {
+              "n": 215,
+              "n_cell": {
+                "20": 62,
+                "21": 78,
+                "22": 75
+              },
+              "non_estimable": false,
+              "classes": {
+                "intact": {
+                  "olofsson": {
+                    "area": 301309.813272501,
+                    "se_area": 17629.004644775956
+                  },
+                  "classical": {
+                    "area": 301309.8132725011,
+                    "se_area": 30100.36621665609
+                  },
+                  "ppi_continuous": {
+                    "area": 299401.83497861825,
+                    "se_area": 18895.335818319545
+                  },
+                  "ppi_bootstrap": {
+                    "area": null,
+                    "se_area": 15701.344222226287
+                  },
+                  "crossppi": {
+                    "area": 288992.79008523584,
+                    "se_area": 18708.62046155191
+                  },
+                  "label_shift": {
+                    "error": "skipped: nothicket ref not in K=3 model"
+                  }
+                },
+                "moderate": {
+                  "olofsson": {
+                    "area": 250455.824249929,
+                    "se_area": 23138.185798682414
+                  },
+                  "classical": {
+                    "area": 250455.82424992908,
+                    "se_area": 25552.734121695703
+                  },
+                  "ppi_continuous": {
+                    "area": 240864.8209939218,
+                    "se_area": 23227.30683762364
+                  },
+                  "ppi_bootstrap": {
+                    "area": null,
+                    "se_area": 22507.751530467576
+                  },
+                  "crossppi": {
+                    "area": 249786.90158457225,
+                    "se_area": 24019.662150561104
+                  },
+                  "label_shift": {
+                    "error": "skipped: nothicket ref not in K=3 model"
+                  }
+                },
+                "severe": {
+                  "olofsson": {
+                    "area": 265736.012500792,
+                    "se_area": 19768.273766634178
+                  },
+                  "classical": {
+                    "area": 265736.012500792,
+                    "se_area": 26992.167182573998
+                  },
+                  "ppi_continuous": {
+                    "area": 277234.99389947666,
+                    "se_area": 20076.14652519032
+                  },
+                  "ppi_bootstrap": {
+                    "area": null,
+                    "se_area": 21674.733796961595
+                  },
+                  "crossppi": {
+                    "area": 278178.56277964386,
+                    "se_area": 20895.077686155797
+                  },
+                  "label_shift": {
+                    "error": "skipped: nothicket ref not in K=3 model"
+                  }
+                }
+              }
+            },
+            "Mesic": {
+              "n": 73,
+              "n_cell": {
+                "30": 38,
+                "31": 32,
+                "32": 3
+              },
+              "non_estimable": false,
+              "classes": {
+                "intact": {
+                  "olofsson": {
+                    "area": 158102.05973185442,
+                    "se_area": 7920.57208782114
+                  },
+                  "classical": {
+                    "area": 158102.05973185442,
+                    "se_area": 17337.852734280936
+                  },
+                  "ppi_continuous": {
+                    "area": 159322.51392387948,
+                    "se_area": 10604.652381999758
+                  },
+                  "ppi_bootstrap": {
+                    "area": null,
+                    "se_area": 9467.557993611943
+                  },
+                  "crossppi": {
+                    "area": 154241.19379565853,
+                    "se_area": 10841.770895231948
+                  },
+                  "label_shift": {
+                    "error": "skipped: nothicket ref not in K=3 model"
+                  }
+                },
+                "moderate": {
+                  "olofsson": {
+                    "area": 73296.62726816084,
+                    "se_area": 10721.719201834458
+                  },
+                  "classical": {
+                    "area": 73296.62726816085,
+                    "se_area": 13113.918879011255
+                  },
+                  "ppi_continuous": {
+                    "area": 72534.22835725317,
+                    "se_area": 11982.580701663295
+                  },
+                  "ppi_bootstrap": {
+                    "area": null,
+                    "se_area": 11420.239304330673
+                  },
+                  "crossppi": {
+                    "area": 79696.90127797124,
+                    "se_area": 12667.92144927795
+                  },
+                  "label_shift": {
+                    "error": "skipped: nothicket ref not in K=3 model"
+                  }
+                },
+                "severe": {
+                  "olofsson": {
+                    "area": 41081.13206766764,
+                    "se_area": 11055.504050355925
+                  },
+                  "classical": {
+                    "area": 41081.13206766765,
+                    "se_area": 13225.434478231715
+                  },
+                  "ppi_continuous": {
+                    "area": 40623.07626712252,
+                    "se_area": 10252.589163576014
+                  },
+                  "ppi_bootstrap": {
+                    "area": null,
+                    "se_area": 9183.168027342985
+                  },
+                  "crossppi": {
+                    "area": 41563.38806606397,
+                    "se_area": 10351.742036814205
+                  },
+                  "label_shift": {
+                    "error": "skipped: nothicket ref not in K=3 model"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "B_nothicket_to_severe": {
+          "nothicket_mode": "severe",
+          "efg": {
+            "Arid": {
+              "n": 174,
+              "n_cell": {
+                "10": 24,
+                "11": 41,
+                "12": 109
+              },
+              "non_estimable": false,
+              "classes": {
+                "intact": {
+                  "olofsson": {
+                    "area": 94849.67628796386,
+                    "se_area": 11291.895970576226
+                  },
+                  "classical": {
+                    "area": 94849.67628796386,
+                    "se_area": 17586.965022407414
+                  },
+                  "ppi_continuous": {
+                    "area": 93493.12714378365,
+                    "se_area": 12962.550894621747
+                  },
+                  "ppi_bootstrap": {
+                    "area": null,
+                    "se_area": 13147.36550703347
+                  },
+                  "crossppi": {
+                    "area": 94293.26990661756,
+                    "se_area": 14041.104052385455
+                  },
+                  "label_shift": {
+                    "area": 142671.24922258718,
+                    "se_area": 72792.79126961506
+                  }
+                },
+                "moderate": {
+                  "olofsson": {
+                    "area": 188565.25977960127,
+                    "se_area": 23504.721701211205
+                  },
+                  "classical": {
+                    "area": 188565.2597796012,
+                    "se_area": 24617.225289177208
+                  },
+                  "ppi_continuous": {
+                    "area": 191219.9707981412,
+                    "se_area": 23216.13511794142
+                  },
+                  "ppi_bootstrap": {
+                    "area": null,
+                    "se_area": 22391.56025276737
+                  },
+                  "crossppi": {
+                    "area": 186315.38015646552,
+                    "se_area": 23355.45261922137
+                  },
+                  "label_shift": {
+                    "area": 173201.01092645215,
+                    "se_area": 88369.48652762991
+                  }
+                },
+                "severe": {
+                  "olofsson": {
+                    "area": 466671.62572359707,
+                    "se_area": 22177.01624126221
+                  },
+                  "classical": {
+                    "area": 466671.6257235968,
+                    "se_area": 28694.231418855736
+                  },
+                  "ppi_continuous": {
+                    "area": 464958.78064644826,
+                    "se_area": 22315.556570075045
+                  },
+                  "ppi_bootstrap": {
+                    "area": null,
+                    "se_area": 20463.47327997793
+                  },
+                  "crossppi": {
+                    "area": 469477.9119076463,
+                    "se_area": 22024.320040511495
+                  },
+                  "label_shift": {
+                    "area": 514367.1953371545,
+                    "se_area": 101028.68138595065
+                  }
+                }
+              }
+            },
+            "Valley": {
+              "n": 215,
+              "n_cell": {
+                "20": 62,
+                "21": 78,
+                "22": 75
+              },
+              "non_estimable": false,
+              "classes": {
+                "intact": {
+                  "olofsson": {
+                    "area": 301309.813272501,
+                    "se_area": 17629.004644775956
+                  },
+                  "classical": {
+                    "area": 301309.8132725011,
+                    "se_area": 30100.36621665609
+                  },
+                  "ppi_continuous": {
+                    "area": 299401.83497861825,
+                    "se_area": 18895.335818319545
+                  },
+                  "ppi_bootstrap": {
+                    "area": null,
+                    "se_area": 18869.104590100655
+                  },
+                  "crossppi": {
+                    "area": 286982.2849009962,
+                    "se_area": 18708.963117679887
+                  },
+                  "label_shift": {
+                    "area": 329200.46335576306,
+                    "se_area": 67001.45675650192
+                  }
+                },
+                "moderate": {
+                  "olofsson": {
+                    "area": 250455.824249929,
+                    "se_area": 23138.185798682414
+                  },
+                  "classical": {
+                    "area": 250455.82424992908,
+                    "se_area": 25552.734121695703
+                  },
+                  "ppi_continuous": {
+                    "area": 240864.8209939218,
+                    "se_area": 23227.30683762364
+                  },
+                  "ppi_bootstrap": {
+                    "area": null,
+                    "se_area": 20177.15291404904
+                  },
+                  "crossppi": {
+                    "area": 247979.79011728187,
+                    "se_area": 24019.55163667865
+                  },
+                  "label_shift": {
+                    "area": 188014.23071987866,
+                    "se_area": 67001.4567565019
+                  }
+                },
+                "severe": {
+                  "olofsson": {
+                    "area": 313485.7158951481,
+                    "se_area": 19031.145578714306
+                  },
+                  "classical": {
+                    "area": 313485.71589514817,
+                    "se_area": 28124.402722658226
+                  },
+                  "ppi_continuous": {
+                    "area": 324984.6972938327,
+                    "se_area": 19959.54207651513
+                  },
+                  "ppi_bootstrap": {
+                    "area": null,
+                    "se_area": 18395.411530631933
+                  },
+                  "crossppi": {
+                    "area": 330289.2781734696,
+                    "se_area": 20844.649744911938
+                  },
+                  "label_shift": {
+                    "area": 348036.6593419365,
+                    "se_area": 67001.45675650192
+                  }
+                }
+              }
+            },
+            "Mesic": {
+              "n": 73,
+              "n_cell": {
+                "30": 38,
+                "31": 32,
+                "32": 3
+              },
+              "non_estimable": false,
+              "classes": {
+                "intact": {
+                  "olofsson": {
+                    "area": 158102.05973185442,
+                    "se_area": 7920.57208782114
+                  },
+                  "classical": {
+                    "area": 158102.05973185442,
+                    "se_area": 17337.852734280936
+                  },
+                  "ppi_continuous": {
+                    "area": 159322.51392387948,
+                    "se_area": 10604.652381999758
+                  },
+                  "ppi_bootstrap": {
+                    "area": null,
+                    "se_area": 9118.571138928015
+                  },
+                  "crossppi": {
+                    "area": 155429.71708758365,
+                    "se_area": 10841.86929069867
+                  },
+                  "label_shift": {
+                    "area": 166939.713706518,
+                    "se_area": 58245.79185532055
+                  }
+                },
+                "moderate": {
+                  "olofsson": {
+                    "area": 73296.62726816084,
+                    "se_area": 10721.719201834458
+                  },
+                  "classical": {
+                    "area": 73296.62726816085,
+                    "se_area": 13113.918879011255
+                  },
+                  "ppi_continuous": {
+                    "area": 72534.22835725317,
+                    "se_area": 11982.580701663295
+                  },
+                  "ppi_bootstrap": {
+                    "area": null,
+                    "se_area": 11034.638371707106
+                  },
+                  "crossppi": {
+                    "area": 79052.73674018275,
+                    "se_area": 12667.968427599633
+                  },
+                  "label_shift": {
+                    "area": 69004.30624780702,
+                    "se_area": 35206.92563338112
+                  }
+                },
+                "severe": {
+                  "olofsson": {
+                    "area": 51863.40204187927,
+                    "se_area": 8405.37436695094
+                  },
+                  "classical": {
+                    "area": 51863.40204187928,
+                    "se_area": 15114.824356155428
+                  },
+                  "ppi_continuous": {
+                    "area": 51405.34624133414,
+                    "se_area": 10749.702191707429
+                  },
+                  "ppi_bootstrap": {
+                    "area": null,
+                    "se_area": 8891.506215070458
+                  },
+                  "crossppi": {
+                    "area": 48779.63451075827,
+                    "se_area": 10772.043709564927
+                  },
+                  "label_shift": {
+                    "area": 103316.53570732592,
+                    "se_area": 52713.486840714206
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

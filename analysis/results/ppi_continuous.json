@@ -1,0 +1,384 @@
+{
+  "sensitivity_adjudication": {
+    "ARP": {
+      "adjudicate": "ARP",
+      "method": "PPI++ with continuous RF probability predictor",
+      "pop_sample_n": 518268,
+      "pop_calibrated": true,
+      "pop_mean_prob_raw": {
+        "intact": 0.2885689382225509,
+        "moderate": 0.29258008698907606,
+        "severe": 0.41885097479834815
+      },
+      "pop_mean_prob_calibrated": {
+        "intact": 0.29503268084284207,
+        "moderate": 0.29586798113854745,
+        "severe": 0.4090993380286004
+      },
+      "scenarios": {
+        "A_nothicket_class": {
+          "nothicket_mode": "class",
+          "n_used": 462,
+          "n_h": {
+            "intact": 124,
+            "moderate": 151,
+            "severe": 187
+          },
+          "classes": {
+            "intact": {
+              "ppi_continuous": {
+                "p": 0.2839871316522357,
+                "se": 0.013405469930501561,
+                "area": 539177.9681549347,
+                "area_pm": 49884.268759710205,
+                "ci95_area": [
+                  489293.6993952245,
+                  589062.236914645
+                ]
+              },
+              "stratified": {
+                "p": 0.2857234248841485,
+                "se": 0.011999967829407494,
+                "area": 542474.4944850443
+              },
+              "olofsson": {
+                "p": 0.2857234248841485,
+                "se": 0.011999967829407494,
+                "area": 542474.4944850443
+              },
+              "se_ratio_ppi_over_stratified": 1.1171254890908706,
+              "ci_reduction_vs_stratified_pct": -11.712548909087062,
+              "ppi_beats_stratified": false
+            },
+            "moderate": {
+              "ppi_continuous": {
+                "p": 0.27420528729263033,
+                "se": 0.018479502644691982,
+                "area": 520606.15845378797,
+                "area_pm": 68765.69648454689,
+                "ci95_area": [
+                  451840.46196924103,
+                  589371.8549383348
+                ]
+              },
+              "stratified": {
+                "p": 0.2785063269299356,
+                "se": 0.018458806664974563,
+                "area": 528772.1123091758
+              },
+              "olofsson": {
+                "p": 0.27850632692993554,
+                "se": 0.018458806664974563,
+                "area": 528772.1123091757
+              },
+              "se_ratio_ppi_over_stratified": 1.0011211981409769,
+              "ci_reduction_vs_stratified_pct": -0.11211981409768867,
+              "ppi_beats_stratified": false
+            },
+            "severe": {
+              "ppi_continuous": {
+                "p": 0.362863643850728,
+                "se": 0.018421698365355826,
+                "area": 688932.9142149922,
+                "area_pm": 68550.5959158376,
+                "ci95_area": [
+                  620382.3182991545,
+                  757483.5101308298
+                ]
+              },
+              "stratified": {
+                "p": 0.35682631130437714,
+                "se": 0.017968391173170468,
+                "area": 677470.4346424905
+              },
+              "olofsson": {
+                "p": 0.35682631130437703,
+                "se": 0.017968391173170468,
+                "area": 677470.4346424902
+              },
+              "se_ratio_ppi_over_stratified": 1.025228034486594,
+              "ci_reduction_vs_stratified_pct": -2.5228034486594053,
+              "ppi_beats_stratified": false
+            }
+          }
+        },
+        "B_nothicket_to_severe": {
+          "nothicket_mode": "severe",
+          "n_used": 462,
+          "n_h": {
+            "intact": 124,
+            "moderate": 151,
+            "severe": 187
+          },
+          "classes": {
+            "intact": {
+              "ppi_continuous": {
+                "p": 0.2839871316522357,
+                "se": 0.013405469930501561,
+                "area": 539177.9681549347,
+                "area_pm": 49884.268759710205,
+                "ci95_area": [
+                  489293.6993952245,
+                  589062.236914645
+                ]
+              },
+              "stratified": {
+                "p": 0.2857234248841485,
+                "se": 0.011999967829407494,
+                "area": 542474.4944850443
+              },
+              "olofsson": {
+                "p": 0.2857234248841485,
+                "se": 0.011999967829407494,
+                "area": 542474.4944850443
+              },
+              "se_ratio_ppi_over_stratified": 1.1171254890908706,
+              "ci_reduction_vs_stratified_pct": -11.712548909087062,
+              "ppi_beats_stratified": false
+            },
+            "moderate": {
+              "ppi_continuous": {
+                "p": 0.27420528729263033,
+                "se": 0.018479502644691982,
+                "area": 520606.15845378797,
+                "area_pm": 68765.69648454689,
+                "ci95_area": [
+                  451840.46196924103,
+                  589371.8549383348
+                ]
+              },
+              "stratified": {
+                "p": 0.2785063269299356,
+                "se": 0.018458806664974563,
+                "area": 528772.1123091758
+              },
+              "olofsson": {
+                "p": 0.27850632692993554,
+                "se": 0.018458806664974563,
+                "area": 528772.1123091757
+              },
+              "se_ratio_ppi_over_stratified": 1.0011211981409769,
+              "ci_reduction_vs_stratified_pct": -0.11211981409768867,
+              "ppi_beats_stratified": false
+            },
+            "severe": {
+              "ppi_continuous": {
+                "p": 0.44180758073226695,
+                "se": 0.01661654464768,
+                "area": 838815.872778282,
+                "area_pm": 61833.28024753401,
+                "ci95_area": [
+                  776982.592530748,
+                  900649.1530258161
+                ]
+              },
+              "stratified": {
+                "p": 0.435770248185916,
+                "se": 0.01600126785067251,
+                "area": 827353.3932057801
+              },
+              "olofsson": {
+                "p": 0.435770248185916,
+                "se": 0.01600126785067251,
+                "area": 827353.3932057801
+              },
+              "se_ratio_ppi_over_stratified": 1.038451752870422,
+              "ci_reduction_vs_stratified_pct": -3.845175287042202,
+              "ppi_beats_stratified": false
+            }
+          }
+        }
+      }
+    },
+    "SVM": {
+      "adjudicate": "SVM",
+      "method": "PPI++ with continuous RF probability predictor",
+      "pop_sample_n": 518268,
+      "pop_calibrated": true,
+      "pop_mean_prob_raw": {
+        "intact": 0.2885689382225509,
+        "moderate": 0.29258008698907606,
+        "severe": 0.41885097479834815
+      },
+      "pop_mean_prob_calibrated": {
+        "intact": 0.29503268084284207,
+        "moderate": 0.29586798113854745,
+        "severe": 0.4090993380286004
+      },
+      "scenarios": {
+        "A_nothicket_class": {
+          "nothicket_mode": "class",
+          "n_used": 462,
+          "n_h": {
+            "intact": 124,
+            "moderate": 151,
+            "severe": 187
+          },
+          "classes": {
+            "intact": {
+              "ppi_continuous": {
+                "p": 0.29041367565581944,
+                "se": 0.013542111310588306,
+                "area": 551379.4046001388,
+                "area_pm": 50392.73697181188,
+                "ci95_area": [
+                  500986.6676283269,
+                  601772.1415719506
+                ]
+              },
+              "stratified": {
+                "p": 0.29214996888773215,
+                "se": 0.011787283713934487,
+                "area": 554675.9309302482
+              },
+              "olofsson": {
+                "p": 0.29214996888773215,
+                "se": 0.011787283713934487,
+                "area": 554675.9309302482
+              },
+              "se_ratio_ppi_over_stratified": 1.1488746380626544,
+              "ci_reduction_vs_stratified_pct": -14.887463806265444,
+              "ppi_beats_stratified": false
+            },
+            "moderate": {
+              "ppi_continuous": {
+                "p": 0.26777874328904666,
+                "se": 0.01838910577424581,
+                "area": 508404.722008584,
+                "area_pm": 68429.31276926115,
+                "ci95_area": [
+                  439975.4092393228,
+                  576834.0347778451
+                ]
+              },
+              "stratified": {
+                "p": 0.2720797829263519,
+                "se": 0.018262590809364557,
+                "area": 516570.6758639717
+              },
+              "olofsson": {
+                "p": 0.2720797829263519,
+                "se": 0.018262590809364557,
+                "area": 516570.6758639717
+              },
+              "se_ratio_ppi_over_stratified": 1.0069275474768005,
+              "ci_reduction_vs_stratified_pct": -0.6927547476800466,
+              "ppi_beats_stratified": false
+            },
+            "severe": {
+              "ppi_continuous": {
+                "p": 0.3651631175411647,
+                "se": 0.018326228572301474,
+                "area": 693298.6949636553,
+                "area_pm": 68195.33490373976,
+                "ci95_area": [
+                  625103.3600599156,
+                  761494.0298673951
+                ]
+              },
+              "stratified": {
+                "p": 0.35912578499481385,
+                "se": 0.017917692352630337,
+                "area": 681836.2153911536
+              },
+              "olofsson": {
+                "p": 0.35912578499481373,
+                "se": 0.017917692352630337,
+                "area": 681836.2153911534
+              },
+              "se_ratio_ppi_over_stratified": 1.0228007162770134,
+              "ci_reduction_vs_stratified_pct": -2.280071627701341,
+              "ppi_beats_stratified": false
+            }
+          }
+        },
+        "B_nothicket_to_severe": {
+          "nothicket_mode": "severe",
+          "n_used": 462,
+          "n_h": {
+            "intact": 124,
+            "moderate": 151,
+            "severe": 187
+          },
+          "classes": {
+            "intact": {
+              "ppi_continuous": {
+                "p": 0.29041367565581944,
+                "se": 0.013542111310588306,
+                "area": 551379.4046001388,
+                "area_pm": 50392.73697181188,
+                "ci95_area": [
+                  500986.6676283269,
+                  601772.1415719506
+                ]
+              },
+              "stratified": {
+                "p": 0.29214996888773215,
+                "se": 0.011787283713934487,
+                "area": 554675.9309302482
+              },
+              "olofsson": {
+                "p": 0.29214996888773215,
+                "se": 0.011787283713934487,
+                "area": 554675.9309302482
+              },
+              "se_ratio_ppi_over_stratified": 1.1488746380626544,
+              "ci_reduction_vs_stratified_pct": -14.887463806265444,
+              "ppi_beats_stratified": false
+            },
+            "moderate": {
+              "ppi_continuous": {
+                "p": 0.26777874328904666,
+                "se": 0.01838910577424581,
+                "area": 508404.722008584,
+                "area_pm": 68429.31276926115,
+                "ci95_area": [
+                  439975.4092393228,
+                  576834.0347778451
+                ]
+              },
+              "stratified": {
+                "p": 0.2720797829263519,
+                "se": 0.018262590809364557,
+                "area": 516570.6758639717
+              },
+              "olofsson": {
+                "p": 0.2720797829263519,
+                "se": 0.018262590809364557,
+                "area": 516570.6758639717
+              },
+              "se_ratio_ppi_over_stratified": 1.0069275474768005,
+              "ci_reduction_vs_stratified_pct": -0.6927547476800466,
+              "ppi_beats_stratified": false
+            },
+            "severe": {
+              "ppi_continuous": {
+                "p": 0.44180758073226695,
+                "se": 0.01661654464768,
+                "area": 838815.872778282,
+                "area_pm": 61833.28024753401,
+                "ci95_area": [
+                  776982.592530748,
+                  900649.1530258161
+                ]
+              },
+              "stratified": {
+                "p": 0.435770248185916,
+                "se": 0.01600126785067251,
+                "area": 827353.3932057801
+              },
+              "olofsson": {
+                "p": 0.435770248185916,
+                "se": 0.01600126785067251,
+                "area": 827353.3932057801
+              },
+              "se_ratio_ppi_over_stratified": 1.038451752870422,
+              "ci_reduction_vs_stratified_pct": -3.845175287042202,
+              "ppi_beats_stratified": false
+            }
+          }
+        }
+      }
+    }
+  }
+}

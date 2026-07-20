@@ -1,0 +1,1252 @@
+{
+  "sensitivity_adjudication": {
+    "ARP": {
+      "adjudicate": "ARP",
+      "part": "2 - area by EFG group x condition class",
+      "strat9_def": "efg_id*10 + cls; EFG 1/2/3=Arid/Valley/Mesic; cls 0/1/2=intact/moderate/severe",
+      "n_unique_points": 462,
+      "qa_agreement": {
+        "n_duplicated": 12,
+        "n_agree": 8,
+        "n_disagree": 4,
+        "disagreements": [
+          {
+            "id": 150,
+            "stratum": "intact",
+            "ARP": "moderate",
+            "SVM": "intact"
+          },
+          {
+            "id": 211,
+            "stratum": "intact",
+            "ARP": "moderate",
+            "SVM": "intact"
+          },
+          {
+            "id": 291,
+            "stratum": "moderate",
+            "ARP": "moderate",
+            "SVM": "intact"
+          },
+          {
+            "id": 550,
+            "stratum": "severe",
+            "ARP": "nothicket",
+            "SVM": "severe"
+          }
+        ]
+      },
+      "area_total_ha": 1898600.0042506347,
+      "areas_ha_by_cell": {
+        "10": 88485.67761196289,
+        "11": 173115.21521289062,
+        "12": 488485.6689663086,
+        "20": 284519.1395746582,
+        "21": 275405.7496375488,
+        "22": 305326.4642053711,
+        "30": 156585.08387624513,
+        "31": 104088.49130263671,
+        "32": 22588.513863012697
+      },
+      "low_n_threshold": 10,
+      "min_n_estimable": 2,
+      "scenarios": {
+        "A_nothicket_class": {
+          "nothicket_mode": "class",
+          "ref_classes": [
+            "intact",
+            "moderate",
+            "severe",
+            "nothicket"
+          ],
+          "per_cell": {
+            "10": {
+              "efg": "Arid",
+              "efg_id": 1,
+              "map_class": "intact",
+              "area_mapped_ha": 88485.67761196289,
+              "n": 24,
+              "ref_counts": {
+                "intact": 20,
+                "moderate": 4,
+                "severe": 0,
+                "nothicket": 0
+              },
+              "users_acc": 0.8333333333333334,
+              "users_acc_se": 0.07770873402002614,
+              "low_n": false,
+              "non_estimable": false
+            },
+            "11": {
+              "efg": "Arid",
+              "efg_id": 1,
+              "map_class": "moderate",
+              "area_mapped_ha": 173115.21521289062,
+              "n": 41,
+              "ref_counts": {
+                "intact": 5,
+                "moderate": 21,
+                "severe": 15,
+                "nothicket": 0
+              },
+              "users_acc": 0.5121951219512195,
+              "users_acc_se": 0.07903342315131537,
+              "low_n": false,
+              "non_estimable": false
+            },
+            "12": {
+              "efg": "Arid",
+              "efg_id": 1,
+              "map_class": "severe",
+              "area_mapped_ha": 488485.6689663086,
+              "n": 109,
+              "ref_counts": {
+                "intact": 0,
+                "moderate": 19,
+                "severe": 69,
+                "nothicket": 21
+              },
+              "users_acc": 0.6330275229357798,
+              "users_acc_se": 0.0463784430828841,
+              "low_n": false,
+              "non_estimable": false
+            },
+            "20": {
+              "efg": "Valley",
+              "efg_id": 2,
+              "map_class": "intact",
+              "area_mapped_ha": 284519.1395746582,
+              "n": 62,
+              "ref_counts": {
+                "intact": 52,
+                "moderate": 9,
+                "severe": 0,
+                "nothicket": 1
+              },
+              "users_acc": 0.8387096774193549,
+              "users_acc_se": 0.0470917754857603,
+              "low_n": false,
+              "non_estimable": false
+            },
+            "21": {
+              "efg": "Valley",
+              "efg_id": 2,
+              "map_class": "moderate",
+              "area_mapped_ha": 275405.7496375488,
+              "n": 78,
+              "ref_counts": {
+                "intact": 13,
+                "moderate": 49,
+                "severe": 13,
+                "nothicket": 3
+              },
+              "users_acc": 0.6282051282051282,
+              "users_acc_se": 0.055075325644338737,
+              "low_n": false,
+              "non_estimable": false
+            },
+            "22": {
+              "efg": "Valley",
+              "efg_id": 2,
+              "map_class": "severe",
+              "area_mapped_ha": 305326.4642053711,
+              "n": 75,
+              "ref_counts": {
+                "intact": 1,
+                "moderate": 12,
+                "severe": 54,
+                "nothicket": 8
+              },
+              "users_acc": 0.72,
+              "users_acc_se": 0.052195060344100805,
+              "low_n": false,
+              "non_estimable": false
+            },
+            "30": {
+              "efg": "Mesic",
+              "efg_id": 3,
+              "map_class": "intact",
+              "area_mapped_ha": 156585.08387624513,
+              "n": 38,
+              "ref_counts": {
+                "intact": 36,
+                "moderate": 2,
+                "severe": 0,
+                "nothicket": 0
+              },
+              "users_acc": 0.9473684210526315,
+              "users_acc_se": 0.03670978065594295,
+              "low_n": false,
+              "non_estimable": false
+            },
+            "31": {
+              "efg": "Mesic",
+              "efg_id": 3,
+              "map_class": "moderate",
+              "area_mapped_ha": 104088.49130263671,
+              "n": 32,
+              "ref_counts": {
+                "intact": 3,
+                "moderate": 20,
+                "severe": 8,
+                "nothicket": 1
+              },
+              "users_acc": 0.625,
+              "users_acc_se": 0.08695104295503155,
+              "low_n": false,
+              "non_estimable": false
+            },
+            "32": {
+              "efg": "Mesic",
+              "efg_id": 3,
+              "map_class": "severe",
+              "area_mapped_ha": 22588.513863012697,
+              "n": 3,
+              "ref_counts": {
+                "intact": 0,
+                "moderate": 0,
+                "severe": 2,
+                "nothicket": 1
+              },
+              "users_acc": 0.6666666666666666,
+              "users_acc_se": 0.33333333333333337,
+              "low_n": true,
+              "non_estimable": false
+            }
+          },
+          "per_efg": {
+            "Arid": {
+              "efg_id": 1,
+              "area_total_ha": 750086.5617911621,
+              "n_labelled": 174,
+              "composition": {
+                "intact": {
+                  "area": 94849.67628796387,
+                  "se": 11291.895970576226,
+                  "ci95": [
+                    72717.96686846152,
+                    116981.38570746622
+                  ],
+                  "frac": 0.12645164054328406
+                },
+                "moderate": {
+                  "area": 188565.25977960127,
+                  "se": 23504.721701211205,
+                  "ci95": [
+                    142496.8517785903,
+                    234633.66778061225
+                  ],
+                  "frac": 0.25139133186084367
+                },
+                "severe": {
+                  "area": 372559.707849354,
+                  "se": 26212.236851979287,
+                  "ci95": [
+                    321184.66766524105,
+                    423934.748033467
+                  ],
+                  "frac": 0.49668895141875835
+                },
+                "nothicket": {
+                  "area": 94111.91787424295,
+                  "se": 18538.066460597594,
+                  "ci95": [
+                    57777.97526846175,
+                    130445.86048002416
+                  ],
+                  "frac": 0.12546807617711386
+                }
+              },
+              "any_low_n": false,
+              "estimable": true,
+              "non_estimable_cells": []
+            },
+            "Valley": {
+              "efg_id": 2,
+              "area_total_ha": 865251.3534175782,
+              "n_labelled": 215,
+              "composition": {
+                "intact": {
+                  "area": 288600.9335679571,
+                  "se": 18245.680731076434,
+                  "ci95": [
+                    252840.05646163083,
+                    324361.8106742833
+                  ],
+                  "frac": 0.3335457753727149
+                },
+                "moderate": {
+                  "area": 263164.703954473,
+                  "se": 23749.961176869558,
+                  "ci95": [
+                    216615.63541358418,
+                    309713.77249536186
+                  ],
+                  "frac": 0.3041482719616936
+                },
+                "severe": {
+                  "area": 265736.012500792,
+                  "se": 19768.273766634178,
+                  "ci95": [
+                    226990.90788166103,
+                    304481.11711992294
+                  ],
+                  "frac": 0.30712001946161116
+                },
+                "nothicket": {
+                  "area": 47749.70339435609,
+                  "se": 13324.11051312049,
+                  "ci95": [
+                    21634.92666260843,
+                    73864.48012610375
+                  ],
+                  "frac": 0.05518593320398038
+                }
+              },
+              "any_low_n": false,
+              "estimable": true,
+              "non_estimable_cells": []
+            },
+            "Mesic": {
+              "efg_id": 3,
+              "area_total_ha": 283262.08904189453,
+              "n_labelled": 73,
+              "composition": {
+                "intact": {
+                  "area": 158102.05973185442,
+                  "se": 7920.5720878211405,
+                  "ci95": [
+                    142578.02370277175,
+                    173626.09576093708
+                  ],
+                  "frac": 0.5581476161057016
+                },
+                "moderate": {
+                  "area": 73296.62726816084,
+                  "se": 10721.719201834456,
+                  "ci95": [
+                    52282.44378021377,
+                    94310.81075610791
+                  ],
+                  "frac": 0.2587590436689897
+                },
+                "severe": {
+                  "area": 41081.13206766764,
+                  "se": 11055.504050355925,
+                  "ci95": [
+                    19412.742298033336,
+                    62749.521837301945
+                  ],
+                  "frac": 0.14502869835713078
+                },
+                "nothicket": {
+                  "area": 10782.26997421163,
+                  "se": 8202.068170940214,
+                  "ci95": [
+                    -5293.488239573506,
+                    26858.028187996766
+                  ],
+                  "frac": 0.03806464186817788
+                }
+              },
+              "any_low_n": true,
+              "estimable": true,
+              "non_estimable_cells": []
+            }
+          }
+        },
+        "B_nothicket_to_severe": {
+          "nothicket_mode": "severe",
+          "ref_classes": [
+            "intact",
+            "moderate",
+            "severe"
+          ],
+          "per_cell": {
+            "10": {
+              "efg": "Arid",
+              "efg_id": 1,
+              "map_class": "intact",
+              "area_mapped_ha": 88485.67761196289,
+              "n": 24,
+              "ref_counts": {
+                "intact": 20,
+                "moderate": 4,
+                "severe": 0
+              },
+              "users_acc": 0.8333333333333334,
+              "users_acc_se": 0.07770873402002614,
+              "low_n": false,
+              "non_estimable": false
+            },
+            "11": {
+              "efg": "Arid",
+              "efg_id": 1,
+              "map_class": "moderate",
+              "area_mapped_ha": 173115.21521289062,
+              "n": 41,
+              "ref_counts": {
+                "intact": 5,
+                "moderate": 21,
+                "severe": 15
+              },
+              "users_acc": 0.5121951219512195,
+              "users_acc_se": 0.07903342315131537,
+              "low_n": false,
+              "non_estimable": false
+            },
+            "12": {
+              "efg": "Arid",
+              "efg_id": 1,
+              "map_class": "severe",
+              "area_mapped_ha": 488485.6689663086,
+              "n": 109,
+              "ref_counts": {
+                "intact": 0,
+                "moderate": 19,
+                "severe": 90
+              },
+              "users_acc": 0.8256880733944955,
+              "users_acc_se": 0.03650561586028539,
+              "low_n": false,
+              "non_estimable": false
+            },
+            "20": {
+              "efg": "Valley",
+              "efg_id": 2,
+              "map_class": "intact",
+              "area_mapped_ha": 284519.1395746582,
+              "n": 62,
+              "ref_counts": {
+                "intact": 52,
+                "moderate": 9,
+                "severe": 1
+              },
+              "users_acc": 0.8387096774193549,
+              "users_acc_se": 0.0470917754857603,
+              "low_n": false,
+              "non_estimable": false
+            },
+            "21": {
+              "efg": "Valley",
+              "efg_id": 2,
+              "map_class": "moderate",
+              "area_mapped_ha": 275405.7496375488,
+              "n": 78,
+              "ref_counts": {
+                "intact": 13,
+                "moderate": 49,
+                "severe": 16
+              },
+              "users_acc": 0.6282051282051282,
+              "users_acc_se": 0.055075325644338737,
+              "low_n": false,
+              "non_estimable": false
+            },
+            "22": {
+              "efg": "Valley",
+              "efg_id": 2,
+              "map_class": "severe",
+              "area_mapped_ha": 305326.4642053711,
+              "n": 75,
+              "ref_counts": {
+                "intact": 1,
+                "moderate": 12,
+                "severe": 62
+              },
+              "users_acc": 0.8266666666666667,
+              "users_acc_se": 0.04400382183783968,
+              "low_n": false,
+              "non_estimable": false
+            },
+            "30": {
+              "efg": "Mesic",
+              "efg_id": 3,
+              "map_class": "intact",
+              "area_mapped_ha": 156585.08387624513,
+              "n": 38,
+              "ref_counts": {
+                "intact": 36,
+                "moderate": 2,
+                "severe": 0
+              },
+              "users_acc": 0.9473684210526315,
+              "users_acc_se": 0.03670978065594295,
+              "low_n": false,
+              "non_estimable": false
+            },
+            "31": {
+              "efg": "Mesic",
+              "efg_id": 3,
+              "map_class": "moderate",
+              "area_mapped_ha": 104088.49130263671,
+              "n": 32,
+              "ref_counts": {
+                "intact": 3,
+                "moderate": 20,
+                "severe": 9
+              },
+              "users_acc": 0.625,
+              "users_acc_se": 0.08695104295503155,
+              "low_n": false,
+              "non_estimable": false
+            },
+            "32": {
+              "efg": "Mesic",
+              "efg_id": 3,
+              "map_class": "severe",
+              "area_mapped_ha": 22588.513863012697,
+              "n": 3,
+              "ref_counts": {
+                "intact": 0,
+                "moderate": 0,
+                "severe": 3
+              },
+              "users_acc": 1.0,
+              "users_acc_se": 0.0,
+              "low_n": true,
+              "non_estimable": false
+            }
+          },
+          "per_efg": {
+            "Arid": {
+              "efg_id": 1,
+              "area_total_ha": 750086.5617911621,
+              "n_labelled": 174,
+              "composition": {
+                "intact": {
+                  "area": 94849.67628796387,
+                  "se": 11291.895970576226,
+                  "ci95": [
+                    72717.96686846152,
+                    116981.38570746622
+                  ],
+                  "frac": 0.12645164054328406
+                },
+                "moderate": {
+                  "area": 188565.25977960127,
+                  "se": 23504.721701211205,
+                  "ci95": [
+                    142496.8517785903,
+                    234633.66778061225
+                  ],
+                  "frac": 0.25139133186084367
+                },
+                "severe": {
+                  "area": 466671.625723597,
+                  "se": 22177.016241262212,
+                  "ci95": [
+                    423205.47260616324,
+                    510137.7788410308
+                  ],
+                  "frac": 0.6221570275958723
+                }
+              },
+              "any_low_n": false,
+              "estimable": true,
+              "non_estimable_cells": []
+            },
+            "Valley": {
+              "efg_id": 2,
+              "area_total_ha": 865251.3534175782,
+              "n_labelled": 215,
+              "composition": {
+                "intact": {
+                  "area": 288600.9335679571,
+                  "se": 18245.680731076434,
+                  "ci95": [
+                    252840.05646163083,
+                    324361.8106742833
+                  ],
+                  "frac": 0.3335457753727149
+                },
+                "moderate": {
+                  "area": 263164.703954473,
+                  "se": 23749.961176869558,
+                  "ci95": [
+                    216615.63541358418,
+                    309713.77249536186
+                  ],
+                  "frac": 0.3041482719616936
+                },
+                "severe": {
+                  "area": 313485.71589514805,
+                  "se": 19031.145578714306,
+                  "ci95": [
+                    276185.3559763293,
+                    350786.0758139668
+                  ],
+                  "frac": 0.3623059526655915
+                }
+              },
+              "any_low_n": false,
+              "estimable": true,
+              "non_estimable_cells": []
+            },
+            "Mesic": {
+              "efg_id": 3,
+              "area_total_ha": 283262.08904189453,
+              "n_labelled": 73,
+              "composition": {
+                "intact": {
+                  "area": 158102.05973185442,
+                  "se": 7920.5720878211405,
+                  "ci95": [
+                    142578.02370277175,
+                    173626.09576093708
+                  ],
+                  "frac": 0.5581476161057016
+                },
+                "moderate": {
+                  "area": 73296.62726816084,
+                  "se": 10721.719201834456,
+                  "ci95": [
+                    52282.44378021377,
+                    94310.81075610791
+                  ],
+                  "frac": 0.2587590436689897
+                },
+                "severe": {
+                  "area": 51863.40204187927,
+                  "se": 8405.37436695094,
+                  "ci95": [
+                    35389.17100607927,
+                    68337.63307767927
+                  ],
+                  "frac": 0.18309334022530865
+                }
+              },
+              "any_low_n": true,
+              "estimable": true,
+              "non_estimable_cells": []
+            }
+          }
+        }
+      }
+    },
+    "SVM": {
+      "adjudicate": "SVM",
+      "part": "2 - area by EFG group x condition class",
+      "strat9_def": "efg_id*10 + cls; EFG 1/2/3=Arid/Valley/Mesic; cls 0/1/2=intact/moderate/severe",
+      "n_unique_points": 462,
+      "qa_agreement": {
+        "n_duplicated": 12,
+        "n_agree": 8,
+        "n_disagree": 4,
+        "disagreements": [
+          {
+            "id": 150,
+            "stratum": "intact",
+            "ARP": "moderate",
+            "SVM": "intact"
+          },
+          {
+            "id": 211,
+            "stratum": "intact",
+            "ARP": "moderate",
+            "SVM": "intact"
+          },
+          {
+            "id": 291,
+            "stratum": "moderate",
+            "ARP": "moderate",
+            "SVM": "intact"
+          },
+          {
+            "id": 550,
+            "stratum": "severe",
+            "ARP": "nothicket",
+            "SVM": "severe"
+          }
+        ]
+      },
+      "area_total_ha": 1898600.0042506347,
+      "areas_ha_by_cell": {
+        "10": 88485.67761196289,
+        "11": 173115.21521289062,
+        "12": 488485.6689663086,
+        "20": 284519.1395746582,
+        "21": 275405.7496375488,
+        "22": 305326.4642053711,
+        "30": 156585.08387624513,
+        "31": 104088.49130263671,
+        "32": 22588.513863012697
+      },
+      "low_n_threshold": 10,
+      "min_n_estimable": 2,
+      "scenarios": {
+        "A_nothicket_class": {
+          "nothicket_mode": "class",
+          "ref_classes": [
+            "intact",
+            "moderate",
+            "severe",
+            "nothicket"
+          ],
+          "per_cell": {
+            "10": {
+              "efg": "Arid",
+              "efg_id": 1,
+              "map_class": "intact",
+              "area_mapped_ha": 88485.67761196289,
+              "n": 24,
+              "ref_counts": {
+                "intact": 20,
+                "moderate": 4,
+                "severe": 0,
+                "nothicket": 0
+              },
+              "users_acc": 0.8333333333333334,
+              "users_acc_se": 0.07770873402002614,
+              "low_n": false,
+              "non_estimable": false
+            },
+            "11": {
+              "efg": "Arid",
+              "efg_id": 1,
+              "map_class": "moderate",
+              "area_mapped_ha": 173115.21521289062,
+              "n": 41,
+              "ref_counts": {
+                "intact": 5,
+                "moderate": 21,
+                "severe": 15,
+                "nothicket": 0
+              },
+              "users_acc": 0.5121951219512195,
+              "users_acc_se": 0.07903342315131537,
+              "low_n": false,
+              "non_estimable": false
+            },
+            "12": {
+              "efg": "Arid",
+              "efg_id": 1,
+              "map_class": "severe",
+              "area_mapped_ha": 488485.6689663086,
+              "n": 109,
+              "ref_counts": {
+                "intact": 0,
+                "moderate": 19,
+                "severe": 70,
+                "nothicket": 20
+              },
+              "users_acc": 0.6422018348623854,
+              "users_acc_se": 0.0461256976421968,
+              "low_n": false,
+              "non_estimable": false
+            },
+            "20": {
+              "efg": "Valley",
+              "efg_id": 2,
+              "map_class": "intact",
+              "area_mapped_ha": 284519.1395746582,
+              "n": 62,
+              "ref_counts": {
+                "intact": 54,
+                "moderate": 7,
+                "severe": 0,
+                "nothicket": 1
+              },
+              "users_acc": 0.8709677419354839,
+              "users_acc_se": 0.04292252541026552,
+              "low_n": false,
+              "non_estimable": false
+            },
+            "21": {
+              "efg": "Valley",
+              "efg_id": 2,
+              "map_class": "moderate",
+              "area_mapped_ha": 275405.7496375488,
+              "n": 78,
+              "ref_counts": {
+                "intact": 14,
+                "moderate": 48,
+                "severe": 13,
+                "nothicket": 3
+              },
+              "users_acc": 0.6153846153846154,
+              "users_acc_se": 0.05544230539664978,
+              "low_n": false,
+              "non_estimable": false
+            },
+            "22": {
+              "efg": "Valley",
+              "efg_id": 2,
+              "map_class": "severe",
+              "area_mapped_ha": 305326.4642053711,
+              "n": 75,
+              "ref_counts": {
+                "intact": 1,
+                "moderate": 12,
+                "severe": 54,
+                "nothicket": 8
+              },
+              "users_acc": 0.72,
+              "users_acc_se": 0.052195060344100805,
+              "low_n": false,
+              "non_estimable": false
+            },
+            "30": {
+              "efg": "Mesic",
+              "efg_id": 3,
+              "map_class": "intact",
+              "area_mapped_ha": 156585.08387624513,
+              "n": 38,
+              "ref_counts": {
+                "intact": 36,
+                "moderate": 2,
+                "severe": 0,
+                "nothicket": 0
+              },
+              "users_acc": 0.9473684210526315,
+              "users_acc_se": 0.03670978065594295,
+              "low_n": false,
+              "non_estimable": false
+            },
+            "31": {
+              "efg": "Mesic",
+              "efg_id": 3,
+              "map_class": "moderate",
+              "area_mapped_ha": 104088.49130263671,
+              "n": 32,
+              "ref_counts": {
+                "intact": 3,
+                "moderate": 20,
+                "severe": 8,
+                "nothicket": 1
+              },
+              "users_acc": 0.625,
+              "users_acc_se": 0.08695104295503155,
+              "low_n": false,
+              "non_estimable": false
+            },
+            "32": {
+              "efg": "Mesic",
+              "efg_id": 3,
+              "map_class": "severe",
+              "area_mapped_ha": 22588.513863012697,
+              "n": 3,
+              "ref_counts": {
+                "intact": 0,
+                "moderate": 0,
+                "severe": 2,
+                "nothicket": 1
+              },
+              "users_acc": 0.6666666666666666,
+              "users_acc_se": 0.33333333333333337,
+              "low_n": true,
+              "non_estimable": false
+            }
+          },
+          "per_efg": {
+            "Arid": {
+              "efg_id": 1,
+              "area_total_ha": 750086.5617911621,
+              "n_labelled": 174,
+              "composition": {
+                "intact": {
+                  "area": 94849.67628796387,
+                  "se": 11291.895970576226,
+                  "ci95": [
+                    72717.96686846152,
+                    116981.38570746622
+                  ],
+                  "frac": 0.12645164054328406
+                },
+                "moderate": {
+                  "area": 188565.25977960127,
+                  "se": 23504.721701211205,
+                  "ci95": [
+                    142496.8517785903,
+                    234633.66778061225
+                  ],
+                  "frac": 0.25139133186084367
+                },
+                "severe": {
+                  "area": 377041.22774812754,
+                  "se": 26105.60219899721,
+                  "ci95": [
+                    325875.1876433634,
+                    428207.2678528917
+                  ],
+                  "frac": 0.5026636217129067
+                },
+                "nothicket": {
+                  "area": 89630.39797546947,
+                  "se": 18193.801517102685,
+                  "ci95": [
+                    53971.20226007801,
+                    125289.59369086093
+                  ],
+                  "frac": 0.11949340588296557
+                }
+              },
+              "any_low_n": false,
+              "estimable": true,
+              "non_estimable_cells": []
+            },
+            "Valley": {
+              "efg_id": 2,
+              "area_total_ha": 865251.3534175782,
+              "n_labelled": 215,
+              "composition": {
+                "intact": {
+                  "area": 301309.81327250105,
+                  "se": 17629.004644775956,
+                  "ci95": [
+                    266757.5990854509,
+                    335862.02745955123
+                  ],
+                  "frac": 0.3482338537609732
+                },
+                "moderate": {
+                  "area": 250455.824249929,
+                  "se": 23138.18579868241,
+                  "ci95": [
+                    205105.8134169153,
+                    295805.8350829427
+                  ],
+                  "frac": 0.2894601935734352
+                },
+                "severe": {
+                  "area": 265736.012500792,
+                  "se": 19768.273766634178,
+                  "ci95": [
+                    226990.90788166103,
+                    304481.11711992294
+                  ],
+                  "frac": 0.30712001946161116
+                },
+                "nothicket": {
+                  "area": 47749.70339435609,
+                  "se": 13324.11051312049,
+                  "ci95": [
+                    21634.92666260843,
+                    73864.48012610375
+                  ],
+                  "frac": 0.05518593320398038
+                }
+              },
+              "any_low_n": false,
+              "estimable": true,
+              "non_estimable_cells": []
+            },
+            "Mesic": {
+              "efg_id": 3,
+              "area_total_ha": 283262.08904189453,
+              "n_labelled": 73,
+              "composition": {
+                "intact": {
+                  "area": 158102.05973185442,
+                  "se": 7920.5720878211405,
+                  "ci95": [
+                    142578.02370277175,
+                    173626.09576093708
+                  ],
+                  "frac": 0.5581476161057016
+                },
+                "moderate": {
+                  "area": 73296.62726816084,
+                  "se": 10721.719201834456,
+                  "ci95": [
+                    52282.44378021377,
+                    94310.81075610791
+                  ],
+                  "frac": 0.2587590436689897
+                },
+                "severe": {
+                  "area": 41081.13206766764,
+                  "se": 11055.504050355925,
+                  "ci95": [
+                    19412.742298033336,
+                    62749.521837301945
+                  ],
+                  "frac": 0.14502869835713078
+                },
+                "nothicket": {
+                  "area": 10782.26997421163,
+                  "se": 8202.068170940214,
+                  "ci95": [
+                    -5293.488239573506,
+                    26858.028187996766
+                  ],
+                  "frac": 0.03806464186817788
+                }
+              },
+              "any_low_n": true,
+              "estimable": true,
+              "non_estimable_cells": []
+            }
+          }
+        },
+        "B_nothicket_to_severe": {
+          "nothicket_mode": "severe",
+          "ref_classes": [
+            "intact",
+            "moderate",
+            "severe"
+          ],
+          "per_cell": {
+            "10": {
+              "efg": "Arid",
+              "efg_id": 1,
+              "map_class": "intact",
+              "area_mapped_ha": 88485.67761196289,
+              "n": 24,
+              "ref_counts": {
+                "intact": 20,
+                "moderate": 4,
+                "severe": 0
+              },
+              "users_acc": 0.8333333333333334,
+              "users_acc_se": 0.07770873402002614,
+              "low_n": false,
+              "non_estimable": false
+            },
+            "11": {
+              "efg": "Arid",
+              "efg_id": 1,
+              "map_class": "moderate",
+              "area_mapped_ha": 173115.21521289062,
+              "n": 41,
+              "ref_counts": {
+                "intact": 5,
+                "moderate": 21,
+                "severe": 15
+              },
+              "users_acc": 0.5121951219512195,
+              "users_acc_se": 0.07903342315131537,
+              "low_n": false,
+              "non_estimable": false
+            },
+            "12": {
+              "efg": "Arid",
+              "efg_id": 1,
+              "map_class": "severe",
+              "area_mapped_ha": 488485.6689663086,
+              "n": 109,
+              "ref_counts": {
+                "intact": 0,
+                "moderate": 19,
+                "severe": 90
+              },
+              "users_acc": 0.8256880733944955,
+              "users_acc_se": 0.03650561586028539,
+              "low_n": false,
+              "non_estimable": false
+            },
+            "20": {
+              "efg": "Valley",
+              "efg_id": 2,
+              "map_class": "intact",
+              "area_mapped_ha": 284519.1395746582,
+              "n": 62,
+              "ref_counts": {
+                "intact": 54,
+                "moderate": 7,
+                "severe": 1
+              },
+              "users_acc": 0.8709677419354839,
+              "users_acc_se": 0.04292252541026552,
+              "low_n": false,
+              "non_estimable": false
+            },
+            "21": {
+              "efg": "Valley",
+              "efg_id": 2,
+              "map_class": "moderate",
+              "area_mapped_ha": 275405.7496375488,
+              "n": 78,
+              "ref_counts": {
+                "intact": 14,
+                "moderate": 48,
+                "severe": 16
+              },
+              "users_acc": 0.6153846153846154,
+              "users_acc_se": 0.05544230539664978,
+              "low_n": false,
+              "non_estimable": false
+            },
+            "22": {
+              "efg": "Valley",
+              "efg_id": 2,
+              "map_class": "severe",
+              "area_mapped_ha": 305326.4642053711,
+              "n": 75,
+              "ref_counts": {
+                "intact": 1,
+                "moderate": 12,
+                "severe": 62
+              },
+              "users_acc": 0.8266666666666667,
+              "users_acc_se": 0.04400382183783968,
+              "low_n": false,
+              "non_estimable": false
+            },
+            "30": {
+              "efg": "Mesic",
+              "efg_id": 3,
+              "map_class": "intact",
+              "area_mapped_ha": 156585.08387624513,
+              "n": 38,
+              "ref_counts": {
+                "intact": 36,
+                "moderate": 2,
+                "severe": 0
+              },
+              "users_acc": 0.9473684210526315,
+              "users_acc_se": 0.03670978065594295,
+              "low_n": false,
+              "non_estimable": false
+            },
+            "31": {
+              "efg": "Mesic",
+              "efg_id": 3,
+              "map_class": "moderate",
+              "area_mapped_ha": 104088.49130263671,
+              "n": 32,
+              "ref_counts": {
+                "intact": 3,
+                "moderate": 20,
+                "severe": 9
+              },
+              "users_acc": 0.625,
+              "users_acc_se": 0.08695104295503155,
+              "low_n": false,
+              "non_estimable": false
+            },
+            "32": {
+              "efg": "Mesic",
+              "efg_id": 3,
+              "map_class": "severe",
+              "area_mapped_ha": 22588.513863012697,
+              "n": 3,
+              "ref_counts": {
+                "intact": 0,
+                "moderate": 0,
+                "severe": 3
+              },
+              "users_acc": 1.0,
+              "users_acc_se": 0.0,
+              "low_n": true,
+              "non_estimable": false
+            }
+          },
+          "per_efg": {
+            "Arid": {
+              "efg_id": 1,
+              "area_total_ha": 750086.5617911621,
+              "n_labelled": 174,
+              "composition": {
+                "intact": {
+                  "area": 94849.67628796387,
+                  "se": 11291.895970576226,
+                  "ci95": [
+                    72717.96686846152,
+                    116981.38570746622
+                  ],
+                  "frac": 0.12645164054328406
+                },
+                "moderate": {
+                  "area": 188565.25977960127,
+                  "se": 23504.721701211205,
+                  "ci95": [
+                    142496.8517785903,
+                    234633.66778061225
+                  ],
+                  "frac": 0.25139133186084367
+                },
+                "severe": {
+                  "area": 466671.625723597,
+                  "se": 22177.016241262212,
+                  "ci95": [
+                    423205.47260616324,
+                    510137.7788410308
+                  ],
+                  "frac": 0.6221570275958723
+                }
+              },
+              "any_low_n": false,
+              "estimable": true,
+              "non_estimable_cells": []
+            },
+            "Valley": {
+              "efg_id": 2,
+              "area_total_ha": 865251.3534175782,
+              "n_labelled": 215,
+              "composition": {
+                "intact": {
+                  "area": 301309.81327250105,
+                  "se": 17629.004644775956,
+                  "ci95": [
+                    266757.5990854509,
+                    335862.02745955123
+                  ],
+                  "frac": 0.3482338537609732
+                },
+                "moderate": {
+                  "area": 250455.824249929,
+                  "se": 23138.18579868241,
+                  "ci95": [
+                    205105.8134169153,
+                    295805.8350829427
+                  ],
+                  "frac": 0.2894601935734352
+                },
+                "severe": {
+                  "area": 313485.71589514805,
+                  "se": 19031.145578714306,
+                  "ci95": [
+                    276185.3559763293,
+                    350786.0758139668
+                  ],
+                  "frac": 0.3623059526655915
+                }
+              },
+              "any_low_n": false,
+              "estimable": true,
+              "non_estimable_cells": []
+            },
+            "Mesic": {
+              "efg_id": 3,
+              "area_total_ha": 283262.08904189453,
+              "n_labelled": 73,
+              "composition": {
+                "intact": {
+                  "area": 158102.05973185442,
+                  "se": 7920.5720878211405,
+                  "ci95": [
+                    142578.02370277175,
+                    173626.09576093708
+                  ],
+                  "frac": 0.5581476161057016
+                },
+                "moderate": {
+                  "area": 73296.62726816084,
+                  "se": 10721.719201834456,
+                  "ci95": [
+                    52282.44378021377,
+                    94310.81075610791
+                  ],
+                  "frac": 0.2587590436689897
+                },
+                "severe": {
+                  "area": 51863.40204187927,
+                  "se": 8405.37436695094,
+                  "ci95": [
+                    35389.17100607927,
+                    68337.63307767927
+                  ],
+                  "frac": 0.18309334022530865
+                }
+              },
+              "any_low_n": true,
+              "estimable": true,
+              "non_estimable_cells": []
+            }
+          }
+        }
+      }
+    }
+  }
+}

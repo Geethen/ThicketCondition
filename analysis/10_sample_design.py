@@ -45,6 +45,10 @@ def res_path(n):  return os.path.join(HERE, 'results', n)
 YEAR = 2022
 SCALE = 10           # embedding / model scale (as in steph.js + script 07)
 EXPORT_SCALE = 30    # the export scale of the probability raster
+# explicit metric CRS for area reductions (Finding 6): a .mosaic() has no
+# well-defined projection, so pin to a fixed UTM grid covering the AOI (~20-29E,
+# -32..-34.5S) instead of inheriting pixelArea's 1-degree default.
+AREA_CRS = 'EPSG:32735'   # WGS84 / UTM zone 35S (metres)
 CLASS_NAME = {0: 'intact', 1: 'moderate', 2: 'severe'}
 CLASS_ID = {v: k for k, v in CLASS_NAME.items()}
 
@@ -134,18 +138,42 @@ def build_class_map():
 
 # ------------------------------------------------ per-class area from the map --
 def class_areas(class_image, aoi):
-    """Pixel count + area (m2) per condition class via a grouped area histogram,
-    same escalating-scale trick as script 07."""
-    px_area = ee.Image.pixelArea().rename('area')
-    stack = px_area.addBands(class_image)
+    """Pixel count + area (m2) per condition class via a grouped area histogram.
+
+    Finding 6 fix: the reduction is pinned to an EXPLICIT projection (fixed CRS +
+    scale) and bestEffort is OFF, so the grid is deterministic and `used_scale_m`
+    is the scale ACTUALLY used, not merely requested. Previously pixelArea() was
+    band 0 with no crs/crsTransform and bestEffort=True, which let Earth Engine
+    (a) inherit pixelArea's 1-degree default projection and (b) silently enlarge
+    the scale. Here we group on the class band and fix the projection of both the
+    grouping band and pixelArea to the same fixed grid.
+
+    If a level exceeds memory it escalates to a coarser but still EXPLICIT fixed
+    grid (never bestEffort), so any coarsening is recorded truthfully.
+    """
     groups = None
     for area_scale in (EXPORT_SCALE, 60, 100, 200):
         try:
-            print(f'  reducing class areas at scale={area_scale} m ...', flush=True)
+            print(f'  reducing class areas at FIXED scale={area_scale} m ({AREA_CRS}) ...', flush=True)
+            proj = ee.Projection(AREA_CRS).atScale(area_scale)
+            fine = ee.Projection(AREA_CRS).atScale(EXPORT_SCALE)
+            # reproject the class band onto the same fixed grid; when coarsening,
+            # mode() picks the dominant class. setDefaultProjection guards mosaics
+            # whose projection is undefined (Finding 6).
+            if area_scale > EXPORT_SCALE:
+                cls_fixed = (class_image.setDefaultProjection(fine)
+                             .reduceResolution(reducer=ee.Reducer.mode(), maxPixels=1024)
+                             .reproject(proj))
+            else:
+                cls_fixed = class_image.reproject(proj)
+            px_area = ee.Image.pixelArea().reproject(proj).rename('area')
+            # grouped reducer requires the group band AFTER the summed band, so
+            # pixelArea is band 0 and the class band (index 1) is the group field.
+            stack = px_area.addBands(cls_fixed.rename('cls'))
             grouped = stack.reduceRegion(
                 reducer=ee.Reducer.sum().group(groupField=1, groupName='cls'),
-                geometry=aoi, scale=area_scale, maxPixels=int(1e13),
-                bestEffort=True, tileScale=4)
+                geometry=aoi, crs=AREA_CRS, scale=area_scale,
+                maxPixels=int(1e13), bestEffort=False, tileScale=4)
             groups = grouped.getInfo().get('groups', [])
             used_scale = area_scale
             break

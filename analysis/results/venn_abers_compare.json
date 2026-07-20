@@ -1,0 +1,79 @@
+{
+  "implementation_agreement": {
+    "n": 462,
+    "per_class": {
+      "intact": {
+        "max_abs_diff": 4.99612018423079e-11,
+        "mean_abs_diff": 2.6292132372177102e-11,
+        "rms_abs_diff": 3.0034160495683506e-11,
+        "n_gt_1e6": 0,
+        "pearson_r": 1.0
+      },
+      "moderate": {
+        "max_abs_diff": 4.9923065681412027e-11,
+        "mean_abs_diff": 2.393077946603722e-11,
+        "rms_abs_diff": 2.8131272447358186e-11,
+        "n_gt_1e6": 0,
+        "pearson_r": 1.0
+      },
+      "severe": {
+        "max_abs_diff": 4.995004410091042e-11,
+        "mean_abs_diff": 2.3953424110734343e-11,
+        "rms_abs_diff": 2.8047508953754425e-11,
+        "n_gt_1e6": 0,
+        "pearson_r": 1.0
+      }
+    },
+    "overall": {
+      "max_abs_diff": 4.99612018423079e-11,
+      "mean_abs_diff": 2.472544531631622e-11,
+      "rms_abs_diff": 2.8752287124672965e-11,
+      "n_gt_1e6": 0,
+      "n_gt_1e9": 0
+    }
+  },
+  "method_metrics": {
+    "python": {
+      "uncalibrated": {
+        "brier": 0.3847005262758479,
+        "logloss": 0.6742775827633697,
+        "ece_toplabel": 0.14201403633222154,
+        "ece_classwise_mean": 0.10105391254257583
+      },
+      "venn_abers": {
+        "brier": 0.3551571211214982,
+        "logloss": 0.600492437201954,
+        "ece_toplabel": 0.040800607901655815,
+        "ece_classwise_mean": 0.03635514449055067
+      }
+    },
+    "R": {
+      "uncalibrated": {
+        "brier": 0.3847005263,
+        "logloss": 0.6742775828,
+        "ece_toplabel": 0.1420140363,
+        "ece_classwise_mean": 0.1010539125
+      },
+      "venn_abers": {
+        "brier": 0.3551571211,
+        "logloss": 0.6004924372,
+        "ece_toplabel": 0.0408006079,
+        "ece_classwise_mean": 0.03635514449
+      }
+    },
+    "python_vs_R_abs_diff": {
+      "uncalibrated": {
+        "brier": 2.4152124744603043e-11,
+        "logloss": 3.663036540757503e-11,
+        "ece_toplabel": 3.222153099891045e-11,
+        "ece_classwise_mean": 4.2575831749047666e-11
+      },
+      "venn_abers": {
+        "brier": 2.149824762653907e-11,
+        "logloss": 1.9539925233402755e-12,
+        "ece_toplabel": 1.655814374501574e-12,
+        "ece_classwise_mean": 5.506706202140776e-13
+      }
+    }
+  }
+}

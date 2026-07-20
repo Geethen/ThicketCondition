@@ -37,3 +37,6 @@ inspector/shot.mjs
 # Baked EE tile manifest holds temporary, account-tied tokens — regenerated in CI
 inspector/gee_layers.json
 inspector/assignment_links.csv
+
+# Local cloud-native geospatial experiments and benchmark artifacts
+CNGexploration/
