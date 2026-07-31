@@ -666,6 +666,17 @@ def interactive_summary_html(result):
                 },
             }
         )
+    efg_reference = {}
+    for efg_name, values in primary_efg["reference_area_by_efg"].items():
+        efg_reference[efg_name] = [
+            {
+                "label": ref_class,
+                "area": estimate["area_ha"],
+                "moe": estimate["moe95_ha"],
+                "n": values["n_labelled"],
+            }
+            for ref_class, estimate in values["composition"].items()
+        ]
     accuracy = []
     for adjudicate, scenarios in result["map_accuracy"].items():
         for scenario, values in scenarios.items():
@@ -684,7 +695,7 @@ def interactive_summary_html(result):
         }
         for item in result["label_disagreement"]["pairwise"]
     ]
-    data = {"areas": areas, "efg": efg, "accuracy": accuracy, "qa": qa}
+    data = {"areas": areas, "efg": efg, "efgReference": efg_reference, "accuracy": accuracy, "qa": qa}
     template = r"""
 <section id="report-interactive" class="interactive-report" aria-label="Interactive estimate summary">
   <h2>Explore the results</h2>
@@ -700,10 +711,10 @@ def interactive_summary_html(result):
       <p id="area-detail" class="chart-detail" aria-live="polite"></p>
     </section>
     <section class="chart-panel" aria-labelledby="efg-chart-heading">
-      <h3 id="efg-chart-heading">EFG mapped-cell composition</h3>
-      <div class="chart-controls"><label>EFG <select id="efg-choice"><option>Arid</option><option>Valley</option><option>Mesic</option></select></label></div>
-      <div class="chart-legend"><span class="legend intact"></span>Reference intact <span class="legend moderate"></span>Reference moderate <span class="legend severe"></span>Reference severe</div>
-      <svg id="efg-svg" class="chart-svg" role="img" aria-label="Error-adjusted reference condition composition within selected EFG mapped cells"></svg>
+      <h3 id="efg-chart-heading">EFG area estimates</h3>
+      <div class="chart-controls"><label>View <select id="efg-view"><option value="mapped">Mapped-cell composition</option><option value="reference">Reference-condition areas</option></select></label><label>EFG <select id="efg-choice"><option>Arid</option><option>Valley</option><option>Mesic</option></select></label></div>
+      <div class="chart-legend"><span class="legend intact"></span>Reference intact <span class="legend moderate"></span>Reference moderate <span class="legend severe"></span>Reference severe; whiskers show 95% MOE in reference-condition view</div>
+      <svg id="efg-svg" class="chart-svg" role="img" aria-label="Error-adjusted EFG area estimates"></svg>
       <p id="efg-detail" class="chart-detail" aria-live="polite"></p>
     </section>
     <section class="chart-panel" aria-labelledby="accuracy-chart-heading">
@@ -775,9 +786,30 @@ def interactive_summary_html(result):
   }
 
   const efgSvg = root.querySelector('#efg-svg');
+  const efgView = root.querySelector('#efg-view');
   const efgChoice = root.querySelector('#efg-choice');
   const efgDetail = root.querySelector('#efg-detail');
   function renderEfg() {
+    if (efgView.value === 'reference') {
+      const rows = data.efgReference[efgChoice.value];
+      const max = Math.max(...rows.map(row => row.area + row.moe)) * 1.06;
+      const width = 760, x0 = 155, chartWidth = 555, rowHeight = 48, y0 = 32, height = 65 + rowHeight * rows.length;
+      clear(efgSvg, width, height); axis(efgSvg, max, x0, height - 28, chartWidth, height - 64, 'ha');
+      rows.forEach((row, index) => {
+        const y = y0 + index * rowHeight, barY = y + 5, barWidth = chartWidth * row.area / max;
+        efgSvg.append(make('text', {x:8, y:y + 20, fill:colors.text, 'font-size':'13'}, `Reference ${row.label}`));
+        const rect = make('rect', {x:x0, y:barY, width:0, height:20, rx:3, fill:colors[row.label], 'data-final-width':barWidth, style:'transition:width .32s ease'});
+        rect.append(make('title', {}, `${efgChoice.value} reference ${row.label}: ${formatHa(row.area)} ± ${formatHa(row.moe)}`)); efgSvg.append(rect);
+        const low = x0 + chartWidth * Math.max(0, row.area - row.moe) / max, high = x0 + chartWidth * Math.min(max, row.area + row.moe) / max;
+        efgSvg.append(make('line', {x1:low, y1:barY + 10, x2:high, y2:barY + 10, stroke:colors.text, 'stroke-width':'1.2'}));
+        efgSvg.append(make('line', {x1:low, y1:barY + 6, x2:low, y2:barY + 14, stroke:colors.text, 'stroke-width':'1.2'}));
+        efgSvg.append(make('line', {x1:high, y1:barY + 6, x2:high, y2:barY + 14, stroke:colors.text, 'stroke-width':'1.2'}));
+        efgSvg.append(make('text', {x:Math.min(x0 + barWidth + 6, width - 55), y:barY + 14, fill:colors.text, 'font-size':'11'}, `${Math.round(row.area / 1000)}k`));
+      });
+      efgDetail.textContent = `${efgChoice.value}: error-adjusted reference-condition areas. Whiskers show 95% margins of error; n=${rows[0].n} labelled points.`;
+      animateWidths(efgSvg);
+      return;
+    }
     const rows = data.efg[efgChoice.value];
     const max = Math.max(...rows.map(row => row.area)) * 1.06;
     const width = 760, x0 = 155, chartWidth = 555, rowHeight = 58, y0 = 32, height = 65 + rowHeight * rows.length;
@@ -827,7 +859,7 @@ def interactive_summary_html(result):
     });
     animateWidths(qaSvg);
   }
-  areaArm.addEventListener('change', renderArea); areaScenario.addEventListener('change', renderArea); efgChoice.addEventListener('change', renderEfg);
+  areaArm.addEventListener('change', renderArea); areaScenario.addEventListener('change', renderArea); efgView.addEventListener('change', renderEfg); efgChoice.addEventListener('change', renderEfg);
   renderArea(); renderEfg(); renderAccuracy(); renderQa();
 })();
 </script>
