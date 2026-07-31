@@ -1,0 +1,6157 @@
+{
+  "artifact": "final design-based thicket-condition area estimation",
+  "version": "2026-07-31",
+  "generated_utc": "2026-07-31T12:44:28.182420+00:00",
+  "area_total_ha": 1898600.0,
+  "source_submission": {
+    "file": "thicket_labels_MichaelPowell_MP_2026-07-31-10-35-52.json",
+    "labeler": "Michael Powell",
+    "assignment": {
+      "campaign": "thicket-2026-r1",
+      "code": "MP",
+      "id": "a98608250309730d",
+      "assigned": 237
+    },
+    "exported": "2026-07-31T10:35:52.055Z",
+    "completion": {
+      "complete": true,
+      "total": 237,
+      "labeled": 237,
+      "flagged": 0,
+      "unsure": 0,
+      "legacyCombined": 0,
+      "lowConfidence": 0
+    },
+    "checksum": {
+      "algorithm": "fnv1a-32",
+      "value": "bcbc113b"
+    },
+    "validation": {
+      "passed": true,
+      "checks": {
+        "dataset_matches_manifest": true,
+        "campaign_matches_manifest": true,
+        "assignment_code_matches": true,
+        "assignment_id_matches": true,
+        "row_count_matches_assignment": true,
+        "id_set_matches_assignment": true,
+        "ids_are_unique": true,
+        "completion_is_final": true,
+        "labels_are_valid": true,
+        "strata_are_valid": true,
+        "checksum_matches": true
+      },
+      "calculated_checksum": "bcbc113b"
+    }
+  },
+  "preserved_baseline": {
+    "json_file": "area_estimation_added_labeller_2026-07-21.json",
+    "html_file": "area_estimation_added_labeller_2026-07-21.html",
+    "files_overwritten": false
+  },
+  "final_labeller_contribution": {
+    "raw_submission_rows": 237,
+    "previous_submission_overlap_rows": 48,
+    "qa_overlap_rows": 44,
+    "new_sample_ids": 189,
+    "resolved_prior_unsure_rows": 4,
+    "usable_new_rows": 193,
+    "previous_unique_points": 628,
+    "final_unique_points": 821,
+    "sample_size_increase_percent": 30.73248407643312,
+    "sample_draw_points": 846,
+    "all_sample_ids_covered": true,
+    "remaining_excluded_unsure": 25,
+    "remaining_excluded_ids": [
+      51,
+      327,
+      334,
+      362,
+      363,
+      371,
+      416,
+      470,
+      472,
+      476,
+      498,
+      534,
+      551,
+      556,
+      596,
+      633,
+      656,
+      681,
+      688,
+      732,
+      742,
+      776,
+      792,
+      823,
+      844
+    ],
+    "previous_by_stratum": {
+      "intact": 176,
+      "moderate": 202,
+      "severe": 250
+    },
+    "usable_added_by_stratum": {
+      "intact": 55,
+      "moderate": 63,
+      "severe": 75
+    },
+    "usable_added_by_label": {
+      "intact": 31,
+      "moderate": 42,
+      "nothicket": 18,
+      "severe": 95,
+      "transformed": 7
+    },
+    "treatment": {
+      "determinate_overlaps": "QA only; excluded from estimator to avoid double-counting",
+      "previously_unseen": "added",
+      "prior_unsure_resolved_by_mp": "MP determinate label added",
+      "remaining_ap_unsure": "excluded"
+    }
+  },
+  "qa": {
+    "mp_pairwise": [
+      {
+        "new_labeller": "MP",
+        "other_labeller": "ARP",
+        "n_overlap": 15,
+        "n_new_unsure": 0,
+        "n_other_unsure": 0,
+        "n_determinate_pairs": 15,
+        "n_agree": 12,
+        "agreement_rate": 0.8,
+        "n_disagree": 3,
+        "disagreements": [
+          {
+            "id": 68,
+            "stratum": "intact",
+            "MP": "severe",
+            "ARP": "intact"
+          },
+          {
+            "id": 373,
+            "stratum": "moderate",
+            "MP": "severe",
+            "ARP": "moderate"
+          },
+          {
+            "id": 810,
+            "stratum": "severe",
+            "MP": "severe",
+            "ARP": "transformed"
+          }
+        ]
+      },
+      {
+        "new_labeller": "MP",
+        "other_labeller": "SVM",
+        "n_overlap": 15,
+        "n_new_unsure": 0,
+        "n_other_unsure": 0,
+        "n_determinate_pairs": 15,
+        "n_agree": 7,
+        "agreement_rate": 0.4666666666666667,
+        "n_disagree": 8,
+        "disagreements": [
+          {
+            "id": 91,
+            "stratum": "intact",
+            "MP": "intact",
+            "SVM": "nothicket"
+          },
+          {
+            "id": 165,
+            "stratum": "intact",
+            "MP": "moderate",
+            "SVM": "intact"
+          },
+          {
+            "id": 181,
+            "stratum": "intact",
+            "MP": "severe",
+            "SVM": "intact"
+          },
+          {
+            "id": 406,
+            "stratum": "moderate",
+            "MP": "severe",
+            "SVM": "moderate"
+          },
+          {
+            "id": 685,
+            "stratum": "severe",
+            "MP": "severe",
+            "SVM": "moderate"
+          },
+          {
+            "id": 687,
+            "stratum": "severe",
+            "MP": "nothicket",
+            "SVM": "severe"
+          },
+          {
+            "id": 721,
+            "stratum": "severe",
+            "MP": "moderate",
+            "SVM": "severe"
+          },
+          {
+            "id": 740,
+            "stratum": "severe",
+            "MP": "nothicket",
+            "SVM": "moderate"
+          }
+        ]
+      },
+      {
+        "new_labeller": "MP",
+        "other_labeller": "AP",
+        "n_overlap": 18,
+        "n_new_unsure": 0,
+        "n_other_unsure": 4,
+        "n_determinate_pairs": 14,
+        "n_agree": 10,
+        "agreement_rate": 0.7142857142857143,
+        "n_disagree": 4,
+        "disagreements": [
+          {
+            "id": 67,
+            "stratum": "intact",
+            "MP": "moderate",
+            "AP": "intact"
+          },
+          {
+            "id": 274,
+            "stratum": "moderate",
+            "MP": "moderate",
+            "AP": "intact"
+          },
+          {
+            "id": 485,
+            "stratum": "moderate",
+            "MP": "severe",
+            "AP": "moderate"
+          },
+          {
+            "id": 612,
+            "stratum": "severe",
+            "MP": "severe",
+            "AP": "nothicket"
+          }
+        ]
+      }
+    ],
+    "all_labels": {
+      "labeller_order": [
+        "ARP",
+        "SVM",
+        "AP",
+        "MP"
+      ],
+      "submission_rows": 948,
+      "unique_labelled_ids": 846,
+      "label_counts": {
+        "ARP": {
+          "intact": 68,
+          "moderate": 43,
+          "nothicket": 31,
+          "severe": 89,
+          "transformed": 6
+        },
+        "SVM": {
+          "intact": 69,
+          "moderate": 95,
+          "nothicket": 4,
+          "severe": 66,
+          "transformed": 3
+        },
+        "AP": {
+          "intact": 36,
+          "moderate": 47,
+          "nothicket": 36,
+          "severe": 76,
+          "transformed": 7,
+          "unsure": 35
+        },
+        "MP": {
+          "intact": 37,
+          "moderate": 51,
+          "nothicket": 21,
+          "severe": 119,
+          "transformed": 9
+        }
+      },
+      "pairwise": [
+        {
+          "new_labeller": "ARP",
+          "other_labeller": "SVM",
+          "n_overlap": 12,
+          "n_new_unsure": 0,
+          "n_other_unsure": 0,
+          "n_determinate_pairs": 12,
+          "n_agree": 8,
+          "agreement_rate": 0.6666666666666666,
+          "n_disagree": 4,
+          "disagreements": [
+            {
+              "id": 150,
+              "stratum": "intact",
+              "ARP": "moderate",
+              "SVM": "intact"
+            },
+            {
+              "id": 211,
+              "stratum": "intact",
+              "ARP": "moderate",
+              "SVM": "intact"
+            },
+            {
+              "id": 291,
+              "stratum": "moderate",
+              "ARP": "moderate",
+              "SVM": "intact"
+            },
+            {
+              "id": 550,
+              "stratum": "severe",
+              "ARP": "nothicket",
+              "SVM": "severe"
+            }
+          ]
+        },
+        {
+          "new_labeller": "ARP",
+          "other_labeller": "AP",
+          "n_overlap": 22,
+          "n_new_unsure": 0,
+          "n_other_unsure": 4,
+          "n_determinate_pairs": 18,
+          "n_agree": 9,
+          "agreement_rate": 0.5,
+          "n_disagree": 9,
+          "disagreements": [
+            {
+              "id": 61,
+              "stratum": "intact",
+              "ARP": "moderate",
+              "AP": "intact"
+            },
+            {
+              "id": 100,
+              "stratum": "intact",
+              "ARP": "intact",
+              "AP": "moderate"
+            },
+            {
+              "id": 120,
+              "stratum": "intact",
+              "ARP": "intact",
+              "AP": "nothicket"
+            },
+            {
+              "id": 310,
+              "stratum": "moderate",
+              "ARP": "severe",
+              "AP": "moderate"
+            },
+            {
+              "id": 408,
+              "stratum": "moderate",
+              "ARP": "intact",
+              "AP": "moderate"
+            },
+            {
+              "id": 473,
+              "stratum": "moderate",
+              "ARP": "intact",
+              "AP": "moderate"
+            },
+            {
+              "id": 629,
+              "stratum": "severe",
+              "ARP": "nothicket",
+              "AP": "severe"
+            },
+            {
+              "id": 729,
+              "stratum": "severe",
+              "ARP": "moderate",
+              "AP": "nothicket"
+            },
+            {
+              "id": 788,
+              "stratum": "severe",
+              "ARP": "moderate",
+              "AP": "nothicket"
+            }
+          ]
+        },
+        {
+          "new_labeller": "ARP",
+          "other_labeller": "MP",
+          "n_overlap": 15,
+          "n_new_unsure": 0,
+          "n_other_unsure": 0,
+          "n_determinate_pairs": 15,
+          "n_agree": 12,
+          "agreement_rate": 0.8,
+          "n_disagree": 3,
+          "disagreements": [
+            {
+              "id": 68,
+              "stratum": "intact",
+              "ARP": "intact",
+              "MP": "severe"
+            },
+            {
+              "id": 373,
+              "stratum": "moderate",
+              "ARP": "moderate",
+              "MP": "severe"
+            },
+            {
+              "id": 810,
+              "stratum": "severe",
+              "ARP": "transformed",
+              "MP": "severe"
+            }
+          ]
+        },
+        {
+          "new_labeller": "SVM",
+          "other_labeller": "AP",
+          "n_overlap": 20,
+          "n_new_unsure": 0,
+          "n_other_unsure": 2,
+          "n_determinate_pairs": 18,
+          "n_agree": 11,
+          "agreement_rate": 0.6111111111111112,
+          "n_disagree": 7,
+          "disagreements": [
+            {
+              "id": 144,
+              "stratum": "intact",
+              "SVM": "intact",
+              "AP": "moderate"
+            },
+            {
+              "id": 247,
+              "stratum": "moderate",
+              "SVM": "moderate",
+              "AP": "severe"
+            },
+            {
+              "id": 297,
+              "stratum": "moderate",
+              "SVM": "moderate",
+              "AP": "nothicket"
+            },
+            {
+              "id": 525,
+              "stratum": "severe",
+              "SVM": "severe",
+              "AP": "transformed"
+            },
+            {
+              "id": 636,
+              "stratum": "severe",
+              "SVM": "moderate",
+              "AP": "nothicket"
+            },
+            {
+              "id": 676,
+              "stratum": "severe",
+              "SVM": "severe",
+              "AP": "nothicket"
+            },
+            {
+              "id": 829,
+              "stratum": "severe",
+              "SVM": "moderate",
+              "AP": "severe"
+            }
+          ]
+        },
+        {
+          "new_labeller": "SVM",
+          "other_labeller": "MP",
+          "n_overlap": 15,
+          "n_new_unsure": 0,
+          "n_other_unsure": 0,
+          "n_determinate_pairs": 15,
+          "n_agree": 7,
+          "agreement_rate": 0.4666666666666667,
+          "n_disagree": 8,
+          "disagreements": [
+            {
+              "id": 91,
+              "stratum": "intact",
+              "SVM": "nothicket",
+              "MP": "intact"
+            },
+            {
+              "id": 165,
+              "stratum": "intact",
+              "SVM": "intact",
+              "MP": "moderate"
+            },
+            {
+              "id": 181,
+              "stratum": "intact",
+              "SVM": "intact",
+              "MP": "severe"
+            },
+            {
+              "id": 406,
+              "stratum": "moderate",
+              "SVM": "moderate",
+              "MP": "severe"
+            },
+            {
+              "id": 685,
+              "stratum": "severe",
+              "SVM": "moderate",
+              "MP": "severe"
+            },
+            {
+              "id": 687,
+              "stratum": "severe",
+              "SVM": "severe",
+              "MP": "nothicket"
+            },
+            {
+              "id": 721,
+              "stratum": "severe",
+              "SVM": "severe",
+              "MP": "moderate"
+            },
+            {
+              "id": 740,
+              "stratum": "severe",
+              "SVM": "moderate",
+              "MP": "nothicket"
+            }
+          ]
+        },
+        {
+          "new_labeller": "AP",
+          "other_labeller": "MP",
+          "n_overlap": 18,
+          "n_new_unsure": 4,
+          "n_other_unsure": 0,
+          "n_determinate_pairs": 14,
+          "n_agree": 10,
+          "agreement_rate": 0.7142857142857143,
+          "n_disagree": 4,
+          "disagreements": [
+            {
+              "id": 67,
+              "stratum": "intact",
+              "AP": "intact",
+              "MP": "moderate"
+            },
+            {
+              "id": 274,
+              "stratum": "moderate",
+              "AP": "intact",
+              "MP": "moderate"
+            },
+            {
+              "id": 485,
+              "stratum": "moderate",
+              "AP": "moderate",
+              "MP": "severe"
+            },
+            {
+              "id": 612,
+              "stratum": "severe",
+              "AP": "nothicket",
+              "MP": "severe"
+            }
+          ]
+        }
+      ],
+      "aggregate": {
+        "n_pairwise_overlap_rows": 102,
+        "n_determinate_pairs": 92,
+        "n_agree": 57,
+        "n_disagree": 35,
+        "agreement_rate": 0.6195652173913043,
+        "disagreement_by_label_pair": {
+          "intact vs moderate": 11,
+          "intact vs nothicket": 2,
+          "intact vs severe": 2,
+          "moderate vs nothicket": 5,
+          "moderate vs severe": 8,
+          "nothicket vs severe": 5,
+          "severe vs transformed": 2
+        }
+      }
+    }
+  },
+  "sensitivity_adjudication": {
+    "ARP": {
+      "previous_result_reproduction": {
+        "passed": true,
+        "max_absolute_difference_ha": 0.0
+      },
+      "final": {
+        "adjudicate": "ARP",
+        "inputs": {
+          "labellers": [
+            "ARP",
+            "SVM/Steph",
+            "Alastair Potts",
+            "Michael Powell"
+          ],
+          "adjudication": "retain the old ARP-preferred sensitivity arm; determinate duplicate labels are QA only; MP resolves four AP-unsure points and supplies the remaining unseen sample IDs",
+          "n_unique_points": 821,
+          "qa_agreement_mp": [
+            {
+              "new_labeller": "MP",
+              "other_labeller": "ARP",
+              "n_overlap": 15,
+              "n_new_unsure": 0,
+              "n_other_unsure": 0,
+              "n_determinate_pairs": 15,
+              "n_agree": 12,
+              "agreement_rate": 0.8,
+              "n_disagree": 3,
+              "disagreements": [
+                {
+                  "id": 68,
+                  "stratum": "intact",
+                  "MP": "severe",
+                  "ARP": "intact"
+                },
+                {
+                  "id": 373,
+                  "stratum": "moderate",
+                  "MP": "severe",
+                  "ARP": "moderate"
+                },
+                {
+                  "id": 810,
+                  "stratum": "severe",
+                  "MP": "severe",
+                  "ARP": "transformed"
+                }
+              ]
+            },
+            {
+              "new_labeller": "MP",
+              "other_labeller": "SVM",
+              "n_overlap": 15,
+              "n_new_unsure": 0,
+              "n_other_unsure": 0,
+              "n_determinate_pairs": 15,
+              "n_agree": 7,
+              "agreement_rate": 0.4666666666666667,
+              "n_disagree": 8,
+              "disagreements": [
+                {
+                  "id": 91,
+                  "stratum": "intact",
+                  "MP": "intact",
+                  "SVM": "nothicket"
+                },
+                {
+                  "id": 165,
+                  "stratum": "intact",
+                  "MP": "moderate",
+                  "SVM": "intact"
+                },
+                {
+                  "id": 181,
+                  "stratum": "intact",
+                  "MP": "severe",
+                  "SVM": "intact"
+                },
+                {
+                  "id": 406,
+                  "stratum": "moderate",
+                  "MP": "severe",
+                  "SVM": "moderate"
+                },
+                {
+                  "id": 685,
+                  "stratum": "severe",
+                  "MP": "severe",
+                  "SVM": "moderate"
+                },
+                {
+                  "id": 687,
+                  "stratum": "severe",
+                  "MP": "nothicket",
+                  "SVM": "severe"
+                },
+                {
+                  "id": 721,
+                  "stratum": "severe",
+                  "MP": "moderate",
+                  "SVM": "severe"
+                },
+                {
+                  "id": 740,
+                  "stratum": "severe",
+                  "MP": "nothicket",
+                  "SVM": "moderate"
+                }
+              ]
+            },
+            {
+              "new_labeller": "MP",
+              "other_labeller": "AP",
+              "n_overlap": 18,
+              "n_new_unsure": 0,
+              "n_other_unsure": 4,
+              "n_determinate_pairs": 14,
+              "n_agree": 10,
+              "agreement_rate": 0.7142857142857143,
+              "n_disagree": 4,
+              "disagreements": [
+                {
+                  "id": 67,
+                  "stratum": "intact",
+                  "MP": "moderate",
+                  "AP": "intact"
+                },
+                {
+                  "id": 274,
+                  "stratum": "moderate",
+                  "MP": "moderate",
+                  "AP": "intact"
+                },
+                {
+                  "id": 485,
+                  "stratum": "moderate",
+                  "MP": "severe",
+                  "AP": "moderate"
+                },
+                {
+                  "id": 612,
+                  "stratum": "severe",
+                  "MP": "severe",
+                  "AP": "nothicket"
+                }
+              ]
+            }
+          ],
+          "W": {
+            "intact": 0.2789371115558833,
+            "moderate": 0.29106130833245547,
+            "severe": 0.43000158011166123
+          },
+          "area_total_ha": 1898600.0,
+          "remap": {
+            "transformed": "severe",
+            "nothicket": "tested: class (kept) | severe",
+            "unsure": "excluded"
+          }
+        },
+        "scenarios": {
+          "A_nothicket_class": {
+            "nothicket_mode": "class",
+            "ref_classes": [
+              "intact",
+              "moderate",
+              "severe",
+              "nothicket"
+            ],
+            "n_used": 821,
+            "olofsson": {
+              "ref_classes": [
+                "intact",
+                "moderate",
+                "severe",
+                "nothicket"
+              ],
+              "n_h": {
+                "intact": 231,
+                "moderate": 265,
+                "severe": 325
+              },
+              "confusion_map_x_ref": {
+                "intact": {
+                  "intact": 154,
+                  "moderate": 55,
+                  "severe": 8,
+                  "nothicket": 14
+                },
+                "moderate": {
+                  "intact": 30,
+                  "moderate": 121,
+                  "severe": 87,
+                  "nothicket": 27
+                },
+                "severe": {
+                  "intact": 5,
+                  "moderate": 39,
+                  "severe": 240,
+                  "nothicket": 41
+                }
+              },
+              "area_proportion": {
+                "intact": {
+                  "p": 0.2255238200877371,
+                  "se": 0.010771944075112894,
+                  "ci95": [
+                    0.20441119765703622,
+                    0.246636442518438
+                  ]
+                },
+                "moderate": {
+                  "p": 0.2509134793320543,
+                  "se": 0.014186301020779071,
+                  "ci95": [
+                    0.22310884025748354,
+                    0.2787181184066251
+                  ]
+                },
+                "severe": {
+                  "p": 0.42275576479553795,
+                  "se": 0.013866988531868532,
+                  "ci95": [
+                    0.3955769666990457,
+                    0.4499345628920302
+                  ]
+                },
+                "nothicket": {
+                  "p": 0.10080693578467072,
+                  "se": 0.010561020421323732,
+                  "ci95": [
+                    0.08010771611888418,
+                    0.12150615545045726
+                  ]
+                }
+              },
+              "area_ha": {
+                "intact": {
+                  "area": 428179.5248185777,
+                  "se": 20451.61302100934,
+                  "ci95": [
+                    388095.09987164894,
+                    468263.9497655064
+                  ]
+                },
+                "moderate": {
+                  "area": 476384.33185983833,
+                  "se": 26934.111118051143,
+                  "ci95": [
+                    423594.44411285827,
+                    529174.2196068184
+                  ]
+                },
+                "severe": {
+                  "area": 802644.0950408083,
+                  "se": 26327.864426605596,
+                  "ci95": [
+                    751042.4289748082,
+                    854245.7611068086
+                  ]
+                },
+                "nothicket": {
+                  "area": 191392.04828077584,
+                  "se": 20051.153371925237,
+                  "ci95": [
+                    152092.5098233135,
+                    230691.58673823814
+                  ]
+                }
+              },
+              "overall_accuracy": {
+                "OA": 0.6363973944898976,
+                "se": 0.01627925462486866,
+                "ci95": [
+                  0.604490641729998,
+                  0.6683041472497973
+                ]
+              },
+              "users_accuracy": {
+                "intact": {
+                  "U": 0.6666666666666666,
+                  "se": 0.03108349360801046
+                },
+                "moderate": {
+                  "U": 0.45660377358490567,
+                  "se": 0.030656748696739473
+                },
+                "severe": {
+                  "U": 0.7384615384615385,
+                  "se": 0.02441513992664222
+                }
+              },
+              "producers_accuracy": {
+                "intact": {
+                  "P": 0.8245606796578929,
+                  "se": 0.024324911979798594
+                },
+                "moderate": {
+                  "P": 0.5296634205661063,
+                  "se": 0.028666372626992186
+                },
+                "severe": {
+                  "P": 0.7511183875723731,
+                  "se": 0.01724196286722337
+                }
+              },
+              "area_total_ha": 1898600.0
+            },
+            "ppi_pp": {
+              "intact": {
+                "ppi": {
+                  "p": 0.2255237517491981,
+                  "ci95": [
+                    0.2043073911520728,
+                    0.24674011234632337
+                  ],
+                  "se_implied": 0.010824872683619306,
+                  "area": 428179.3950710275,
+                  "area_ci95": [
+                    387898.0128413254,
+                    468460.77730072953
+                  ]
+                },
+                "stratified": {
+                  "p": 0.2255238200877371,
+                  "se": 0.010771944075112894,
+                  "ci95": [
+                    0.20441119765703622,
+                    0.246636442518438
+                  ],
+                  "area": 428179.5248185777,
+                  "area_ci95": [
+                    388095.09987164894,
+                    468263.9497655064
+                  ]
+                },
+                "ppi_beats_stratified": false
+              },
+              "moderate": {
+                "ppi": {
+                  "p": 0.2509135319532235,
+                  "ci95": [
+                    0.22300401345073922,
+                    0.2788230504557078
+                  ],
+                  "se_implied": 0.014239811916255105,
+                  "area": 476384.43176639016,
+                  "area_ci95": [
+                    423395.4199375735,
+                    529373.4435952068
+                  ]
+                },
+                "stratified": {
+                  "p": 0.25091347933205427,
+                  "se": 0.014186301020779071,
+                  "ci95": [
+                    0.22310884025748348,
+                    0.2787181184066251
+                  ],
+                  "area": 476384.3318598382,
+                  "area_ci95": [
+                    423594.44411285815,
+                    529174.2196068184
+                  ]
+                },
+                "ppi_beats_stratified": false
+              },
+              "severe": {
+                "ppi": {
+                  "p": 0.4227557187366042,
+                  "ci95": [
+                    0.39474652298192814,
+                    0.4507649144912803
+                  ],
+                  "se_implied": 0.014290668591672627,
+                  "area": 802644.0075933167,
+                  "area_ci95": [
+                    749465.7485334887,
+                    855822.2666531448
+                  ]
+                },
+                "stratified": {
+                  "p": 0.4227557647955379,
+                  "se": 0.013866988531868532,
+                  "ci95": [
+                    0.39557696669904563,
+                    0.44993456289203015
+                  ],
+                  "area": 802644.0950408082,
+                  "area_ci95": [
+                    751042.4289748081,
+                    854245.7611068084
+                  ]
+                },
+                "ppi_beats_stratified": false
+              },
+              "nothicket": {
+                "ppi": {
+                  "p": 0.10080693578467072,
+                  "ci95": [
+                    0.08002947506545233,
+                    0.12158439650388911
+                  ],
+                  "se_implied": 0.010600940059668622,
+                  "area": 191392.04828077584,
+                  "area_ci95": [
+                    151943.9613592678,
+                    230840.13520228385
+                  ]
+                },
+                "stratified": {
+                  "p": 0.10080693578467072,
+                  "se": 0.010561020421323732,
+                  "ci95": [
+                    0.08010771611888418,
+                    0.12150615545045726
+                  ],
+                  "area": 191392.04828077584,
+                  "area_ci95": [
+                    152092.5098233135,
+                    230691.58673823814
+                  ]
+                },
+                "ppi_beats_stratified": false
+              }
+            }
+          },
+          "B_nothicket_to_severe": {
+            "nothicket_mode": "severe",
+            "ref_classes": [
+              "intact",
+              "moderate",
+              "severe"
+            ],
+            "n_used": 821,
+            "olofsson": {
+              "ref_classes": [
+                "intact",
+                "moderate",
+                "severe"
+              ],
+              "n_h": {
+                "intact": 231,
+                "moderate": 265,
+                "severe": 325
+              },
+              "confusion_map_x_ref": {
+                "intact": {
+                  "intact": 154,
+                  "moderate": 55,
+                  "severe": 22
+                },
+                "moderate": {
+                  "intact": 30,
+                  "moderate": 121,
+                  "severe": 114
+                },
+                "severe": {
+                  "intact": 5,
+                  "moderate": 39,
+                  "severe": 281
+                }
+              },
+              "area_proportion": {
+                "intact": {
+                  "p": 0.2255238200877371,
+                  "se": 0.010771944075112894,
+                  "ci95": [
+                    0.20441119765703622,
+                    0.246636442518438
+                  ]
+                },
+                "moderate": {
+                  "p": 0.2509134793320543,
+                  "se": 0.014186301020779071,
+                  "ci95": [
+                    0.22310884025748354,
+                    0.2787181184066251
+                  ]
+                },
+                "severe": {
+                  "p": 0.5235627005802086,
+                  "se": 0.013214056650443938,
+                  "ci95": [
+                    0.4976636254556665,
+                    0.5494617757047507
+                  ]
+                }
+              },
+              "area_ha": {
+                "intact": {
+                  "area": 428179.5248185777,
+                  "se": 20451.61302100934,
+                  "ci95": [
+                    388095.09987164894,
+                    468263.9497655064
+                  ]
+                },
+                "moderate": {
+                  "area": 476384.33185983833,
+                  "se": 26934.111118051143,
+                  "ci95": [
+                    423594.44411285827,
+                    529174.2196068184
+                  ]
+                },
+                "severe": {
+                  "area": 994036.1433215841,
+                  "se": 25088.20795653286,
+                  "ci95": [
+                    944864.1592901284,
+                    1043208.1273530398
+                  ]
+                }
+              },
+              "overall_accuracy": {
+                "OA": 0.6906437476732149,
+                "se": 0.014886110393472375,
+                "ci95": [
+                  0.6614675074321217,
+                  0.7198199879143081
+                ]
+              },
+              "users_accuracy": {
+                "intact": {
+                  "U": 0.6666666666666666,
+                  "se": 0.03108349360801046
+                },
+                "moderate": {
+                  "U": 0.45660377358490567,
+                  "se": 0.030656748696739473
+                },
+                "severe": {
+                  "U": 0.8646153846153846,
+                  "se": 0.019007440169460023
+                }
+              },
+              "producers_accuracy": {
+                "intact": {
+                  "P": 0.8245606796578929,
+                  "se": 0.024324911979798594
+                },
+                "moderate": {
+                  "P": 0.5296634205661063,
+                  "se": 0.028666372626992186
+                },
+                "severe": {
+                  "P": 0.7101078460353581,
+                  "se": 0.014791912511290507
+                }
+              },
+              "area_total_ha": 1898600.0
+            },
+            "ppi_pp": {
+              "intact": {
+                "ppi": {
+                  "p": 0.2255237517491981,
+                  "ci95": [
+                    0.2043073911520728,
+                    0.24674011234632337
+                  ],
+                  "se_implied": 0.010824872683619306,
+                  "area": 428179.3950710275,
+                  "area_ci95": [
+                    387898.0128413254,
+                    468460.77730072953
+                  ]
+                },
+                "stratified": {
+                  "p": 0.2255238200877371,
+                  "se": 0.010771944075112894,
+                  "ci95": [
+                    0.20441119765703622,
+                    0.246636442518438
+                  ],
+                  "area": 428179.5248185777,
+                  "area_ci95": [
+                    388095.09987164894,
+                    468263.9497655064
+                  ]
+                },
+                "ppi_beats_stratified": false
+              },
+              "moderate": {
+                "ppi": {
+                  "p": 0.2509135319532235,
+                  "ci95": [
+                    0.22300401345073922,
+                    0.2788230504557078
+                  ],
+                  "se_implied": 0.014239811916255105,
+                  "area": 476384.43176639016,
+                  "area_ci95": [
+                    423395.4199375735,
+                    529373.4435952068
+                  ]
+                },
+                "stratified": {
+                  "p": 0.25091347933205427,
+                  "se": 0.014186301020779071,
+                  "ci95": [
+                    0.22310884025748348,
+                    0.2787181184066251
+                  ],
+                  "area": 476384.3318598382,
+                  "area_ci95": [
+                    423594.44411285815,
+                    529174.2196068184
+                  ]
+                },
+                "ppi_beats_stratified": false
+              },
+              "severe": {
+                "ppi": {
+                  "p": 0.5235626513300652,
+                  "ci95": [
+                    0.49655206672978874,
+                    0.5505732359303415
+                  ],
+                  "se_implied": 0.013781163742462825,
+                  "area": 994036.0498152617,
+                  "area_ci95": [
+                    942753.7538931769,
+                    1045318.3457373463
+                  ]
+                },
+                "stratified": {
+                  "p": 0.5235627005802086,
+                  "se": 0.013214056650443938,
+                  "ci95": [
+                    0.4976636254556665,
+                    0.5494617757047507
+                  ],
+                  "area": 994036.1433215841,
+                  "area_ci95": [
+                    944864.1592901284,
+                    1043208.1273530398
+                  ]
+                },
+                "ppi_beats_stratified": false
+              }
+            }
+          }
+        }
+      },
+      "comparison_to_previous": {
+        "A_nothicket_class": {
+          "previous_n_used": 628,
+          "final_n_used": 821,
+          "previous_overall_accuracy": 0.6788875735595786,
+          "final_overall_accuracy": 0.6363973944898976,
+          "classes": {
+            "intact": {
+              "previous_area_ha": 469653.5688235824,
+              "final_area_ha": 428179.5248185777,
+              "delta_area_ha": -41474.04400500469,
+              "delta_percent_of_previous": -8.83077373581797,
+              "previous_moe95_ha": 42510.359192187534,
+              "final_moe95_ha": 40084.42494692872,
+              "moe95_change_ha": -2425.934245258817,
+              "moe95_reduction_percent": 5.706689596037688
+            },
+            "moderate": {
+              "previous_area_ha": 499474.7876147615,
+              "final_area_ha": 476384.33185983833,
+              "delta_area_ha": -23090.45575492317,
+              "delta_percent_of_previous": -4.622947209245833,
+              "previous_moe95_ha": 59238.00927840205,
+              "final_moe95_ha": 52789.88774698009,
+              "moe95_change_ha": -6448.121531421966,
+              "moe95_reduction_percent": 10.885108412603133
+            },
+            "severe": {
+              "previous_area_ha": 733620.2282133213,
+              "final_area_ha": 802644.0950408083,
+              "delta_area_ha": 69023.86682748701,
+              "delta_percent_of_previous": 9.408664615967531,
+              "previous_moe95_ha": 57124.18562498556,
+              "final_moe95_ha": 51601.66606600025,
+              "moe95_change_ha": -5522.51955898531,
+              "moe95_reduction_percent": 9.667568121215918
+            },
+            "nothicket": {
+              "previous_area_ha": 195851.41534833482,
+              "final_area_ha": 191392.04828077584,
+              "delta_area_ha": -4459.367067558982,
+              "delta_percent_of_previous": -2.276913373144483,
+              "previous_moe95_ha": 45459.9692532745,
+              "final_moe95_ha": 39299.538457462324,
+              "moe95_change_ha": -6160.430795812179,
+              "moe95_reduction_percent": 13.551330757594913
+            }
+          }
+        },
+        "B_nothicket_to_severe": {
+          "previous_n_used": 628,
+          "final_n_used": 821,
+          "previous_overall_accuracy": 0.7356477821343179,
+          "final_overall_accuracy": 0.6906437476732149,
+          "classes": {
+            "intact": {
+              "previous_area_ha": 469653.5688235824,
+              "final_area_ha": 428179.5248185777,
+              "delta_area_ha": -41474.04400500469,
+              "delta_percent_of_previous": -8.83077373581797,
+              "previous_moe95_ha": 42510.359192187534,
+              "final_moe95_ha": 40084.42494692872,
+              "moe95_change_ha": -2425.934245258817,
+              "moe95_reduction_percent": 5.706689596037688
+            },
+            "moderate": {
+              "previous_area_ha": 499474.7876147615,
+              "final_area_ha": 476384.33185983833,
+              "delta_area_ha": -23090.45575492317,
+              "delta_percent_of_previous": -4.622947209245833,
+              "previous_moe95_ha": 59238.00927840205,
+              "final_moe95_ha": 52789.88774698009,
+              "moe95_change_ha": -6448.121531421966,
+              "moe95_reduction_percent": 10.885108412603133
+            },
+            "severe": {
+              "previous_area_ha": 929471.6435616561,
+              "final_area_ha": 994036.1433215841,
+              "delta_area_ha": 64564.499759927974,
+              "delta_percent_of_previous": 6.946365734464186,
+              "previous_moe95_ha": 55580.47755469838,
+              "final_moe95_ha": 49171.984031455635,
+              "moe95_change_ha": -6408.493523242745,
+              "moe95_reduction_percent": 11.530115978107526
+            }
+          }
+        }
+      }
+    },
+    "SVM": {
+      "previous_result_reproduction": {
+        "passed": true,
+        "max_absolute_difference_ha": 0.0
+      },
+      "final": {
+        "adjudicate": "SVM",
+        "inputs": {
+          "labellers": [
+            "ARP",
+            "SVM/Steph",
+            "Alastair Potts",
+            "Michael Powell"
+          ],
+          "adjudication": "retain the old SVM-preferred sensitivity arm; determinate duplicate labels are QA only; MP resolves four AP-unsure points and supplies the remaining unseen sample IDs",
+          "n_unique_points": 821,
+          "qa_agreement_mp": [
+            {
+              "new_labeller": "MP",
+              "other_labeller": "ARP",
+              "n_overlap": 15,
+              "n_new_unsure": 0,
+              "n_other_unsure": 0,
+              "n_determinate_pairs": 15,
+              "n_agree": 12,
+              "agreement_rate": 0.8,
+              "n_disagree": 3,
+              "disagreements": [
+                {
+                  "id": 68,
+                  "stratum": "intact",
+                  "MP": "severe",
+                  "ARP": "intact"
+                },
+                {
+                  "id": 373,
+                  "stratum": "moderate",
+                  "MP": "severe",
+                  "ARP": "moderate"
+                },
+                {
+                  "id": 810,
+                  "stratum": "severe",
+                  "MP": "severe",
+                  "ARP": "transformed"
+                }
+              ]
+            },
+            {
+              "new_labeller": "MP",
+              "other_labeller": "SVM",
+              "n_overlap": 15,
+              "n_new_unsure": 0,
+              "n_other_unsure": 0,
+              "n_determinate_pairs": 15,
+              "n_agree": 7,
+              "agreement_rate": 0.4666666666666667,
+              "n_disagree": 8,
+              "disagreements": [
+                {
+                  "id": 91,
+                  "stratum": "intact",
+                  "MP": "intact",
+                  "SVM": "nothicket"
+                },
+                {
+                  "id": 165,
+                  "stratum": "intact",
+                  "MP": "moderate",
+                  "SVM": "intact"
+                },
+                {
+                  "id": 181,
+                  "stratum": "intact",
+                  "MP": "severe",
+                  "SVM": "intact"
+                },
+                {
+                  "id": 406,
+                  "stratum": "moderate",
+                  "MP": "severe",
+                  "SVM": "moderate"
+                },
+                {
+                  "id": 685,
+                  "stratum": "severe",
+                  "MP": "severe",
+                  "SVM": "moderate"
+                },
+                {
+                  "id": 687,
+                  "stratum": "severe",
+                  "MP": "nothicket",
+                  "SVM": "severe"
+                },
+                {
+                  "id": 721,
+                  "stratum": "severe",
+                  "MP": "moderate",
+                  "SVM": "severe"
+                },
+                {
+                  "id": 740,
+                  "stratum": "severe",
+                  "MP": "nothicket",
+                  "SVM": "moderate"
+                }
+              ]
+            },
+            {
+              "new_labeller": "MP",
+              "other_labeller": "AP",
+              "n_overlap": 18,
+              "n_new_unsure": 0,
+              "n_other_unsure": 4,
+              "n_determinate_pairs": 14,
+              "n_agree": 10,
+              "agreement_rate": 0.7142857142857143,
+              "n_disagree": 4,
+              "disagreements": [
+                {
+                  "id": 67,
+                  "stratum": "intact",
+                  "MP": "moderate",
+                  "AP": "intact"
+                },
+                {
+                  "id": 274,
+                  "stratum": "moderate",
+                  "MP": "moderate",
+                  "AP": "intact"
+                },
+                {
+                  "id": 485,
+                  "stratum": "moderate",
+                  "MP": "severe",
+                  "AP": "moderate"
+                },
+                {
+                  "id": 612,
+                  "stratum": "severe",
+                  "MP": "severe",
+                  "AP": "nothicket"
+                }
+              ]
+            }
+          ],
+          "W": {
+            "intact": 0.2789371115558833,
+            "moderate": 0.29106130833245547,
+            "severe": 0.43000158011166123
+          },
+          "area_total_ha": 1898600.0,
+          "remap": {
+            "transformed": "severe",
+            "nothicket": "tested: class (kept) | severe",
+            "unsure": "excluded"
+          }
+        },
+        "scenarios": {
+          "A_nothicket_class": {
+            "nothicket_mode": "class",
+            "ref_classes": [
+              "intact",
+              "moderate",
+              "severe",
+              "nothicket"
+            ],
+            "n_used": 821,
+            "olofsson": {
+              "ref_classes": [
+                "intact",
+                "moderate",
+                "severe",
+                "nothicket"
+              ],
+              "n_h": {
+                "intact": 231,
+                "moderate": 265,
+                "severe": 325
+              },
+              "confusion_map_x_ref": {
+                "intact": {
+                  "intact": 156,
+                  "moderate": 53,
+                  "severe": 8,
+                  "nothicket": 14
+                },
+                "moderate": {
+                  "intact": 31,
+                  "moderate": 120,
+                  "severe": 87,
+                  "nothicket": 27
+                },
+                "severe": {
+                  "intact": 5,
+                  "moderate": 39,
+                  "severe": 241,
+                  "nothicket": 40
+                }
+              },
+              "area_proportion": {
+                "intact": {
+                  "p": 0.229037204574373,
+                  "se": 0.010768719174393133,
+                  "ci95": [
+                    0.20793090283293653,
+                    0.25014350631580945
+                  ]
+                },
+                "moderate": {
+                  "p": 0.24740009484541842,
+                  "se": 0.014127346873177139,
+                  "ci95": [
+                    0.21971100377688668,
+                    0.27508918591395015
+                  ]
+                },
+                "severe": {
+                  "p": 0.4240788465804968,
+                  "se": 0.013836564448797077,
+                  "ci95": [
+                    0.3969596785910873,
+                    0.4511980145699064
+                  ]
+                },
+                "nothicket": {
+                  "p": 0.09948385399971177,
+                  "se": 0.010498420850986024,
+                  "ci95": [
+                    0.07890732723723481,
+                    0.12006038076218872
+                  ]
+                }
+              },
+              "area_ha": {
+                "intact": {
+                  "area": 434850.03660490457,
+                  "se": 20445.490224502802,
+                  "ci95": [
+                    394777.61211861327,
+                    474922.4610911958
+                  ]
+                },
+                "moderate": {
+                  "area": 469713.8200735114,
+                  "se": 26822.180773414115,
+                  "ci95": [
+                    417143.31177079707,
+                    522284.3283762258
+                  ]
+                },
+                "severe": {
+                  "area": 805156.0981177313,
+                  "se": 26270.10126248613,
+                  "ci95": [
+                    753667.6457730383,
+                    856644.5504624243
+                  ]
+                },
+                "nothicket": {
+                  "area": 188880.04520385276,
+                  "se": 19932.301827682066,
+                  "ci95": [
+                    149813.45149261403,
+                    227946.63891509152
+                  ]
+                }
+              },
+              "overall_accuracy": {
+                "OA": 0.6390371716420022,
+                "se": 0.01621912304698796,
+                "ci95": [
+                  0.6072482746090823,
+                  0.6708260686749222
+                ]
+              },
+              "users_accuracy": {
+                "intact": {
+                  "U": 0.6753246753246753,
+                  "se": 0.03087571567361336
+                },
+                "moderate": {
+                  "U": 0.4528301886792453,
+                  "se": 0.03063562795796184
+                },
+                "severe": {
+                  "U": 0.7415384615384616,
+                  "se": 0.024321608768317824
+                }
+              },
+              "producers_accuracy": {
+                "intact": {
+                  "P": 0.8224563980665905,
+                  "se": 0.024155139866324716
+                },
+                "moderate": {
+                  "P": 0.5327457422834315,
+                  "se": 0.028989515677773352
+                },
+                "severe": {
+                  "P": 0.7518948722536284,
+                  "se": 0.01718839113328747
+                }
+              },
+              "area_total_ha": 1898600.0
+            },
+            "ppi_pp": {
+              "intact": {
+                "ppi": {
+                  "p": 0.22903713541704476,
+                  "ci95": [
+                    0.20781527428244478,
+                    0.25025899655164474
+                  ],
+                  "se_implied": 0.010827679131859214,
+                  "area": 434849.90530280117,
+                  "area_ci95": [
+                    394558.07975264965,
+                    475141.7308529527
+                  ]
+                },
+                "stratified": {
+                  "p": 0.229037204574373,
+                  "se": 0.010768719174393133,
+                  "ci95": [
+                    0.20793090283293653,
+                    0.25014350631580945
+                  ],
+                  "area": 434850.03660490457,
+                  "area_ci95": [
+                    394777.61211861327,
+                    474922.4610911958
+                  ]
+                },
+                "ppi_beats_stratified": false
+              },
+              "moderate": {
+                "ppi": {
+                  "p": 0.24740014733378443,
+                  "ci95": [
+                    0.21962963699895066,
+                    0.2751706576686182
+                  ],
+                  "se_implied": 0.014168888078497368,
+                  "area": 469713.9197279231,
+                  "area_ci95": [
+                    416988.82880620775,
+                    522439.01064963854
+                  ]
+                },
+                "stratified": {
+                  "p": 0.24740009484541842,
+                  "se": 0.014127346873177139,
+                  "ci95": [
+                    0.21971100377688668,
+                    0.27508918591395015
+                  ],
+                  "area": 469713.8200735114,
+                  "area_ci95": [
+                    417143.31177079707,
+                    522284.3283762258
+                  ]
+                },
+                "ppi_beats_stratified": false
+              },
+              "severe": {
+                "ppi": {
+                  "p": 0.42407880027524003,
+                  "ci95": [
+                    0.3961272546469409,
+                    0.4520303459035392
+                  ],
+                  "se_implied": 0.014261254721401712,
+                  "area": 805156.0102025707,
+                  "area_ci95": [
+                    752087.2056726819,
+                    858224.8147324595
+                  ]
+                },
+                "stratified": {
+                  "p": 0.4240788465804969,
+                  "se": 0.013836564448797077,
+                  "ci95": [
+                    0.39695967859108733,
+                    0.45119801456990644
+                  ],
+                  "area": 805156.0981177314,
+                  "area_ci95": [
+                    753667.6457730384,
+                    856644.5504624244
+                  ]
+                },
+                "ppi_beats_stratified": false
+              },
+              "nothicket": {
+                "ppi": {
+                  "p": 0.09948385399971177,
+                  "ci95": [
+                    0.07883880214939436,
+                    0.12012890585002918
+                  ],
+                  "se_implied": 0.01053338327293917,
+                  "area": 188880.04520385276,
+                  "area_ci95": [
+                    149683.34976084012,
+                    228076.7406468654
+                  ]
+                },
+                "stratified": {
+                  "p": 0.09948385399971177,
+                  "se": 0.010498420850986024,
+                  "ci95": [
+                    0.07890732723723481,
+                    0.12006038076218872
+                  ],
+                  "area": 188880.04520385276,
+                  "area_ci95": [
+                    149813.45149261403,
+                    227946.63891509152
+                  ]
+                },
+                "ppi_beats_stratified": false
+              }
+            }
+          },
+          "B_nothicket_to_severe": {
+            "nothicket_mode": "severe",
+            "ref_classes": [
+              "intact",
+              "moderate",
+              "severe"
+            ],
+            "n_used": 821,
+            "olofsson": {
+              "ref_classes": [
+                "intact",
+                "moderate",
+                "severe"
+              ],
+              "n_h": {
+                "intact": 231,
+                "moderate": 265,
+                "severe": 325
+              },
+              "confusion_map_x_ref": {
+                "intact": {
+                  "intact": 156,
+                  "moderate": 53,
+                  "severe": 22
+                },
+                "moderate": {
+                  "intact": 31,
+                  "moderate": 120,
+                  "severe": 114
+                },
+                "severe": {
+                  "intact": 5,
+                  "moderate": 39,
+                  "severe": 281
+                }
+              },
+              "area_proportion": {
+                "intact": {
+                  "p": 0.229037204574373,
+                  "se": 0.010768719174393133,
+                  "ci95": [
+                    0.20793090283293653,
+                    0.25014350631580945
+                  ]
+                },
+                "moderate": {
+                  "p": 0.24740009484541842,
+                  "se": 0.014127346873177139,
+                  "ci95": [
+                    0.21971100377688668,
+                    0.27508918591395015
+                  ]
+                },
+                "severe": {
+                  "p": 0.5235627005802086,
+                  "se": 0.013214056650443938,
+                  "ci95": [
+                    0.4976636254556665,
+                    0.5494617757047507
+                  ]
+                }
+              },
+              "area_ha": {
+                "intact": {
+                  "area": 434850.03660490457,
+                  "se": 20445.490224502802,
+                  "ci95": [
+                    394777.61211861327,
+                    474922.4610911958
+                  ]
+                },
+                "moderate": {
+                  "area": 469713.8200735114,
+                  "se": 26822.180773414115,
+                  "ci95": [
+                    417143.31177079707,
+                    522284.3283762258
+                  ]
+                },
+                "severe": {
+                  "area": 994036.1433215841,
+                  "se": 25088.20795653286,
+                  "ci95": [
+                    944864.1592901284,
+                    1043208.1273530398
+                  ]
+                }
+              },
+              "overall_accuracy": {
+                "OA": 0.6919604430403605,
+                "se": 0.014848735943370156,
+                "ci95": [
+                  0.6628574553754096,
+                  0.7210634307053114
+                ]
+              },
+              "users_accuracy": {
+                "intact": {
+                  "U": 0.6753246753246753,
+                  "se": 0.03087571567361336
+                },
+                "moderate": {
+                  "U": 0.4528301886792453,
+                  "se": 0.03063562795796184
+                },
+                "severe": {
+                  "U": 0.8646153846153846,
+                  "se": 0.019007440169460023
+                }
+              },
+              "producers_accuracy": {
+                "intact": {
+                  "P": 0.8224563980665905,
+                  "se": 0.024155139866324716
+                },
+                "moderate": {
+                  "P": 0.5327457422834315,
+                  "se": 0.028989515677773352
+                },
+                "severe": {
+                  "P": 0.7101078460353581,
+                  "se": 0.014791912511290507
+                }
+              },
+              "area_total_ha": 1898600.0
+            },
+            "ppi_pp": {
+              "intact": {
+                "ppi": {
+                  "p": 0.22903713541704476,
+                  "ci95": [
+                    0.20781527428244478,
+                    0.25025899655164474
+                  ],
+                  "se_implied": 0.010827679131859214,
+                  "area": 434849.90530280117,
+                  "area_ci95": [
+                    394558.07975264965,
+                    475141.7308529527
+                  ]
+                },
+                "stratified": {
+                  "p": 0.229037204574373,
+                  "se": 0.010768719174393133,
+                  "ci95": [
+                    0.20793090283293653,
+                    0.25014350631580945
+                  ],
+                  "area": 434850.03660490457,
+                  "area_ci95": [
+                    394777.61211861327,
+                    474922.4610911958
+                  ]
+                },
+                "ppi_beats_stratified": false
+              },
+              "moderate": {
+                "ppi": {
+                  "p": 0.24740014733378443,
+                  "ci95": [
+                    0.21962963699895066,
+                    0.2751706576686182
+                  ],
+                  "se_implied": 0.014168888078497368,
+                  "area": 469713.9197279231,
+                  "area_ci95": [
+                    416988.82880620775,
+                    522439.01064963854
+                  ]
+                },
+                "stratified": {
+                  "p": 0.24740009484541842,
+                  "se": 0.014127346873177139,
+                  "ci95": [
+                    0.21971100377688668,
+                    0.27508918591395015
+                  ],
+                  "area": 469713.8200735114,
+                  "area_ci95": [
+                    417143.31177079707,
+                    522284.3283762258
+                  ]
+                },
+                "ppi_beats_stratified": false
+              },
+              "severe": {
+                "ppi": {
+                  "p": 0.5235626513300652,
+                  "ci95": [
+                    0.49655206672978874,
+                    0.5505732359303415
+                  ],
+                  "se_implied": 0.013781163742462825,
+                  "area": 994036.0498152617,
+                  "area_ci95": [
+                    942753.7538931769,
+                    1045318.3457373463
+                  ]
+                },
+                "stratified": {
+                  "p": 0.5235627005802086,
+                  "se": 0.013214056650443938,
+                  "ci95": [
+                    0.4976636254556665,
+                    0.5494617757047507
+                  ],
+                  "area": 994036.1433215841,
+                  "area_ci95": [
+                    944864.1592901284,
+                    1043208.1273530398
+                  ]
+                },
+                "ppi_beats_stratified": false
+              }
+            }
+          }
+        }
+      },
+      "comparison_to_previous": {
+        "A_nothicket_class": {
+          "previous_n_used": 628,
+          "final_n_used": 821,
+          "previous_overall_accuracy": 0.6823364222180672,
+          "final_overall_accuracy": 0.6390371716420022,
+          "classes": {
+            "intact": {
+              "previous_area_ha": 478407.3251242125,
+              "final_area_ha": 434850.03660490457,
+              "delta_area_ha": -43557.28851930791,
+              "delta_percent_of_previous": -9.104644981762938,
+              "previous_moe95_ha": 42340.644349384514,
+              "final_moe95_ha": 40072.42448629124,
+              "moe95_change_ha": -2268.219863093276,
+              "moe95_reduction_percent": 5.3570745035821545
+            },
+            "moderate": {
+              "previous_area_ha": 490721.03131413145,
+              "final_area_ha": 469713.8200735114,
+              "delta_area_ha": -21007.21124062006,
+              "delta_percent_of_previous": -4.280886674932922,
+              "previous_moe95_ha": 58847.920147629935,
+              "final_moe95_ha": 52570.508302714356,
+              "moe95_change_ha": -6277.411844915579,
+              "moe95_reduction_percent": 10.66717707128414
+            },
+            "severe": {
+              "previous_area_ha": 736885.8322133212,
+              "final_area_ha": 805156.0981177313,
+              "delta_area_ha": 68270.26590441004,
+              "delta_percent_of_previous": 9.264700570962596,
+              "previous_moe95_ha": 56964.117177444125,
+              "final_moe95_ha": 51488.45234469302,
+              "moe95_change_ha": -5475.664832751107,
+              "moe95_reduction_percent": 9.612480810848561
+            },
+            "nothicket": {
+              "previous_area_ha": 192585.81134833483,
+              "final_area_ha": 188880.04520385276,
+              "delta_area_ha": -3705.7661444820696,
+              "delta_percent_of_previous": -1.9242155580087656,
+              "previous_moe95_ha": 45123.96527332557,
+              "final_moe95_ha": 39066.59371123874,
+              "moe95_change_ha": -6057.371562086832,
+              "moe95_reduction_percent": 13.423845899614602
+            }
+          }
+        },
+        "B_nothicket_to_severe": {
+          "previous_n_used": 628,
+          "final_n_used": 821,
+          "previous_overall_accuracy": 0.7373766244723599,
+          "final_overall_accuracy": 0.6919604430403605,
+          "classes": {
+            "intact": {
+              "previous_area_ha": 478407.3251242125,
+              "final_area_ha": 434850.03660490457,
+              "delta_area_ha": -43557.28851930791,
+              "delta_percent_of_previous": -9.104644981762938,
+              "previous_moe95_ha": 42340.644349384514,
+              "final_moe95_ha": 40072.42448629124,
+              "moe95_change_ha": -2268.219863093276,
+              "moe95_reduction_percent": 5.3570745035821545
+            },
+            "moderate": {
+              "previous_area_ha": 490721.03131413145,
+              "final_area_ha": 469713.8200735114,
+              "delta_area_ha": -21007.21124062006,
+              "delta_percent_of_previous": -4.280886674932922,
+              "previous_moe95_ha": 58847.920147629935,
+              "final_moe95_ha": 52570.508302714356,
+              "moe95_change_ha": -6277.411844915579,
+              "moe95_reduction_percent": 10.66717707128414
+            },
+            "severe": {
+              "previous_area_ha": 929471.6435616561,
+              "final_area_ha": 994036.1433215841,
+              "delta_area_ha": 64564.499759927974,
+              "delta_percent_of_previous": 6.946365734464186,
+              "previous_moe95_ha": 55580.47755469838,
+              "final_moe95_ha": 49171.984031455635,
+              "moe95_change_ha": -6408.493523242745,
+              "moe95_reduction_percent": 11.530115978107526
+            }
+          }
+        }
+      }
+    }
+  },
+  "efg_updates": {
+    "ARP": {
+      "final": {
+        "A_nothicket_class": {
+          "nothicket_mode": "class",
+          "ref_classes": [
+            "intact",
+            "moderate",
+            "severe",
+            "nothicket"
+          ],
+          "per_cell": {
+            "10": {
+              "efg": "Arid",
+              "efg_id": 1,
+              "map_class": "intact",
+              "area_mapped_ha": 88485.67761196289,
+              "n": 39,
+              "ref_counts": {
+                "intact": 24,
+                "moderate": 12,
+                "severe": 2,
+                "nothicket": 1
+              },
+              "users_acc": 0.6153846153846154,
+              "users_acc_se": 0.07892141169885801,
+              "low_n": false,
+              "non_estimable": false
+            },
+            "11": {
+              "efg": "Arid",
+              "efg_id": 1,
+              "map_class": "moderate",
+              "area_mapped_ha": 173115.21521289062,
+              "n": 73,
+              "ref_counts": {
+                "intact": 6,
+                "moderate": 34,
+                "severe": 30,
+                "nothicket": 3
+              },
+              "users_acc": 0.4657534246575342,
+              "users_acc_se": 0.05878718351408097,
+              "low_n": false,
+              "non_estimable": false
+            },
+            "12": {
+              "efg": "Arid",
+              "efg_id": 1,
+              "map_class": "severe",
+              "area_mapped_ha": 488485.6689663086,
+              "n": 203,
+              "ref_counts": {
+                "intact": 1,
+                "moderate": 21,
+                "severe": 153,
+                "nothicket": 28
+              },
+              "users_acc": 0.7536945812807881,
+              "users_acc_se": 0.030315099285617708,
+              "low_n": false,
+              "non_estimable": false
+            },
+            "20": {
+              "efg": "Valley",
+              "efg_id": 2,
+              "map_class": "intact",
+              "area_mapped_ha": 284519.1395746582,
+              "n": 130,
+              "ref_counts": {
+                "intact": 80,
+                "moderate": 35,
+                "severe": 4,
+                "nothicket": 11
+              },
+              "users_acc": 0.6153846153846154,
+              "users_acc_se": 0.0428343112607465,
+              "low_n": false,
+              "non_estimable": false
+            },
+            "21": {
+              "efg": "Valley",
+              "efg_id": 2,
+              "map_class": "moderate",
+              "area_mapped_ha": 275405.7496375488,
+              "n": 137,
+              "ref_counts": {
+                "intact": 18,
+                "moderate": 64,
+                "severe": 40,
+                "nothicket": 15
+              },
+              "users_acc": 0.46715328467153283,
+              "users_acc_se": 0.042782030767131475,
+              "low_n": false,
+              "non_estimable": false
+            },
+            "22": {
+              "efg": "Valley",
+              "efg_id": 2,
+              "map_class": "severe",
+              "area_mapped_ha": 305326.4642053711,
+              "n": 118,
+              "ref_counts": {
+                "intact": 3,
+                "moderate": 18,
+                "severe": 85,
+                "nothicket": 12
+              },
+              "users_acc": 0.7203389830508474,
+              "users_acc_se": 0.04149459161011108,
+              "low_n": false,
+              "non_estimable": false
+            },
+            "30": {
+              "efg": "Mesic",
+              "efg_id": 3,
+              "map_class": "intact",
+              "area_mapped_ha": 156585.08387624513,
+              "n": 62,
+              "ref_counts": {
+                "intact": 50,
+                "moderate": 8,
+                "severe": 2,
+                "nothicket": 2
+              },
+              "users_acc": 0.8064516129032258,
+              "users_acc_se": 0.050584681305417746,
+              "low_n": false,
+              "non_estimable": false
+            },
+            "31": {
+              "efg": "Mesic",
+              "efg_id": 3,
+              "map_class": "moderate",
+              "area_mapped_ha": 104088.49130263671,
+              "n": 55,
+              "ref_counts": {
+                "intact": 6,
+                "moderate": 23,
+                "severe": 17,
+                "nothicket": 9
+              },
+              "users_acc": 0.41818181818181815,
+              "users_acc_se": 0.06712423323570162,
+              "low_n": false,
+              "non_estimable": false
+            },
+            "32": {
+              "efg": "Mesic",
+              "efg_id": 3,
+              "map_class": "severe",
+              "area_mapped_ha": 22588.513863012697,
+              "n": 4,
+              "ref_counts": {
+                "intact": 1,
+                "moderate": 0,
+                "severe": 2,
+                "nothicket": 1
+              },
+              "users_acc": 0.5,
+              "users_acc_se": 0.28867513459481287,
+              "low_n": true,
+              "non_estimable": false
+            }
+          },
+          "per_efg": {
+            "Arid": {
+              "efg_id": 1,
+              "area_total_ha": 750086.5617911621,
+              "n_labelled": 315,
+              "composition": {
+                "intact": {
+                  "area": 71087.70585466351,
+                  "se": 9271.337565293483,
+                  "ci95": [
+                    52916.21813817501,
+                    89259.193571152
+                  ],
+                  "frac": 0.09477266955017871
+                },
+                "moderate": {
+                  "area": 158388.36692576628,
+                  "se": 16031.887529775988,
+                  "ci95": [
+                    126966.44476320854,
+                    189810.28908832403
+                  ],
+                  "frac": 0.21116011803696932
+                },
+                "severe": {
+                  "area": 443849.9679188365,
+                  "se": 18167.953565215135,
+                  "ci95": [
+                    408241.43325821875,
+                    479458.5025794543
+                  ],
+                  "frac": 0.5917316620883717
+                },
+                "nothicket": {
+                  "area": 76760.52109189572,
+                  "se": 12728.372682174528,
+                  "ci95": [
+                    51813.369053030154,
+                    101707.67313076128
+                  ],
+                  "frac": 0.10233555032448009
+                }
+              },
+              "any_low_n": false,
+              "estimable": true,
+              "non_estimable_cells": []
+            },
+            "Valley": {
+              "efg_id": 2,
+              "area_total_ha": 865251.3534175782,
+              "n_labelled": 385,
+              "composition": {
+                "intact": {
+                  "area": 219035.93553494365,
+                  "se": 15228.847780753063,
+                  "ci95": [
+                    189187.94235862492,
+                    248883.9287112624
+                  ],
+                  "frac": 0.25314717471379083
+                },
+                "moderate": {
+                  "area": 251833.23072253028,
+                  "se": 19112.617328047734,
+                  "ci95": [
+                    214373.18910926057,
+                    289293.2723358
+                  ],
+                  "frac": 0.2910521084166317
+                },
+                "severe": {
+                  "area": 309103.4276384228,
+                  "se": 17161.57556441125,
+                  "ci95": [
+                    275467.3576142141,
+                    342739.4976626315
+                  ],
+                  "frac": 0.357241195194348
+                },
+                "nothicket": {
+                  "area": 85278.75952168134,
+                  "se": 13257.898717378153,
+                  "ci95": [
+                    59293.75552494038,
+                    111263.76351842229
+                  ],
+                  "frac": 0.09855952167522936
+                }
+              },
+              "any_low_n": false,
+              "estimable": true,
+              "non_estimable_cells": []
+            },
+            "Mesic": {
+              "efg_id": 3,
+              "area_total_ha": 283262.08904189453,
+              "n_labelled": 121,
+              "composition": {
+                "intact": {
+                  "area": 143280.53005644376,
+                  "se": 10683.126508539655,
+                  "ci95": [
+                    122341.98685742091,
+                    164219.07325546662
+                  ],
+                  "frac": 0.5058231778953397
+                },
+                "moderate": {
+                  "area": 63732.441496512554,
+                  "se": 9694.762615955151,
+                  "ci95": [
+                    44731.05593057514,
+                    82733.82706244997
+                  ],
+                  "frac": 0.22499460380342853
+                },
+                "severe": {
+                  "area": 48518.195072082905,
+                  "se": 9895.188532211556,
+                  "ci95": [
+                    29123.981928714493,
+                    67912.40821545132
+                  ],
+                  "frac": 0.1712837578660484
+                },
+                "nothicket": {
+                  "area": 27730.922416855297,
+                  "se": 8479.210822557827,
+                  "ci95": [
+                    11111.97458731971,
+                    44349.870246390885
+                  ],
+                  "frac": 0.09789846043518335
+                }
+              },
+              "any_low_n": true,
+              "estimable": true,
+              "non_estimable_cells": []
+            }
+          }
+        },
+        "B_nothicket_to_severe": {
+          "nothicket_mode": "severe",
+          "ref_classes": [
+            "intact",
+            "moderate",
+            "severe"
+          ],
+          "per_cell": {
+            "10": {
+              "efg": "Arid",
+              "efg_id": 1,
+              "map_class": "intact",
+              "area_mapped_ha": 88485.67761196289,
+              "n": 39,
+              "ref_counts": {
+                "intact": 24,
+                "moderate": 12,
+                "severe": 3
+              },
+              "users_acc": 0.6153846153846154,
+              "users_acc_se": 0.07892141169885801,
+              "low_n": false,
+              "non_estimable": false
+            },
+            "11": {
+              "efg": "Arid",
+              "efg_id": 1,
+              "map_class": "moderate",
+              "area_mapped_ha": 173115.21521289062,
+              "n": 73,
+              "ref_counts": {
+                "intact": 6,
+                "moderate": 34,
+                "severe": 33
+              },
+              "users_acc": 0.4657534246575342,
+              "users_acc_se": 0.05878718351408097,
+              "low_n": false,
+              "non_estimable": false
+            },
+            "12": {
+              "efg": "Arid",
+              "efg_id": 1,
+              "map_class": "severe",
+              "area_mapped_ha": 488485.6689663086,
+              "n": 203,
+              "ref_counts": {
+                "intact": 1,
+                "moderate": 21,
+                "severe": 181
+              },
+              "users_acc": 0.8916256157635468,
+              "users_acc_se": 0.0218715169309426,
+              "low_n": false,
+              "non_estimable": false
+            },
+            "20": {
+              "efg": "Valley",
+              "efg_id": 2,
+              "map_class": "intact",
+              "area_mapped_ha": 284519.1395746582,
+              "n": 130,
+              "ref_counts": {
+                "intact": 80,
+                "moderate": 35,
+                "severe": 15
+              },
+              "users_acc": 0.6153846153846154,
+              "users_acc_se": 0.0428343112607465,
+              "low_n": false,
+              "non_estimable": false
+            },
+            "21": {
+              "efg": "Valley",
+              "efg_id": 2,
+              "map_class": "moderate",
+              "area_mapped_ha": 275405.7496375488,
+              "n": 137,
+              "ref_counts": {
+                "intact": 18,
+                "moderate": 64,
+                "severe": 55
+              },
+              "users_acc": 0.46715328467153283,
+              "users_acc_se": 0.042782030767131475,
+              "low_n": false,
+              "non_estimable": false
+            },
+            "22": {
+              "efg": "Valley",
+              "efg_id": 2,
+              "map_class": "severe",
+              "area_mapped_ha": 305326.4642053711,
+              "n": 118,
+              "ref_counts": {
+                "intact": 3,
+                "moderate": 18,
+                "severe": 97
+              },
+              "users_acc": 0.8220338983050848,
+              "users_acc_se": 0.03536067741432931,
+              "low_n": false,
+              "non_estimable": false
+            },
+            "30": {
+              "efg": "Mesic",
+              "efg_id": 3,
+              "map_class": "intact",
+              "area_mapped_ha": 156585.08387624513,
+              "n": 62,
+              "ref_counts": {
+                "intact": 50,
+                "moderate": 8,
+                "severe": 4
+              },
+              "users_acc": 0.8064516129032258,
+              "users_acc_se": 0.050584681305417746,
+              "low_n": false,
+              "non_estimable": false
+            },
+            "31": {
+              "efg": "Mesic",
+              "efg_id": 3,
+              "map_class": "moderate",
+              "area_mapped_ha": 104088.49130263671,
+              "n": 55,
+              "ref_counts": {
+                "intact": 6,
+                "moderate": 23,
+                "severe": 26
+              },
+              "users_acc": 0.41818181818181815,
+              "users_acc_se": 0.06712423323570162,
+              "low_n": false,
+              "non_estimable": false
+            },
+            "32": {
+              "efg": "Mesic",
+              "efg_id": 3,
+              "map_class": "severe",
+              "area_mapped_ha": 22588.513863012697,
+              "n": 4,
+              "ref_counts": {
+                "intact": 1,
+                "moderate": 0,
+                "severe": 3
+              },
+              "users_acc": 0.75,
+              "users_acc_se": 0.25,
+              "low_n": true,
+              "non_estimable": false
+            }
+          },
+          "per_efg": {
+            "Arid": {
+              "efg_id": 1,
+              "area_total_ha": 750086.5617911621,
+              "n_labelled": 315,
+              "composition": {
+                "intact": {
+                  "area": 71087.70585466351,
+                  "se": 9271.337565293483,
+                  "ci95": [
+                    52916.21813817501,
+                    89259.193571152
+                  ],
+                  "frac": 0.09477266955017871
+                },
+                "moderate": {
+                  "area": 158388.36692576628,
+                  "se": 16031.887529775988,
+                  "ci95": [
+                    126966.44476320854,
+                    189810.28908832403
+                  ],
+                  "frac": 0.21116011803696932
+                },
+                "severe": {
+                  "area": 520610.48901073233,
+                  "se": 15227.5543971611,
+                  "ci95": [
+                    490765.03081967204,
+                    550455.9472017926
+                  ],
+                  "frac": 0.694067212412852
+                }
+              },
+              "any_low_n": false,
+              "estimable": true,
+              "non_estimable_cells": []
+            },
+            "Valley": {
+              "efg_id": 2,
+              "area_total_ha": 865251.3534175782,
+              "n_labelled": 385,
+              "composition": {
+                "intact": {
+                  "area": 219035.93553494365,
+                  "se": 15228.847780753063,
+                  "ci95": [
+                    189187.94235862492,
+                    248883.9287112624
+                  ],
+                  "frac": 0.25314717471379083
+                },
+                "moderate": {
+                  "area": 251833.23072253028,
+                  "se": 19112.617328047734,
+                  "ci95": [
+                    214373.18910926057,
+                    289293.2723358
+                  ],
+                  "frac": 0.2910521084166317
+                },
+                "severe": {
+                  "area": 394382.18716010416,
+                  "se": 17737.80078395675,
+                  "ci95": [
+                    359616.7364586026,
+                    429147.63786160573
+                  ],
+                  "frac": 0.45580071686957735
+                }
+              },
+              "any_low_n": false,
+              "estimable": true,
+              "non_estimable_cells": []
+            },
+            "Mesic": {
+              "efg_id": 3,
+              "area_total_ha": 283262.08904189453,
+              "n_labelled": 121,
+              "composition": {
+                "intact": {
+                  "area": 143280.53005644376,
+                  "se": 10683.126508539655,
+                  "ci95": [
+                    122341.98685742091,
+                    164219.07325546662
+                  ],
+                  "frac": 0.5058231778953397
+                },
+                "moderate": {
+                  "area": 63732.441496512554,
+                  "se": 9694.762615955151,
+                  "ci95": [
+                    44731.05593057514,
+                    82733.82706244997
+                  ],
+                  "frac": 0.22499460380342853
+                },
+                "severe": {
+                  "area": 76249.11748893821,
+                  "se": 10303.363432946953,
+                  "ci95": [
+                    56054.89624073521,
+                    96443.33873714121
+                  ],
+                  "frac": 0.2691822183012318
+                }
+              },
+              "any_low_n": true,
+              "estimable": true,
+              "non_estimable_cells": []
+            }
+          }
+        }
+      },
+      "comparison_to_previous": {
+        "A_nothicket_class": {
+          "cells": {
+            "10": {
+              "efg": "Arid",
+              "map_class": "intact",
+              "previous_n": 31,
+              "final_n": 39,
+              "added_n": 8,
+              "previous_low_n": false,
+              "final_low_n": false,
+              "final_estimable": true
+            },
+            "11": {
+              "efg": "Arid",
+              "map_class": "moderate",
+              "previous_n": 57,
+              "final_n": 73,
+              "added_n": 16,
+              "previous_low_n": false,
+              "final_low_n": false,
+              "final_estimable": true
+            },
+            "12": {
+              "efg": "Arid",
+              "map_class": "severe",
+              "previous_n": 152,
+              "final_n": 203,
+              "added_n": 51,
+              "previous_low_n": false,
+              "final_low_n": false,
+              "final_estimable": true
+            },
+            "20": {
+              "efg": "Valley",
+              "map_class": "intact",
+              "previous_n": 95,
+              "final_n": 130,
+              "added_n": 35,
+              "previous_low_n": false,
+              "final_low_n": false,
+              "final_estimable": true
+            },
+            "21": {
+              "efg": "Valley",
+              "map_class": "moderate",
+              "previous_n": 104,
+              "final_n": 137,
+              "added_n": 33,
+              "previous_low_n": false,
+              "final_low_n": false,
+              "final_estimable": true
+            },
+            "22": {
+              "efg": "Valley",
+              "map_class": "severe",
+              "previous_n": 94,
+              "final_n": 118,
+              "added_n": 24,
+              "previous_low_n": false,
+              "final_low_n": false,
+              "final_estimable": true
+            },
+            "30": {
+              "efg": "Mesic",
+              "map_class": "intact",
+              "previous_n": 50,
+              "final_n": 62,
+              "added_n": 12,
+              "previous_low_n": false,
+              "final_low_n": false,
+              "final_estimable": true
+            },
+            "31": {
+              "efg": "Mesic",
+              "map_class": "moderate",
+              "previous_n": 41,
+              "final_n": 55,
+              "added_n": 14,
+              "previous_low_n": false,
+              "final_low_n": false,
+              "final_estimable": true
+            },
+            "32": {
+              "efg": "Mesic",
+              "map_class": "severe",
+              "previous_n": 4,
+              "final_n": 4,
+              "added_n": 0,
+              "previous_low_n": true,
+              "final_low_n": true,
+              "final_estimable": true
+            }
+          }
+        },
+        "B_nothicket_to_severe": {
+          "cells": {
+            "10": {
+              "efg": "Arid",
+              "map_class": "intact",
+              "previous_n": 31,
+              "final_n": 39,
+              "added_n": 8,
+              "previous_low_n": false,
+              "final_low_n": false,
+              "final_estimable": true
+            },
+            "11": {
+              "efg": "Arid",
+              "map_class": "moderate",
+              "previous_n": 57,
+              "final_n": 73,
+              "added_n": 16,
+              "previous_low_n": false,
+              "final_low_n": false,
+              "final_estimable": true
+            },
+            "12": {
+              "efg": "Arid",
+              "map_class": "severe",
+              "previous_n": 152,
+              "final_n": 203,
+              "added_n": 51,
+              "previous_low_n": false,
+              "final_low_n": false,
+              "final_estimable": true
+            },
+            "20": {
+              "efg": "Valley",
+              "map_class": "intact",
+              "previous_n": 95,
+              "final_n": 130,
+              "added_n": 35,
+              "previous_low_n": false,
+              "final_low_n": false,
+              "final_estimable": true
+            },
+            "21": {
+              "efg": "Valley",
+              "map_class": "moderate",
+              "previous_n": 104,
+              "final_n": 137,
+              "added_n": 33,
+              "previous_low_n": false,
+              "final_low_n": false,
+              "final_estimable": true
+            },
+            "22": {
+              "efg": "Valley",
+              "map_class": "severe",
+              "previous_n": 94,
+              "final_n": 118,
+              "added_n": 24,
+              "previous_low_n": false,
+              "final_low_n": false,
+              "final_estimable": true
+            },
+            "30": {
+              "efg": "Mesic",
+              "map_class": "intact",
+              "previous_n": 50,
+              "final_n": 62,
+              "added_n": 12,
+              "previous_low_n": false,
+              "final_low_n": false,
+              "final_estimable": true
+            },
+            "31": {
+              "efg": "Mesic",
+              "map_class": "moderate",
+              "previous_n": 41,
+              "final_n": 55,
+              "added_n": 14,
+              "previous_low_n": false,
+              "final_low_n": false,
+              "final_estimable": true
+            },
+            "32": {
+              "efg": "Mesic",
+              "map_class": "severe",
+              "previous_n": 4,
+              "final_n": 4,
+              "added_n": 0,
+              "previous_low_n": true,
+              "final_low_n": true,
+              "final_estimable": true
+            }
+          }
+        }
+      }
+    },
+    "SVM": {
+      "final": {
+        "A_nothicket_class": {
+          "nothicket_mode": "class",
+          "ref_classes": [
+            "intact",
+            "moderate",
+            "severe",
+            "nothicket"
+          ],
+          "per_cell": {
+            "10": {
+              "efg": "Arid",
+              "efg_id": 1,
+              "map_class": "intact",
+              "area_mapped_ha": 88485.67761196289,
+              "n": 39,
+              "ref_counts": {
+                "intact": 24,
+                "moderate": 12,
+                "severe": 2,
+                "nothicket": 1
+              },
+              "users_acc": 0.6153846153846154,
+              "users_acc_se": 0.07892141169885801,
+              "low_n": false,
+              "non_estimable": false
+            },
+            "11": {
+              "efg": "Arid",
+              "efg_id": 1,
+              "map_class": "moderate",
+              "area_mapped_ha": 173115.21521289062,
+              "n": 73,
+              "ref_counts": {
+                "intact": 6,
+                "moderate": 34,
+                "severe": 30,
+                "nothicket": 3
+              },
+              "users_acc": 0.4657534246575342,
+              "users_acc_se": 0.05878718351408097,
+              "low_n": false,
+              "non_estimable": false
+            },
+            "12": {
+              "efg": "Arid",
+              "efg_id": 1,
+              "map_class": "severe",
+              "area_mapped_ha": 488485.6689663086,
+              "n": 203,
+              "ref_counts": {
+                "intact": 1,
+                "moderate": 21,
+                "severe": 154,
+                "nothicket": 27
+              },
+              "users_acc": 0.7586206896551724,
+              "users_acc_se": 0.030108330718011642,
+              "low_n": false,
+              "non_estimable": false
+            },
+            "20": {
+              "efg": "Valley",
+              "efg_id": 2,
+              "map_class": "intact",
+              "area_mapped_ha": 284519.1395746582,
+              "n": 130,
+              "ref_counts": {
+                "intact": 82,
+                "moderate": 33,
+                "severe": 4,
+                "nothicket": 11
+              },
+              "users_acc": 0.6307692307692307,
+              "users_acc_se": 0.04249025499621759,
+              "low_n": false,
+              "non_estimable": false
+            },
+            "21": {
+              "efg": "Valley",
+              "efg_id": 2,
+              "map_class": "moderate",
+              "area_mapped_ha": 275405.7496375488,
+              "n": 137,
+              "ref_counts": {
+                "intact": 19,
+                "moderate": 63,
+                "severe": 40,
+                "nothicket": 15
+              },
+              "users_acc": 0.45985401459854014,
+              "users_acc_se": 0.04273622067714666,
+              "low_n": false,
+              "non_estimable": false
+            },
+            "22": {
+              "efg": "Valley",
+              "efg_id": 2,
+              "map_class": "severe",
+              "area_mapped_ha": 305326.4642053711,
+              "n": 118,
+              "ref_counts": {
+                "intact": 3,
+                "moderate": 18,
+                "severe": 85,
+                "nothicket": 12
+              },
+              "users_acc": 0.7203389830508474,
+              "users_acc_se": 0.04149459161011108,
+              "low_n": false,
+              "non_estimable": false
+            },
+            "30": {
+              "efg": "Mesic",
+              "efg_id": 3,
+              "map_class": "intact",
+              "area_mapped_ha": 156585.08387624513,
+              "n": 62,
+              "ref_counts": {
+                "intact": 50,
+                "moderate": 8,
+                "severe": 2,
+                "nothicket": 2
+              },
+              "users_acc": 0.8064516129032258,
+              "users_acc_se": 0.050584681305417746,
+              "low_n": false,
+              "non_estimable": false
+            },
+            "31": {
+              "efg": "Mesic",
+              "efg_id": 3,
+              "map_class": "moderate",
+              "area_mapped_ha": 104088.49130263671,
+              "n": 55,
+              "ref_counts": {
+                "intact": 6,
+                "moderate": 23,
+                "severe": 17,
+                "nothicket": 9
+              },
+              "users_acc": 0.41818181818181815,
+              "users_acc_se": 0.06712423323570162,
+              "low_n": false,
+              "non_estimable": false
+            },
+            "32": {
+              "efg": "Mesic",
+              "efg_id": 3,
+              "map_class": "severe",
+              "area_mapped_ha": 22588.513863012697,
+              "n": 4,
+              "ref_counts": {
+                "intact": 1,
+                "moderate": 0,
+                "severe": 2,
+                "nothicket": 1
+              },
+              "users_acc": 0.5,
+              "users_acc_se": 0.28867513459481287,
+              "low_n": true,
+              "non_estimable": false
+            }
+          },
+          "per_efg": {
+            "Arid": {
+              "efg_id": 1,
+              "area_total_ha": 750086.5617911621,
+              "n_labelled": 315,
+              "composition": {
+                "intact": {
+                  "area": 71087.70585466351,
+                  "se": 9271.337565293483,
+                  "ci95": [
+                    52916.21813817501,
+                    89259.193571152
+                  ],
+                  "frac": 0.09477266955017871
+                },
+                "moderate": {
+                  "area": 158388.36692576628,
+                  "se": 16031.887529775988,
+                  "ci95": [
+                    126966.44476320854,
+                    189810.28908832403
+                  ],
+                  "frac": 0.21116011803696932
+                },
+                "severe": {
+                  "area": 446256.30126349814,
+                  "se": 18085.72144065243,
+                  "ci95": [
+                    410808.9386053955,
+                    481703.6639216008
+                  ],
+                  "frac": 0.5949397362857223
+                },
+                "nothicket": {
+                  "area": 74354.1877472341,
+                  "se": 12560.611864909864,
+                  "ci95": [
+                    49735.84086822429,
+                    98972.53462624391
+                  ],
+                  "frac": 0.09912747612712954
+                }
+              },
+              "any_low_n": false,
+              "estimable": true,
+              "non_estimable_cells": []
+            },
+            "Valley": {
+              "efg_id": 2,
+              "area_total_ha": 865251.3534175782,
+              "n_labelled": 385,
+              "composition": {
+                "intact": {
+                  "area": 225423.41401312096,
+                  "se": 15248.370392573448,
+                  "ci95": [
+                    195537.15722075012,
+                    255309.6708054918
+                  ],
+                  "frac": 0.26052939775562484
+                },
+                "moderate": {
+                  "area": 245445.75224435295,
+                  "se": 18983.95766750048,
+                  "ci95": [
+                    208237.878932019,
+                    282653.6255566869
+                  ],
+                  "frac": 0.28366988537479765
+                },
+                "severe": {
+                  "area": 309103.4276384228,
+                  "se": 17161.57556441125,
+                  "ci95": [
+                    275467.3576142141,
+                    342739.4976626315
+                  ],
+                  "frac": 0.357241195194348
+                },
+                "nothicket": {
+                  "area": 85278.75952168134,
+                  "se": 13257.898717378153,
+                  "ci95": [
+                    59293.75552494038,
+                    111263.76351842229
+                  ],
+                  "frac": 0.09855952167522936
+                }
+              },
+              "any_low_n": false,
+              "estimable": true,
+              "non_estimable_cells": []
+            },
+            "Mesic": {
+              "efg_id": 3,
+              "area_total_ha": 283262.08904189453,
+              "n_labelled": 121,
+              "composition": {
+                "intact": {
+                  "area": 143280.53005644376,
+                  "se": 10683.126508539655,
+                  "ci95": [
+                    122341.98685742091,
+                    164219.07325546662
+                  ],
+                  "frac": 0.5058231778953397
+                },
+                "moderate": {
+                  "area": 63732.441496512554,
+                  "se": 9694.762615955151,
+                  "ci95": [
+                    44731.05593057514,
+                    82733.82706244997
+                  ],
+                  "frac": 0.22499460380342853
+                },
+                "severe": {
+                  "area": 48518.195072082905,
+                  "se": 9895.188532211556,
+                  "ci95": [
+                    29123.981928714493,
+                    67912.40821545132
+                  ],
+                  "frac": 0.1712837578660484
+                },
+                "nothicket": {
+                  "area": 27730.922416855297,
+                  "se": 8479.210822557827,
+                  "ci95": [
+                    11111.97458731971,
+                    44349.870246390885
+                  ],
+                  "frac": 0.09789846043518335
+                }
+              },
+              "any_low_n": true,
+              "estimable": true,
+              "non_estimable_cells": []
+            }
+          }
+        },
+        "B_nothicket_to_severe": {
+          "nothicket_mode": "severe",
+          "ref_classes": [
+            "intact",
+            "moderate",
+            "severe"
+          ],
+          "per_cell": {
+            "10": {
+              "efg": "Arid",
+              "efg_id": 1,
+              "map_class": "intact",
+              "area_mapped_ha": 88485.67761196289,
+              "n": 39,
+              "ref_counts": {
+                "intact": 24,
+                "moderate": 12,
+                "severe": 3
+              },
+              "users_acc": 0.6153846153846154,
+              "users_acc_se": 0.07892141169885801,
+              "low_n": false,
+              "non_estimable": false
+            },
+            "11": {
+              "efg": "Arid",
+              "efg_id": 1,
+              "map_class": "moderate",
+              "area_mapped_ha": 173115.21521289062,
+              "n": 73,
+              "ref_counts": {
+                "intact": 6,
+                "moderate": 34,
+                "severe": 33
+              },
+              "users_acc": 0.4657534246575342,
+              "users_acc_se": 0.05878718351408097,
+              "low_n": false,
+              "non_estimable": false
+            },
+            "12": {
+              "efg": "Arid",
+              "efg_id": 1,
+              "map_class": "severe",
+              "area_mapped_ha": 488485.6689663086,
+              "n": 203,
+              "ref_counts": {
+                "intact": 1,
+                "moderate": 21,
+                "severe": 181
+              },
+              "users_acc": 0.8916256157635468,
+              "users_acc_se": 0.0218715169309426,
+              "low_n": false,
+              "non_estimable": false
+            },
+            "20": {
+              "efg": "Valley",
+              "efg_id": 2,
+              "map_class": "intact",
+              "area_mapped_ha": 284519.1395746582,
+              "n": 130,
+              "ref_counts": {
+                "intact": 82,
+                "moderate": 33,
+                "severe": 15
+              },
+              "users_acc": 0.6307692307692307,
+              "users_acc_se": 0.04249025499621759,
+              "low_n": false,
+              "non_estimable": false
+            },
+            "21": {
+              "efg": "Valley",
+              "efg_id": 2,
+              "map_class": "moderate",
+              "area_mapped_ha": 275405.7496375488,
+              "n": 137,
+              "ref_counts": {
+                "intact": 19,
+                "moderate": 63,
+                "severe": 55
+              },
+              "users_acc": 0.45985401459854014,
+              "users_acc_se": 0.04273622067714666,
+              "low_n": false,
+              "non_estimable": false
+            },
+            "22": {
+              "efg": "Valley",
+              "efg_id": 2,
+              "map_class": "severe",
+              "area_mapped_ha": 305326.4642053711,
+              "n": 118,
+              "ref_counts": {
+                "intact": 3,
+                "moderate": 18,
+                "severe": 97
+              },
+              "users_acc": 0.8220338983050848,
+              "users_acc_se": 0.03536067741432931,
+              "low_n": false,
+              "non_estimable": false
+            },
+            "30": {
+              "efg": "Mesic",
+              "efg_id": 3,
+              "map_class": "intact",
+              "area_mapped_ha": 156585.08387624513,
+              "n": 62,
+              "ref_counts": {
+                "intact": 50,
+                "moderate": 8,
+                "severe": 4
+              },
+              "users_acc": 0.8064516129032258,
+              "users_acc_se": 0.050584681305417746,
+              "low_n": false,
+              "non_estimable": false
+            },
+            "31": {
+              "efg": "Mesic",
+              "efg_id": 3,
+              "map_class": "moderate",
+              "area_mapped_ha": 104088.49130263671,
+              "n": 55,
+              "ref_counts": {
+                "intact": 6,
+                "moderate": 23,
+                "severe": 26
+              },
+              "users_acc": 0.41818181818181815,
+              "users_acc_se": 0.06712423323570162,
+              "low_n": false,
+              "non_estimable": false
+            },
+            "32": {
+              "efg": "Mesic",
+              "efg_id": 3,
+              "map_class": "severe",
+              "area_mapped_ha": 22588.513863012697,
+              "n": 4,
+              "ref_counts": {
+                "intact": 1,
+                "moderate": 0,
+                "severe": 3
+              },
+              "users_acc": 0.75,
+              "users_acc_se": 0.25,
+              "low_n": true,
+              "non_estimable": false
+            }
+          },
+          "per_efg": {
+            "Arid": {
+              "efg_id": 1,
+              "area_total_ha": 750086.5617911621,
+              "n_labelled": 315,
+              "composition": {
+                "intact": {
+                  "area": 71087.70585466351,
+                  "se": 9271.337565293483,
+                  "ci95": [
+                    52916.21813817501,
+                    89259.193571152
+                  ],
+                  "frac": 0.09477266955017871
+                },
+                "moderate": {
+                  "area": 158388.36692576628,
+                  "se": 16031.887529775988,
+                  "ci95": [
+                    126966.44476320854,
+                    189810.28908832403
+                  ],
+                  "frac": 0.21116011803696932
+                },
+                "severe": {
+                  "area": 520610.48901073233,
+                  "se": 15227.5543971611,
+                  "ci95": [
+                    490765.03081967204,
+                    550455.9472017926
+                  ],
+                  "frac": 0.694067212412852
+                }
+              },
+              "any_low_n": false,
+              "estimable": true,
+              "non_estimable_cells": []
+            },
+            "Valley": {
+              "efg_id": 2,
+              "area_total_ha": 865251.3534175782,
+              "n_labelled": 385,
+              "composition": {
+                "intact": {
+                  "area": 225423.41401312096,
+                  "se": 15248.370392573448,
+                  "ci95": [
+                    195537.15722075012,
+                    255309.6708054918
+                  ],
+                  "frac": 0.26052939775562484
+                },
+                "moderate": {
+                  "area": 245445.75224435295,
+                  "se": 18983.95766750048,
+                  "ci95": [
+                    208237.878932019,
+                    282653.6255566869
+                  ],
+                  "frac": 0.28366988537479765
+                },
+                "severe": {
+                  "area": 394382.18716010416,
+                  "se": 17737.80078395675,
+                  "ci95": [
+                    359616.7364586026,
+                    429147.63786160573
+                  ],
+                  "frac": 0.45580071686957735
+                }
+              },
+              "any_low_n": false,
+              "estimable": true,
+              "non_estimable_cells": []
+            },
+            "Mesic": {
+              "efg_id": 3,
+              "area_total_ha": 283262.08904189453,
+              "n_labelled": 121,
+              "composition": {
+                "intact": {
+                  "area": 143280.53005644376,
+                  "se": 10683.126508539655,
+                  "ci95": [
+                    122341.98685742091,
+                    164219.07325546662
+                  ],
+                  "frac": 0.5058231778953397
+                },
+                "moderate": {
+                  "area": 63732.441496512554,
+                  "se": 9694.762615955151,
+                  "ci95": [
+                    44731.05593057514,
+                    82733.82706244997
+                  ],
+                  "frac": 0.22499460380342853
+                },
+                "severe": {
+                  "area": 76249.11748893821,
+                  "se": 10303.363432946953,
+                  "ci95": [
+                    56054.89624073521,
+                    96443.33873714121
+                  ],
+                  "frac": 0.2691822183012318
+                }
+              },
+              "any_low_n": true,
+              "estimable": true,
+              "non_estimable_cells": []
+            }
+          }
+        }
+      },
+      "comparison_to_previous": {
+        "A_nothicket_class": {
+          "cells": {
+            "10": {
+              "efg": "Arid",
+              "map_class": "intact",
+              "previous_n": 31,
+              "final_n": 39,
+              "added_n": 8,
+              "previous_low_n": false,
+              "final_low_n": false,
+              "final_estimable": true
+            },
+            "11": {
+              "efg": "Arid",
+              "map_class": "moderate",
+              "previous_n": 57,
+              "final_n": 73,
+              "added_n": 16,
+              "previous_low_n": false,
+              "final_low_n": false,
+              "final_estimable": true
+            },
+            "12": {
+              "efg": "Arid",
+              "map_class": "severe",
+              "previous_n": 152,
+              "final_n": 203,
+              "added_n": 51,
+              "previous_low_n": false,
+              "final_low_n": false,
+              "final_estimable": true
+            },
+            "20": {
+              "efg": "Valley",
+              "map_class": "intact",
+              "previous_n": 95,
+              "final_n": 130,
+              "added_n": 35,
+              "previous_low_n": false,
+              "final_low_n": false,
+              "final_estimable": true
+            },
+            "21": {
+              "efg": "Valley",
+              "map_class": "moderate",
+              "previous_n": 104,
+              "final_n": 137,
+              "added_n": 33,
+              "previous_low_n": false,
+              "final_low_n": false,
+              "final_estimable": true
+            },
+            "22": {
+              "efg": "Valley",
+              "map_class": "severe",
+              "previous_n": 94,
+              "final_n": 118,
+              "added_n": 24,
+              "previous_low_n": false,
+              "final_low_n": false,
+              "final_estimable": true
+            },
+            "30": {
+              "efg": "Mesic",
+              "map_class": "intact",
+              "previous_n": 50,
+              "final_n": 62,
+              "added_n": 12,
+              "previous_low_n": false,
+              "final_low_n": false,
+              "final_estimable": true
+            },
+            "31": {
+              "efg": "Mesic",
+              "map_class": "moderate",
+              "previous_n": 41,
+              "final_n": 55,
+              "added_n": 14,
+              "previous_low_n": false,
+              "final_low_n": false,
+              "final_estimable": true
+            },
+            "32": {
+              "efg": "Mesic",
+              "map_class": "severe",
+              "previous_n": 4,
+              "final_n": 4,
+              "added_n": 0,
+              "previous_low_n": true,
+              "final_low_n": true,
+              "final_estimable": true
+            }
+          }
+        },
+        "B_nothicket_to_severe": {
+          "cells": {
+            "10": {
+              "efg": "Arid",
+              "map_class": "intact",
+              "previous_n": 31,
+              "final_n": 39,
+              "added_n": 8,
+              "previous_low_n": false,
+              "final_low_n": false,
+              "final_estimable": true
+            },
+            "11": {
+              "efg": "Arid",
+              "map_class": "moderate",
+              "previous_n": 57,
+              "final_n": 73,
+              "added_n": 16,
+              "previous_low_n": false,
+              "final_low_n": false,
+              "final_estimable": true
+            },
+            "12": {
+              "efg": "Arid",
+              "map_class": "severe",
+              "previous_n": 152,
+              "final_n": 203,
+              "added_n": 51,
+              "previous_low_n": false,
+              "final_low_n": false,
+              "final_estimable": true
+            },
+            "20": {
+              "efg": "Valley",
+              "map_class": "intact",
+              "previous_n": 95,
+              "final_n": 130,
+              "added_n": 35,
+              "previous_low_n": false,
+              "final_low_n": false,
+              "final_estimable": true
+            },
+            "21": {
+              "efg": "Valley",
+              "map_class": "moderate",
+              "previous_n": 104,
+              "final_n": 137,
+              "added_n": 33,
+              "previous_low_n": false,
+              "final_low_n": false,
+              "final_estimable": true
+            },
+            "22": {
+              "efg": "Valley",
+              "map_class": "severe",
+              "previous_n": 94,
+              "final_n": 118,
+              "added_n": 24,
+              "previous_low_n": false,
+              "final_low_n": false,
+              "final_estimable": true
+            },
+            "30": {
+              "efg": "Mesic",
+              "map_class": "intact",
+              "previous_n": 50,
+              "final_n": 62,
+              "added_n": 12,
+              "previous_low_n": false,
+              "final_low_n": false,
+              "final_estimable": true
+            },
+            "31": {
+              "efg": "Mesic",
+              "map_class": "moderate",
+              "previous_n": 41,
+              "final_n": 55,
+              "added_n": 14,
+              "previous_low_n": false,
+              "final_low_n": false,
+              "final_estimable": true
+            },
+            "32": {
+              "efg": "Mesic",
+              "map_class": "severe",
+              "previous_n": 4,
+              "final_n": 4,
+              "added_n": 0,
+              "previous_low_n": true,
+              "final_low_n": true,
+              "final_estimable": true
+            }
+          }
+        }
+      }
+    }
+  },
+  "efg_area_estimates": {
+    "ARP": {
+      "A_nothicket_class": {
+        "adjudicate": "ARP",
+        "scenario": "A_nothicket_class",
+        "ref_classes": [
+          "intact",
+          "moderate",
+          "severe",
+          "nothicket"
+        ],
+        "mapped_cells": {
+          "10": {
+            "efg": "Arid",
+            "efg_id": 1,
+            "map_class": "intact",
+            "area_mapped_ha": 88485.67761196289,
+            "n": 39,
+            "users_accuracy": 0.6153846153846154,
+            "users_accuracy_se": 0.07892141169885801,
+            "users_accuracy_moe95": 0.15468312453881977,
+            "reference_area_by_class": {
+              "intact": {
+                "area_ha": 54452.72468428486,
+                "se_ha": 6983.414592266146,
+                "moe95_ha": 13687.241089953113
+              },
+              "moderate": {
+                "area_ha": 27226.36234214243,
+                "se_ha": 6625.048787045132,
+                "moe95_ha": 12984.857018429228
+              },
+              "severe": {
+                "area_ha": 4537.727057023738,
+                "se_ha": 3166.156920899358,
+                "moe95_ha": 6205.553534364974
+              },
+              "nothicket": {
+                "area_ha": 2268.863528511869,
+                "se_ha": 2268.863528511869,
+                "moe95_ha": 4446.890801719729
+              }
+            },
+            "low_n": false,
+            "estimable": true
+          },
+          "11": {
+            "efg": "Arid",
+            "efg_id": 1,
+            "map_class": "moderate",
+            "area_mapped_ha": 173115.21521289062,
+            "n": 73,
+            "users_accuracy": 0.4657534246575342,
+            "users_accuracy_se": 0.05878718351408097,
+            "users_accuracy_moe95": 0.11522076244014552,
+            "reference_area_by_class": {
+              "intact": {
+                "area_ha": 14228.647825717037,
+                "se_ha": 5603.4971862682305,
+                "moe95_ha": 10982.652672557262
+              },
+              "moderate": {
+                "area_ha": 80629.00434572987,
+                "se_ha": 10176.955925799823,
+                "moe95_ha": 19946.467086819135
+              },
+              "severe": {
+                "area_ha": 71143.23912858518,
+                "se_ha": 10037.856593209273,
+                "moe95_ha": 19673.8374046681
+              },
+              "nothicket": {
+                "area_ha": 7114.323912858518,
+                "se_ha": 4050.007048230572,
+                "moe95_ha": 7937.867951665295
+              }
+            },
+            "low_n": false,
+            "estimable": true
+          },
+          "12": {
+            "efg": "Arid",
+            "efg_id": 1,
+            "map_class": "severe",
+            "area_mapped_ha": 488485.6689663086,
+            "n": 203,
+            "users_accuracy": 0.7536945812807881,
+            "users_accuracy_se": 0.030315099285617708,
+            "users_accuracy_moe95": 0.059416502787566626,
+            "reference_area_by_class": {
+              "intact": {
+                "area_ha": 2406.333344661619,
+                "se_ha": 2406.333344661619,
+                "moe95_ha": 4716.326690334582
+              },
+              "moderate": {
+                "area_ha": 50533.00023789399,
+                "se_ha": 10467.0776447386,
+                "moe95_ha": 20515.09520707199
+              },
+              "severe": {
+                "area_ha": 368169.00173322763,
+                "se_ha": 14808.49155431503,
+                "moe95_ha": 29024.11011182302
+              },
+              "nothicket": {
+                "area_ha": 67377.33365052532,
+                "se_ha": 11851.631631745822,
+                "moe95_ha": 23228.771156257484
+              }
+            },
+            "low_n": false,
+            "estimable": true
+          },
+          "20": {
+            "efg": "Valley",
+            "efg_id": 2,
+            "map_class": "intact",
+            "area_mapped_ha": 284519.1395746582,
+            "n": 130,
+            "users_accuracy": 0.6153846153846154,
+            "users_accuracy_se": 0.0428343112607465,
+            "users_accuracy_moe95": 0.08395370737364162,
+            "reference_area_by_class": {
+              "intact": {
+                "area_ha": 175088.70127671273,
+                "se_ha": 12187.181384180687,
+                "moe95_ha": 23886.43658605115
+              },
+              "moderate": {
+                "area_ha": 76601.30680856181,
+                "se_ha": 11111.408237171267,
+                "moe95_ha": 21777.959962377372
+              },
+              "severe": {
+                "area_ha": 8754.435063835637,
+                "se_ha": 4326.020243995162,
+                "moe95_ha": 8478.843874621694
+              },
+              "nothicket": {
+                "area_ha": 24074.696425548,
+                "se_ha": 6971.770822915342,
+                "moe95_ha": 13664.419721381246
+              }
+            },
+            "low_n": false,
+            "estimable": true
+          },
+          "21": {
+            "efg": "Valley",
+            "efg_id": 2,
+            "map_class": "moderate",
+            "area_mapped_ha": 275405.7496375488,
+            "n": 137,
+            "users_accuracy": 0.46715328467153283,
+            "users_accuracy_se": 0.042782030767131475,
+            "users_accuracy_moe95": 0.08385123948906219,
+            "reference_area_by_class": {
+              "intact": {
+                "area_ha": 36184.69703267065,
+                "se_ha": 7977.975801221947,
+                "moe95_ha": 15636.545239927098
+              },
+              "moderate": {
+                "area_ha": 128656.70056060674,
+                "se_ha": 11782.417254438522,
+                "moe95_ha": 23093.11346952281
+              },
+              "severe": {
+                "area_ha": 80410.43785037921,
+                "se_ha": 10737.392880920695,
+                "moe95_ha": 21044.903334461338
+              },
+              "nothicket": {
+                "area_ha": 30153.914193892208,
+                "se_ha": 7374.091570104332,
+                "moe95_ha": 14452.953896104911
+              }
+            },
+            "low_n": false,
+            "estimable": true
+          },
+          "22": {
+            "efg": "Valley",
+            "efg_id": 2,
+            "map_class": "severe",
+            "area_mapped_ha": 305326.4642053711,
+            "n": 118,
+            "users_accuracy": 0.7203389830508474,
+            "users_accuracy_se": 0.04149459161011108,
+            "users_accuracy_moe95": 0.08132790510901561,
+            "reference_area_by_class": {
+              "intact": {
+                "area_ha": 7762.537225560282,
+                "se_ha": 4443.232691807205,
+                "moe95_ha": 8708.57605087308
+              },
+              "moderate": {
+                "area_ha": 46575.223353361696,
+                "se_ha": 10149.058663621097,
+                "moe95_ha": 19891.789457681563
+              },
+              "severe": {
+                "area_ha": 219938.554724208,
+                "se_ha": 12669.396939961072,
+                "moe95_ha": 24831.56170816567
+              },
+              "nothicket": {
+                "area_ha": 31050.14890224113,
+                "se_ha": 8531.65069073505,
+                "moe95_ha": 16721.728082516973
+              }
+            },
+            "low_n": false,
+            "estimable": true
+          },
+          "30": {
+            "efg": "Mesic",
+            "efg_id": 3,
+            "map_class": "intact",
+            "area_mapped_ha": 156585.08387624513,
+            "n": 62,
+            "users_accuracy": 0.8064516129032258,
+            "users_accuracy_se": 0.050584681305417746,
+            "users_accuracy_moe95": 0.09914415352805535,
+            "reference_area_by_class": {
+              "intact": {
+                "area_ha": 126278.29344858478,
+                "se_ha": 7920.8065650619665,
+                "moe95_ha": 15524.49559602987
+              },
+              "moderate": {
+                "area_ha": 20204.526951773565,
+                "se_ha": 6721.027241546689,
+                "moe95_ha": 13172.971332544097
+              },
+              "severe": {
+                "area_ha": 5051.131737943391,
+                "se_ha": 3542.2923832210336,
+                "moe95_ha": 6942.765493823781
+              },
+              "nothicket": {
+                "area_ha": 5051.131737943391,
+                "se_ha": 3542.2923832210336,
+                "moe95_ha": 6942.765493823781
+              }
+            },
+            "low_n": false,
+            "estimable": true
+          },
+          "31": {
+            "efg": "Mesic",
+            "efg_id": 3,
+            "map_class": "moderate",
+            "area_mapped_ha": 104088.49130263671,
+            "n": 55,
+            "users_accuracy": 0.41818181818181815,
+            "users_accuracy_se": 0.06712423323570162,
+            "users_accuracy_moe95": 0.13156107963184166,
+            "reference_area_by_class": {
+              "intact": {
+                "area_ha": 11355.108142105822,
+                "se_ha": 4415.875388596709,
+                "moe95_ha": 8654.956721866365
+              },
+              "moderate": {
+                "area_ha": 43527.91454473899,
+                "se_ha": 6986.860167350486,
+                "moe95_ha": 13693.994293024449
+              },
+              "severe": {
+                "area_ha": 32172.806402633167,
+                "se_ha": 6545.749833402762,
+                "moe95_ha": 12829.433925278472
+              },
+              "nothicket": {
+                "area_ha": 17032.662213158736,
+                "se_ha": 5240.145125512865,
+                "moe95_ha": 10270.495719768336
+              }
+            },
+            "low_n": false,
+            "estimable": true
+          },
+          "32": {
+            "efg": "Mesic",
+            "efg_id": 3,
+            "map_class": "severe",
+            "area_mapped_ha": 22588.513863012697,
+            "n": 4,
+            "users_accuracy": 0.5,
+            "users_accuracy_se": 0.28867513459481287,
+            "users_accuracy_moe95": 0.5657928670380858,
+            "reference_area_by_class": {
+              "intact": {
+                "area_ha": 5647.128465753174,
+                "se_ha": 5647.128465753174,
+                "moe95_ha": 11068.168408947153
+              },
+              "moderate": {
+                "area_ha": 0.0,
+                "se_ha": 0.0,
+                "moe95_ha": 0.0
+              },
+              "severe": {
+                "area_ha": 11294.256931506348,
+                "se_ha": 6520.742279701986,
+                "moe95_ha": 12780.420020683501
+              },
+              "nothicket": {
+                "area_ha": 5647.128465753174,
+                "se_ha": 5647.128465753174,
+                "moe95_ha": 11068.168408947153
+              }
+            },
+            "low_n": true,
+            "estimable": true
+          }
+        },
+        "reference_area_by_efg": {
+          "Arid": {
+            "area_total_ha": 750086.5617911621,
+            "n_labelled": 315,
+            "estimable": true,
+            "non_estimable_cells": [],
+            "composition": {
+              "intact": {
+                "area_ha": 71087.70585466351,
+                "se_ha": 9271.337565293483,
+                "moe95_ha": 18171.487716488497,
+                "ci95_ha": [
+                  52916.21813817501,
+                  89259.193571152
+                ]
+              },
+              "moderate": {
+                "area_ha": 158388.36692576628,
+                "se_ha": 16031.887529775988,
+                "moe95_ha": 31421.92216255775,
+                "ci95_ha": [
+                  126966.44476320854,
+                  189810.28908832403
+                ]
+              },
+              "severe": {
+                "area_ha": 443849.9679188365,
+                "se_ha": 18167.953565215135,
+                "moe95_ha": 35608.53466061774,
+                "ci95_ha": [
+                  408241.43325821875,
+                  479458.5025794543
+                ]
+              },
+              "nothicket": {
+                "area_ha": 76760.52109189572,
+                "se_ha": 12728.372682174528,
+                "moe95_ha": 24947.152038865563,
+                "ci95_ha": [
+                  51813.369053030154,
+                  101707.67313076128
+                ]
+              }
+            }
+          },
+          "Valley": {
+            "area_total_ha": 865251.3534175782,
+            "n_labelled": 385,
+            "estimable": true,
+            "non_estimable_cells": [],
+            "composition": {
+              "intact": {
+                "area_ha": 219035.93553494365,
+                "se_ha": 15228.847780753063,
+                "moe95_ha": 29847.993176318734,
+                "ci95_ha": [
+                  189187.94235862492,
+                  248883.9287112624
+                ]
+              },
+              "moderate": {
+                "area_ha": 251833.23072253028,
+                "se_ha": 19112.617328047734,
+                "moe95_ha": 37460.04161326972,
+                "ci95_ha": [
+                  214373.18910926057,
+                  289293.2723358
+                ]
+              },
+              "severe": {
+                "area_ha": 309103.4276384228,
+                "se_ha": 17161.57556441125,
+                "moe95_ha": 33636.070024208704,
+                "ci95_ha": [
+                  275467.3576142141,
+                  342739.4976626315
+                ]
+              },
+              "nothicket": {
+                "area_ha": 85278.75952168134,
+                "se_ha": 13257.898717378153,
+                "moe95_ha": 25985.003996740958,
+                "ci95_ha": [
+                  59293.75552494038,
+                  111263.76351842229
+                ]
+              }
+            }
+          },
+          "Mesic": {
+            "area_total_ha": 283262.08904189453,
+            "n_labelled": 121,
+            "estimable": true,
+            "non_estimable_cells": [],
+            "composition": {
+              "intact": {
+                "area_ha": 143280.53005644376,
+                "se_ha": 10683.126508539655,
+                "moe95_ha": 20938.543199022857,
+                "ci95_ha": [
+                  122341.98685742091,
+                  164219.07325546662
+                ]
+              },
+              "moderate": {
+                "area_ha": 63732.441496512554,
+                "se_ha": 9694.762615955151,
+                "moe95_ha": 19001.385565937417,
+                "ci95_ha": [
+                  44731.05593057514,
+                  82733.82706244997
+                ]
+              },
+              "severe": {
+                "area_ha": 48518.195072082905,
+                "se_ha": 9895.188532211556,
+                "moe95_ha": 19394.21314336841,
+                "ci95_ha": [
+                  29123.981928714493,
+                  67912.40821545132
+                ]
+              },
+              "nothicket": {
+                "area_ha": 27730.922416855297,
+                "se_ha": 8479.210822557827,
+                "moe95_ha": 16618.947829535588,
+                "ci95_ha": [
+                  11111.97458731971,
+                  44349.870246390885
+                ]
+              }
+            }
+          }
+        }
+      },
+      "B_nothicket_to_severe": {
+        "adjudicate": "ARP",
+        "scenario": "B_nothicket_to_severe",
+        "ref_classes": [
+          "intact",
+          "moderate",
+          "severe"
+        ],
+        "mapped_cells": {
+          "10": {
+            "efg": "Arid",
+            "efg_id": 1,
+            "map_class": "intact",
+            "area_mapped_ha": 88485.67761196289,
+            "n": 39,
+            "users_accuracy": 0.6153846153846154,
+            "users_accuracy_se": 0.07892141169885801,
+            "users_accuracy_moe95": 0.15468312453881977,
+            "reference_area_by_class": {
+              "intact": {
+                "area_ha": 54452.72468428486,
+                "se_ha": 6983.414592266146,
+                "moe95_ha": 13687.241089953113
+              },
+              "moderate": {
+                "area_ha": 27226.36234214243,
+                "se_ha": 6625.048787045132,
+                "moe95_ha": 12984.857018429228
+              },
+              "severe": {
+                "area_ha": 6806.590585535608,
+                "se_ha": 3824.97370059491,
+                "moe95_ha": 7496.810694978915
+              }
+            },
+            "low_n": false,
+            "estimable": true
+          },
+          "11": {
+            "efg": "Arid",
+            "efg_id": 1,
+            "map_class": "moderate",
+            "area_mapped_ha": 173115.21521289062,
+            "n": 73,
+            "users_accuracy": 0.4657534246575342,
+            "users_accuracy_se": 0.05878718351408097,
+            "users_accuracy_moe95": 0.11522076244014552,
+            "reference_area_by_class": {
+              "intact": {
+                "area_ha": 14228.647825717037,
+                "se_ha": 5603.4971862682305,
+                "moe95_ha": 10982.652672557262
+              },
+              "moderate": {
+                "area_ha": 80629.00434572987,
+                "se_ha": 10176.955925799823,
+                "moe95_ha": 19946.467086819135
+              },
+              "severe": {
+                "area_ha": 78257.5630414437,
+                "se_ha": 10153.905033402956,
+                "moe95_ha": 19901.28816790977
+              }
+            },
+            "low_n": false,
+            "estimable": true
+          },
+          "12": {
+            "efg": "Arid",
+            "efg_id": 1,
+            "map_class": "severe",
+            "area_mapped_ha": 488485.6689663086,
+            "n": 203,
+            "users_accuracy": 0.8916256157635468,
+            "users_accuracy_se": 0.0218715169309426,
+            "users_accuracy_moe95": 0.042867385471905516,
+            "reference_area_by_class": {
+              "intact": {
+                "area_ha": 2406.333344661619,
+                "se_ha": 2406.333344661619,
+                "moe95_ha": 4716.326690334582
+              },
+              "moderate": {
+                "area_ha": 50533.00023789399,
+                "se_ha": 10467.0776447386,
+                "moe95_ha": 20515.09520707199
+              },
+              "severe": {
+                "area_ha": 435546.335383753,
+                "se_ha": 10683.922579319442,
+                "moe95_ha": 20940.103469080386
+              }
+            },
+            "low_n": false,
+            "estimable": true
+          },
+          "20": {
+            "efg": "Valley",
+            "efg_id": 2,
+            "map_class": "intact",
+            "area_mapped_ha": 284519.1395746582,
+            "n": 130,
+            "users_accuracy": 0.6153846153846154,
+            "users_accuracy_se": 0.0428343112607465,
+            "users_accuracy_moe95": 0.08395370737364162,
+            "reference_area_by_class": {
+              "intact": {
+                "area_ha": 175088.70127671273,
+                "se_ha": 12187.181384180687,
+                "moe95_ha": 23886.43658605115
+              },
+              "moderate": {
+                "area_ha": 76601.30680856181,
+                "se_ha": 11111.408237171267,
+                "moe95_ha": 21777.959962377372
+              },
+              "severe": {
+                "area_ha": 32829.13148938364,
+                "se_ha": 8003.276640021222,
+                "moe95_ha": 15686.13397275233
+              }
+            },
+            "low_n": false,
+            "estimable": true
+          },
+          "21": {
+            "efg": "Valley",
+            "efg_id": 2,
+            "map_class": "moderate",
+            "area_mapped_ha": 275405.7496375488,
+            "n": 137,
+            "users_accuracy": 0.46715328467153283,
+            "users_accuracy_se": 0.042782030767131475,
+            "users_accuracy_moe95": 0.08385123948906219,
+            "reference_area_by_class": {
+              "intact": {
+                "area_ha": 36184.69703267065,
+                "se_ha": 7977.975801221947,
+                "moe95_ha": 15636.545239927098
+              },
+              "moderate": {
+                "area_ha": 128656.70056060674,
+                "se_ha": 11782.417254438522,
+                "moe95_ha": 23093.11346952281
+              },
+              "severe": {
+                "area_ha": 110564.35204427142,
+                "se_ha": 11576.339433038318,
+                "moe95_ha": 22689.208361565932
+              }
+            },
+            "low_n": false,
+            "estimable": true
+          },
+          "22": {
+            "efg": "Valley",
+            "efg_id": 2,
+            "map_class": "severe",
+            "area_mapped_ha": 305326.4642053711,
+            "n": 118,
+            "users_accuracy": 0.8220338983050848,
+            "users_accuracy_se": 0.03536067741432931,
+            "users_accuracy_moe95": 0.06930565420102436,
+            "reference_area_by_class": {
+              "intact": {
+                "area_ha": 7762.537225560282,
+                "se_ha": 4443.232691807205,
+                "moe95_ha": 8708.57605087308
+              },
+              "moderate": {
+                "area_ha": 46575.223353361696,
+                "se_ha": 10149.058663621097,
+                "moe95_ha": 19891.789457681563
+              },
+              "severe": {
+                "area_ha": 250988.70362644913,
+                "se_ha": 10796.550606823892,
+                "moe95_ha": 21160.850346638894
+              }
+            },
+            "low_n": false,
+            "estimable": true
+          },
+          "30": {
+            "efg": "Mesic",
+            "efg_id": 3,
+            "map_class": "intact",
+            "area_mapped_ha": 156585.08387624513,
+            "n": 62,
+            "users_accuracy": 0.8064516129032258,
+            "users_accuracy_se": 0.050584681305417746,
+            "users_accuracy_moe95": 0.09914415352805535,
+            "reference_area_by_class": {
+              "intact": {
+                "area_ha": 126278.29344858478,
+                "se_ha": 7920.8065650619665,
+                "moe95_ha": 15524.49559602987
+              },
+              "moderate": {
+                "area_ha": 20204.526951773565,
+                "se_ha": 6721.027241546689,
+                "moe95_ha": 13172.971332544097
+              },
+              "severe": {
+                "area_ha": 10102.263475886783,
+                "se_ha": 4925.35768256849,
+                "moe95_ha": 9653.523668811906
+              }
+            },
+            "low_n": false,
+            "estimable": true
+          },
+          "31": {
+            "efg": "Mesic",
+            "efg_id": 3,
+            "map_class": "moderate",
+            "area_mapped_ha": 104088.49130263671,
+            "n": 55,
+            "users_accuracy": 0.41818181818181815,
+            "users_accuracy_se": 0.06712423323570162,
+            "users_accuracy_moe95": 0.13156107963184166,
+            "reference_area_by_class": {
+              "intact": {
+                "area_ha": 11355.108142105822,
+                "se_ha": 4415.875388596709,
+                "moe95_ha": 8654.956721866365
+              },
+              "moderate": {
+                "area_ha": 43527.91454473899,
+                "se_ha": 6986.860167350486,
+                "moe95_ha": 13693.994293024449
+              },
+              "severe": {
+                "area_ha": 49205.4686157919,
+                "se_ha": 7071.781233991346,
+                "moe95_ha": 13860.43652516926
+              }
+            },
+            "low_n": false,
+            "estimable": true
+          },
+          "32": {
+            "efg": "Mesic",
+            "efg_id": 3,
+            "map_class": "severe",
+            "area_mapped_ha": 22588.513863012697,
+            "n": 4,
+            "users_accuracy": 0.75,
+            "users_accuracy_se": 0.25,
+            "users_accuracy_moe95": 0.4899909961350135,
+            "reference_area_by_class": {
+              "intact": {
+                "area_ha": 5647.128465753174,
+                "se_ha": 5647.128465753174,
+                "moe95_ha": 11068.168408947153
+              },
+              "moderate": {
+                "area_ha": 0.0,
+                "se_ha": 0.0,
+                "moe95_ha": 0.0
+              },
+              "severe": {
+                "area_ha": 16941.385397259524,
+                "se_ha": 5647.128465753174,
+                "moe95_ha": 11068.168408947153
+              }
+            },
+            "low_n": true,
+            "estimable": true
+          }
+        },
+        "reference_area_by_efg": {
+          "Arid": {
+            "area_total_ha": 750086.5617911621,
+            "n_labelled": 315,
+            "estimable": true,
+            "non_estimable_cells": [],
+            "composition": {
+              "intact": {
+                "area_ha": 71087.70585466351,
+                "se_ha": 9271.337565293483,
+                "moe95_ha": 18171.487716488497,
+                "ci95_ha": [
+                  52916.21813817501,
+                  89259.193571152
+                ]
+              },
+              "moderate": {
+                "area_ha": 158388.36692576628,
+                "se_ha": 16031.887529775988,
+                "moe95_ha": 31421.92216255775,
+                "ci95_ha": [
+                  126966.44476320854,
+                  189810.28908832403
+                ]
+              },
+              "severe": {
+                "area_ha": 520610.48901073233,
+                "se_ha": 15227.5543971611,
+                "moe95_ha": 29845.45819106029,
+                "ci95_ha": [
+                  490765.03081967204,
+                  550455.9472017926
+                ]
+              }
+            }
+          },
+          "Valley": {
+            "area_total_ha": 865251.3534175782,
+            "n_labelled": 385,
+            "estimable": true,
+            "non_estimable_cells": [],
+            "composition": {
+              "intact": {
+                "area_ha": 219035.93553494365,
+                "se_ha": 15228.847780753063,
+                "moe95_ha": 29847.993176318734,
+                "ci95_ha": [
+                  189187.94235862492,
+                  248883.9287112624
+                ]
+              },
+              "moderate": {
+                "area_ha": 251833.23072253028,
+                "se_ha": 19112.617328047734,
+                "moe95_ha": 37460.04161326972,
+                "ci95_ha": [
+                  214373.18910926057,
+                  289293.2723358
+                ]
+              },
+              "severe": {
+                "area_ha": 394382.18716010416,
+                "se_ha": 17737.80078395675,
+                "moe95_ha": 34765.45070150157,
+                "ci95_ha": [
+                  359616.7364586026,
+                  429147.63786160573
+                ]
+              }
+            }
+          },
+          "Mesic": {
+            "area_total_ha": 283262.08904189453,
+            "n_labelled": 121,
+            "estimable": true,
+            "non_estimable_cells": [],
+            "composition": {
+              "intact": {
+                "area_ha": 143280.53005644376,
+                "se_ha": 10683.126508539655,
+                "moe95_ha": 20938.543199022857,
+                "ci95_ha": [
+                  122341.98685742091,
+                  164219.07325546662
+                ]
+              },
+              "moderate": {
+                "area_ha": 63732.441496512554,
+                "se_ha": 9694.762615955151,
+                "moe95_ha": 19001.385565937417,
+                "ci95_ha": [
+                  44731.05593057514,
+                  82733.82706244997
+                ]
+              },
+              "severe": {
+                "area_ha": 76249.11748893821,
+                "se_ha": 10303.363432946953,
+                "moe95_ha": 20194.221248203,
+                "ci95_ha": [
+                  56054.89624073521,
+                  96443.33873714121
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "SVM": {
+      "A_nothicket_class": {
+        "adjudicate": "SVM",
+        "scenario": "A_nothicket_class",
+        "ref_classes": [
+          "intact",
+          "moderate",
+          "severe",
+          "nothicket"
+        ],
+        "mapped_cells": {
+          "10": {
+            "efg": "Arid",
+            "efg_id": 1,
+            "map_class": "intact",
+            "area_mapped_ha": 88485.67761196289,
+            "n": 39,
+            "users_accuracy": 0.6153846153846154,
+            "users_accuracy_se": 0.07892141169885801,
+            "users_accuracy_moe95": 0.15468312453881977,
+            "reference_area_by_class": {
+              "intact": {
+                "area_ha": 54452.72468428486,
+                "se_ha": 6983.414592266146,
+                "moe95_ha": 13687.241089953113
+              },
+              "moderate": {
+                "area_ha": 27226.36234214243,
+                "se_ha": 6625.048787045132,
+                "moe95_ha": 12984.857018429228
+              },
+              "severe": {
+                "area_ha": 4537.727057023738,
+                "se_ha": 3166.156920899358,
+                "moe95_ha": 6205.553534364974
+              },
+              "nothicket": {
+                "area_ha": 2268.863528511869,
+                "se_ha": 2268.863528511869,
+                "moe95_ha": 4446.890801719729
+              }
+            },
+            "low_n": false,
+            "estimable": true
+          },
+          "11": {
+            "efg": "Arid",
+            "efg_id": 1,
+            "map_class": "moderate",
+            "area_mapped_ha": 173115.21521289062,
+            "n": 73,
+            "users_accuracy": 0.4657534246575342,
+            "users_accuracy_se": 0.05878718351408097,
+            "users_accuracy_moe95": 0.11522076244014552,
+            "reference_area_by_class": {
+              "intact": {
+                "area_ha": 14228.647825717037,
+                "se_ha": 5603.4971862682305,
+                "moe95_ha": 10982.652672557262
+              },
+              "moderate": {
+                "area_ha": 80629.00434572987,
+                "se_ha": 10176.955925799823,
+                "moe95_ha": 19946.467086819135
+              },
+              "severe": {
+                "area_ha": 71143.23912858518,
+                "se_ha": 10037.856593209273,
+                "moe95_ha": 19673.8374046681
+              },
+              "nothicket": {
+                "area_ha": 7114.323912858518,
+                "se_ha": 4050.007048230572,
+                "moe95_ha": 7937.867951665295
+              }
+            },
+            "low_n": false,
+            "estimable": true
+          },
+          "12": {
+            "efg": "Arid",
+            "efg_id": 1,
+            "map_class": "severe",
+            "area_mapped_ha": 488485.6689663086,
+            "n": 203,
+            "users_accuracy": 0.7586206896551724,
+            "users_accuracy_se": 0.030108330718011642,
+            "users_accuracy_moe95": 0.059011243841923806,
+            "reference_area_by_class": {
+              "intact": {
+                "area_ha": 2406.333344661619,
+                "se_ha": 2406.333344661619,
+                "moe95_ha": 4716.326690334582
+              },
+              "moderate": {
+                "area_ha": 50533.00023789399,
+                "se_ha": 10467.0776447386,
+                "moe95_ha": 20515.09520707199
+              },
+              "severe": {
+                "area_ha": 370575.33507788926,
+                "se_ha": 14707.488072246775,
+                "moe95_ha": 28826.146924656106
+              },
+              "nothicket": {
+                "area_ha": 64971.00030586371,
+                "se_ha": 11671.275492386674,
+                "moe95_ha": 22875.279618722867
+              }
+            },
+            "low_n": false,
+            "estimable": true
+          },
+          "20": {
+            "efg": "Valley",
+            "efg_id": 2,
+            "map_class": "intact",
+            "area_mapped_ha": 284519.1395746582,
+            "n": 130,
+            "users_accuracy": 0.6307692307692307,
+            "users_accuracy_se": 0.04249025499621759,
+            "users_accuracy_moe95": 0.08327936948650957,
+            "reference_area_by_class": {
+              "intact": {
+                "area_ha": 179465.91880863055,
+                "se_ha": 12089.29079183165,
+                "moe95_ha": 23694.574550621746
+              },
+              "moderate": {
+                "area_ha": 72224.089276644,
+                "se_ha": 10902.249488993495,
+                "moe95_ha": 21368.016348897458
+              },
+              "severe": {
+                "area_ha": 8754.435063835637,
+                "se_ha": 4326.020243995162,
+                "moe95_ha": 8478.843874621694
+              },
+              "nothicket": {
+                "area_ha": 24074.696425548,
+                "se_ha": 6971.770822915342,
+                "moe95_ha": 13664.419721381246
+              }
+            },
+            "low_n": false,
+            "estimable": true
+          },
+          "21": {
+            "efg": "Valley",
+            "efg_id": 2,
+            "map_class": "moderate",
+            "area_mapped_ha": 275405.7496375488,
+            "n": 137,
+            "users_accuracy": 0.45985401459854014,
+            "users_accuracy_se": 0.04273622067714666,
+            "users_accuracy_moe95": 0.08376145336256341,
+            "reference_area_by_class": {
+              "intact": {
+                "area_ha": 38194.95797893013,
+                "se_ha": 8162.07884218847,
+                "moe95_ha": 15997.380569665784
+              },
+              "moderate": {
+                "area_ha": 126646.43961434725,
+                "se_ha": 11769.800892265288,
+                "moe95_ha": 23068.385854047356
+              },
+              "severe": {
+                "area_ha": 80410.43785037921,
+                "se_ha": 10737.392880920695,
+                "moe95_ha": 21044.903334461338
+              },
+              "nothicket": {
+                "area_ha": 30153.914193892208,
+                "se_ha": 7374.091570104332,
+                "moe95_ha": 14452.953896104911
+              }
+            },
+            "low_n": false,
+            "estimable": true
+          },
+          "22": {
+            "efg": "Valley",
+            "efg_id": 2,
+            "map_class": "severe",
+            "area_mapped_ha": 305326.4642053711,
+            "n": 118,
+            "users_accuracy": 0.7203389830508474,
+            "users_accuracy_se": 0.04149459161011108,
+            "users_accuracy_moe95": 0.08132790510901561,
+            "reference_area_by_class": {
+              "intact": {
+                "area_ha": 7762.537225560282,
+                "se_ha": 4443.232691807205,
+                "moe95_ha": 8708.57605087308
+              },
+              "moderate": {
+                "area_ha": 46575.223353361696,
+                "se_ha": 10149.058663621097,
+                "moe95_ha": 19891.789457681563
+              },
+              "severe": {
+                "area_ha": 219938.554724208,
+                "se_ha": 12669.396939961072,
+                "moe95_ha": 24831.56170816567
+              },
+              "nothicket": {
+                "area_ha": 31050.14890224113,
+                "se_ha": 8531.65069073505,
+                "moe95_ha": 16721.728082516973
+              }
+            },
+            "low_n": false,
+            "estimable": true
+          },
+          "30": {
+            "efg": "Mesic",
+            "efg_id": 3,
+            "map_class": "intact",
+            "area_mapped_ha": 156585.08387624513,
+            "n": 62,
+            "users_accuracy": 0.8064516129032258,
+            "users_accuracy_se": 0.050584681305417746,
+            "users_accuracy_moe95": 0.09914415352805535,
+            "reference_area_by_class": {
+              "intact": {
+                "area_ha": 126278.29344858478,
+                "se_ha": 7920.8065650619665,
+                "moe95_ha": 15524.49559602987
+              },
+              "moderate": {
+                "area_ha": 20204.526951773565,
+                "se_ha": 6721.027241546689,
+                "moe95_ha": 13172.971332544097
+              },
+              "severe": {
+                "area_ha": 5051.131737943391,
+                "se_ha": 3542.2923832210336,
+                "moe95_ha": 6942.765493823781
+              },
+              "nothicket": {
+                "area_ha": 5051.131737943391,
+                "se_ha": 3542.2923832210336,
+                "moe95_ha": 6942.765493823781
+              }
+            },
+            "low_n": false,
+            "estimable": true
+          },
+          "31": {
+            "efg": "Mesic",
+            "efg_id": 3,
+            "map_class": "moderate",
+            "area_mapped_ha": 104088.49130263671,
+            "n": 55,
+            "users_accuracy": 0.41818181818181815,
+            "users_accuracy_se": 0.06712423323570162,
+            "users_accuracy_moe95": 0.13156107963184166,
+            "reference_area_by_class": {
+              "intact": {
+                "area_ha": 11355.108142105822,
+                "se_ha": 4415.875388596709,
+                "moe95_ha": 8654.956721866365
+              },
+              "moderate": {
+                "area_ha": 43527.91454473899,
+                "se_ha": 6986.860167350486,
+                "moe95_ha": 13693.994293024449
+              },
+              "severe": {
+                "area_ha": 32172.806402633167,
+                "se_ha": 6545.749833402762,
+                "moe95_ha": 12829.433925278472
+              },
+              "nothicket": {
+                "area_ha": 17032.662213158736,
+                "se_ha": 5240.145125512865,
+                "moe95_ha": 10270.495719768336
+              }
+            },
+            "low_n": false,
+            "estimable": true
+          },
+          "32": {
+            "efg": "Mesic",
+            "efg_id": 3,
+            "map_class": "severe",
+            "area_mapped_ha": 22588.513863012697,
+            "n": 4,
+            "users_accuracy": 0.5,
+            "users_accuracy_se": 0.28867513459481287,
+            "users_accuracy_moe95": 0.5657928670380858,
+            "reference_area_by_class": {
+              "intact": {
+                "area_ha": 5647.128465753174,
+                "se_ha": 5647.128465753174,
+                "moe95_ha": 11068.168408947153
+              },
+              "moderate": {
+                "area_ha": 0.0,
+                "se_ha": 0.0,
+                "moe95_ha": 0.0
+              },
+              "severe": {
+                "area_ha": 11294.256931506348,
+                "se_ha": 6520.742279701986,
+                "moe95_ha": 12780.420020683501
+              },
+              "nothicket": {
+                "area_ha": 5647.128465753174,
+                "se_ha": 5647.128465753174,
+                "moe95_ha": 11068.168408947153
+              }
+            },
+            "low_n": true,
+            "estimable": true
+          }
+        },
+        "reference_area_by_efg": {
+          "Arid": {
+            "area_total_ha": 750086.5617911621,
+            "n_labelled": 315,
+            "estimable": true,
+            "non_estimable_cells": [],
+            "composition": {
+              "intact": {
+                "area_ha": 71087.70585466351,
+                "se_ha": 9271.337565293483,
+                "moe95_ha": 18171.487716488497,
+                "ci95_ha": [
+                  52916.21813817501,
+                  89259.193571152
+                ]
+              },
+              "moderate": {
+                "area_ha": 158388.36692576628,
+                "se_ha": 16031.887529775988,
+                "moe95_ha": 31421.92216255775,
+                "ci95_ha": [
+                  126966.44476320854,
+                  189810.28908832403
+                ]
+              },
+              "severe": {
+                "area_ha": 446256.30126349814,
+                "se_ha": 18085.72144065243,
+                "moe95_ha": 35447.36265810262,
+                "ci95_ha": [
+                  410808.9386053955,
+                  481703.6639216008
+                ]
+              },
+              "nothicket": {
+                "area_ha": 74354.1877472341,
+                "se_ha": 12560.611864909864,
+                "moe95_ha": 24618.346879009816,
+                "ci95_ha": [
+                  49735.84086822429,
+                  98972.53462624391
+                ]
+              }
+            }
+          },
+          "Valley": {
+            "area_total_ha": 865251.3534175782,
+            "n_labelled": 385,
+            "estimable": true,
+            "non_estimable_cells": [],
+            "composition": {
+              "intact": {
+                "area_ha": 225423.41401312096,
+                "se_ha": 15248.370392573448,
+                "moe95_ha": 29886.256792370845,
+                "ci95_ha": [
+                  195537.15722075012,
+                  255309.6708054918
+                ]
+              },
+              "moderate": {
+                "area_ha": 245445.75224435295,
+                "se_ha": 18983.95766750048,
+                "moe95_ha": 37207.87331233395,
+                "ci95_ha": [
+                  208237.878932019,
+                  282653.6255566869
+                ]
+              },
+              "severe": {
+                "area_ha": 309103.4276384228,
+                "se_ha": 17161.57556441125,
+                "moe95_ha": 33636.070024208704,
+                "ci95_ha": [
+                  275467.3576142141,
+                  342739.4976626315
+                ]
+              },
+              "nothicket": {
+                "area_ha": 85278.75952168134,
+                "se_ha": 13257.898717378153,
+                "moe95_ha": 25985.003996740958,
+                "ci95_ha": [
+                  59293.75552494038,
+                  111263.76351842229
+                ]
+              }
+            }
+          },
+          "Mesic": {
+            "area_total_ha": 283262.08904189453,
+            "n_labelled": 121,
+            "estimable": true,
+            "non_estimable_cells": [],
+            "composition": {
+              "intact": {
+                "area_ha": 143280.53005644376,
+                "se_ha": 10683.126508539655,
+                "moe95_ha": 20938.543199022857,
+                "ci95_ha": [
+                  122341.98685742091,
+                  164219.07325546662
+                ]
+              },
+              "moderate": {
+                "area_ha": 63732.441496512554,
+                "se_ha": 9694.762615955151,
+                "moe95_ha": 19001.385565937417,
+                "ci95_ha": [
+                  44731.05593057514,
+                  82733.82706244997
+                ]
+              },
+              "severe": {
+                "area_ha": 48518.195072082905,
+                "se_ha": 9895.188532211556,
+                "moe95_ha": 19394.21314336841,
+                "ci95_ha": [
+                  29123.981928714493,
+                  67912.40821545132
+                ]
+              },
+              "nothicket": {
+                "area_ha": 27730.922416855297,
+                "se_ha": 8479.210822557827,
+                "moe95_ha": 16618.947829535588,
+                "ci95_ha": [
+                  11111.97458731971,
+                  44349.870246390885
+                ]
+              }
+            }
+          }
+        }
+      },
+      "B_nothicket_to_severe": {
+        "adjudicate": "SVM",
+        "scenario": "B_nothicket_to_severe",
+        "ref_classes": [
+          "intact",
+          "moderate",
+          "severe"
+        ],
+        "mapped_cells": {
+          "10": {
+            "efg": "Arid",
+            "efg_id": 1,
+            "map_class": "intact",
+            "area_mapped_ha": 88485.67761196289,
+            "n": 39,
+            "users_accuracy": 0.6153846153846154,
+            "users_accuracy_se": 0.07892141169885801,
+            "users_accuracy_moe95": 0.15468312453881977,
+            "reference_area_by_class": {
+              "intact": {
+                "area_ha": 54452.72468428486,
+                "se_ha": 6983.414592266146,
+                "moe95_ha": 13687.241089953113
+              },
+              "moderate": {
+                "area_ha": 27226.36234214243,
+                "se_ha": 6625.048787045132,
+                "moe95_ha": 12984.857018429228
+              },
+              "severe": {
+                "area_ha": 6806.590585535608,
+                "se_ha": 3824.97370059491,
+                "moe95_ha": 7496.810694978915
+              }
+            },
+            "low_n": false,
+            "estimable": true
+          },
+          "11": {
+            "efg": "Arid",
+            "efg_id": 1,
+            "map_class": "moderate",
+            "area_mapped_ha": 173115.21521289062,
+            "n": 73,
+            "users_accuracy": 0.4657534246575342,
+            "users_accuracy_se": 0.05878718351408097,
+            "users_accuracy_moe95": 0.11522076244014552,
+            "reference_area_by_class": {
+              "intact": {
+                "area_ha": 14228.647825717037,
+                "se_ha": 5603.4971862682305,
+                "moe95_ha": 10982.652672557262
+              },
+              "moderate": {
+                "area_ha": 80629.00434572987,
+                "se_ha": 10176.955925799823,
+                "moe95_ha": 19946.467086819135
+              },
+              "severe": {
+                "area_ha": 78257.5630414437,
+                "se_ha": 10153.905033402956,
+                "moe95_ha": 19901.28816790977
+              }
+            },
+            "low_n": false,
+            "estimable": true
+          },
+          "12": {
+            "efg": "Arid",
+            "efg_id": 1,
+            "map_class": "severe",
+            "area_mapped_ha": 488485.6689663086,
+            "n": 203,
+            "users_accuracy": 0.8916256157635468,
+            "users_accuracy_se": 0.0218715169309426,
+            "users_accuracy_moe95": 0.042867385471905516,
+            "reference_area_by_class": {
+              "intact": {
+                "area_ha": 2406.333344661619,
+                "se_ha": 2406.333344661619,
+                "moe95_ha": 4716.326690334582
+              },
+              "moderate": {
+                "area_ha": 50533.00023789399,
+                "se_ha": 10467.0776447386,
+                "moe95_ha": 20515.09520707199
+              },
+              "severe": {
+                "area_ha": 435546.335383753,
+                "se_ha": 10683.922579319442,
+                "moe95_ha": 20940.103469080386
+              }
+            },
+            "low_n": false,
+            "estimable": true
+          },
+          "20": {
+            "efg": "Valley",
+            "efg_id": 2,
+            "map_class": "intact",
+            "area_mapped_ha": 284519.1395746582,
+            "n": 130,
+            "users_accuracy": 0.6307692307692307,
+            "users_accuracy_se": 0.04249025499621759,
+            "users_accuracy_moe95": 0.08327936948650957,
+            "reference_area_by_class": {
+              "intact": {
+                "area_ha": 179465.91880863055,
+                "se_ha": 12089.29079183165,
+                "moe95_ha": 23694.574550621746
+              },
+              "moderate": {
+                "area_ha": 72224.089276644,
+                "se_ha": 10902.249488993495,
+                "moe95_ha": 21368.016348897458
+              },
+              "severe": {
+                "area_ha": 32829.13148938364,
+                "se_ha": 8003.276640021222,
+                "moe95_ha": 15686.13397275233
+              }
+            },
+            "low_n": false,
+            "estimable": true
+          },
+          "21": {
+            "efg": "Valley",
+            "efg_id": 2,
+            "map_class": "moderate",
+            "area_mapped_ha": 275405.7496375488,
+            "n": 137,
+            "users_accuracy": 0.45985401459854014,
+            "users_accuracy_se": 0.04273622067714666,
+            "users_accuracy_moe95": 0.08376145336256341,
+            "reference_area_by_class": {
+              "intact": {
+                "area_ha": 38194.95797893013,
+                "se_ha": 8162.07884218847,
+                "moe95_ha": 15997.380569665784
+              },
+              "moderate": {
+                "area_ha": 126646.43961434725,
+                "se_ha": 11769.800892265288,
+                "moe95_ha": 23068.385854047356
+              },
+              "severe": {
+                "area_ha": 110564.35204427142,
+                "se_ha": 11576.339433038318,
+                "moe95_ha": 22689.208361565932
+              }
+            },
+            "low_n": false,
+            "estimable": true
+          },
+          "22": {
+            "efg": "Valley",
+            "efg_id": 2,
+            "map_class": "severe",
+            "area_mapped_ha": 305326.4642053711,
+            "n": 118,
+            "users_accuracy": 0.8220338983050848,
+            "users_accuracy_se": 0.03536067741432931,
+            "users_accuracy_moe95": 0.06930565420102436,
+            "reference_area_by_class": {
+              "intact": {
+                "area_ha": 7762.537225560282,
+                "se_ha": 4443.232691807205,
+                "moe95_ha": 8708.57605087308
+              },
+              "moderate": {
+                "area_ha": 46575.223353361696,
+                "se_ha": 10149.058663621097,
+                "moe95_ha": 19891.789457681563
+              },
+              "severe": {
+                "area_ha": 250988.70362644913,
+                "se_ha": 10796.550606823892,
+                "moe95_ha": 21160.850346638894
+              }
+            },
+            "low_n": false,
+            "estimable": true
+          },
+          "30": {
+            "efg": "Mesic",
+            "efg_id": 3,
+            "map_class": "intact",
+            "area_mapped_ha": 156585.08387624513,
+            "n": 62,
+            "users_accuracy": 0.8064516129032258,
+            "users_accuracy_se": 0.050584681305417746,
+            "users_accuracy_moe95": 0.09914415352805535,
+            "reference_area_by_class": {
+              "intact": {
+                "area_ha": 126278.29344858478,
+                "se_ha": 7920.8065650619665,
+                "moe95_ha": 15524.49559602987
+              },
+              "moderate": {
+                "area_ha": 20204.526951773565,
+                "se_ha": 6721.027241546689,
+                "moe95_ha": 13172.971332544097
+              },
+              "severe": {
+                "area_ha": 10102.263475886783,
+                "se_ha": 4925.35768256849,
+                "moe95_ha": 9653.523668811906
+              }
+            },
+            "low_n": false,
+            "estimable": true
+          },
+          "31": {
+            "efg": "Mesic",
+            "efg_id": 3,
+            "map_class": "moderate",
+            "area_mapped_ha": 104088.49130263671,
+            "n": 55,
+            "users_accuracy": 0.41818181818181815,
+            "users_accuracy_se": 0.06712423323570162,
+            "users_accuracy_moe95": 0.13156107963184166,
+            "reference_area_by_class": {
+              "intact": {
+                "area_ha": 11355.108142105822,
+                "se_ha": 4415.875388596709,
+                "moe95_ha": 8654.956721866365
+              },
+              "moderate": {
+                "area_ha": 43527.91454473899,
+                "se_ha": 6986.860167350486,
+                "moe95_ha": 13693.994293024449
+              },
+              "severe": {
+                "area_ha": 49205.4686157919,
+                "se_ha": 7071.781233991346,
+                "moe95_ha": 13860.43652516926
+              }
+            },
+            "low_n": false,
+            "estimable": true
+          },
+          "32": {
+            "efg": "Mesic",
+            "efg_id": 3,
+            "map_class": "severe",
+            "area_mapped_ha": 22588.513863012697,
+            "n": 4,
+            "users_accuracy": 0.75,
+            "users_accuracy_se": 0.25,
+            "users_accuracy_moe95": 0.4899909961350135,
+            "reference_area_by_class": {
+              "intact": {
+                "area_ha": 5647.128465753174,
+                "se_ha": 5647.128465753174,
+                "moe95_ha": 11068.168408947153
+              },
+              "moderate": {
+                "area_ha": 0.0,
+                "se_ha": 0.0,
+                "moe95_ha": 0.0
+              },
+              "severe": {
+                "area_ha": 16941.385397259524,
+                "se_ha": 5647.128465753174,
+                "moe95_ha": 11068.168408947153
+              }
+            },
+            "low_n": true,
+            "estimable": true
+          }
+        },
+        "reference_area_by_efg": {
+          "Arid": {
+            "area_total_ha": 750086.5617911621,
+            "n_labelled": 315,
+            "estimable": true,
+            "non_estimable_cells": [],
+            "composition": {
+              "intact": {
+                "area_ha": 71087.70585466351,
+                "se_ha": 9271.337565293483,
+                "moe95_ha": 18171.487716488497,
+                "ci95_ha": [
+                  52916.21813817501,
+                  89259.193571152
+                ]
+              },
+              "moderate": {
+                "area_ha": 158388.36692576628,
+                "se_ha": 16031.887529775988,
+                "moe95_ha": 31421.92216255775,
+                "ci95_ha": [
+                  126966.44476320854,
+                  189810.28908832403
+                ]
+              },
+              "severe": {
+                "area_ha": 520610.48901073233,
+                "se_ha": 15227.5543971611,
+                "moe95_ha": 29845.45819106029,
+                "ci95_ha": [
+                  490765.03081967204,
+                  550455.9472017926
+                ]
+              }
+            }
+          },
+          "Valley": {
+            "area_total_ha": 865251.3534175782,
+            "n_labelled": 385,
+            "estimable": true,
+            "non_estimable_cells": [],
+            "composition": {
+              "intact": {
+                "area_ha": 225423.41401312096,
+                "se_ha": 15248.370392573448,
+                "moe95_ha": 29886.256792370845,
+                "ci95_ha": [
+                  195537.15722075012,
+                  255309.6708054918
+                ]
+              },
+              "moderate": {
+                "area_ha": 245445.75224435295,
+                "se_ha": 18983.95766750048,
+                "moe95_ha": 37207.87331233395,
+                "ci95_ha": [
+                  208237.878932019,
+                  282653.6255566869
+                ]
+              },
+              "severe": {
+                "area_ha": 394382.18716010416,
+                "se_ha": 17737.80078395675,
+                "moe95_ha": 34765.45070150157,
+                "ci95_ha": [
+                  359616.7364586026,
+                  429147.63786160573
+                ]
+              }
+            }
+          },
+          "Mesic": {
+            "area_total_ha": 283262.08904189453,
+            "n_labelled": 121,
+            "estimable": true,
+            "non_estimable_cells": [],
+            "composition": {
+              "intact": {
+                "area_ha": 143280.53005644376,
+                "se_ha": 10683.126508539655,
+                "moe95_ha": 20938.543199022857,
+                "ci95_ha": [
+                  122341.98685742091,
+                  164219.07325546662
+                ]
+              },
+              "moderate": {
+                "area_ha": 63732.441496512554,
+                "se_ha": 9694.762615955151,
+                "moe95_ha": 19001.385565937417,
+                "ci95_ha": [
+                  44731.05593057514,
+                  82733.82706244997
+                ]
+              },
+              "severe": {
+                "area_ha": 76249.11748893821,
+                "se_ha": 10303.363432946953,
+                "moe95_ha": 20194.221248203,
+                "ci95_ha": [
+                  56054.89624073521,
+                  96443.33873714121
+                ]
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "map_accuracy": {
+    "ARP": {
+      "A_nothicket_class": {
+        "n_used": 821,
+        "overall_accuracy": {
+          "OA": 0.6363973944898976,
+          "se": 0.01627925462486866,
+          "moe95": 0.03190675275989968,
+          "ci95": [
+            0.604490641729998,
+            0.6683041472497973
+          ]
+        },
+        "users_accuracy": {
+          "intact": {
+            "U": 0.6666666666666666,
+            "se": 0.03108349360801046,
+            "moe95": 0.06092252798538148,
+            "ci95": [
+              0.6057441386812852,
+              0.7275891946520481
+            ]
+          },
+          "moderate": {
+            "U": 0.45660377358490567,
+            "se": 0.030656748696739473,
+            "moe95": 0.0600861233287046,
+            "ci95": [
+              0.39651765025620106,
+              0.5166898969136102
+            ]
+          },
+          "severe": {
+            "U": 0.7384615384615385,
+            "se": 0.02441513992664222,
+            "moe95": 0.04785279493372465,
+            "ci95": [
+              0.6906087435278139,
+              0.7863143333952631
+            ]
+          }
+        },
+        "producers_accuracy": {
+          "intact": {
+            "P": 0.8245606796578929,
+            "se": 0.024324911979798594,
+            "moe95": 0.04767595140751215,
+            "ci95": [
+              0.7768847282503808,
+              0.872236631065405
+            ]
+          },
+          "moderate": {
+            "P": 0.5296634205661063,
+            "se": 0.028666372626992186,
+            "moe95": 0.05618505791630954,
+            "ci95": [
+              0.4734783626497967,
+              0.5858484784824158
+            ]
+          },
+          "severe": {
+            "P": 0.7511183875723731,
+            "se": 0.01724196286722337,
+            "moe95": 0.03379362624253477,
+            "ci95": [
+              0.7173247613298384,
+              0.7849120138149079
+            ]
+          }
+        }
+      },
+      "B_nothicket_to_severe": {
+        "n_used": 821,
+        "overall_accuracy": {
+          "OA": 0.6906437476732149,
+          "se": 0.014886110393472375,
+          "moe95": 0.029176240241093228,
+          "ci95": [
+            0.6614675074321217,
+            0.7198199879143081
+          ]
+        },
+        "users_accuracy": {
+          "intact": {
+            "U": 0.6666666666666666,
+            "se": 0.03108349360801046,
+            "moe95": 0.06092252798538148,
+            "ci95": [
+              0.6057441386812852,
+              0.7275891946520481
+            ]
+          },
+          "moderate": {
+            "U": 0.45660377358490567,
+            "se": 0.030656748696739473,
+            "moe95": 0.0600861233287046,
+            "ci95": [
+              0.39651765025620106,
+              0.5166898969136102
+            ]
+          },
+          "severe": {
+            "U": 0.8646153846153846,
+            "se": 0.019007440169460023,
+            "moe95": 0.03725389817044154,
+            "ci95": [
+              0.827361486444943,
+              0.9018692827858261
+            ]
+          }
+        },
+        "producers_accuracy": {
+          "intact": {
+            "P": 0.8245606796578929,
+            "se": 0.024324911979798594,
+            "moe95": 0.04767595140751215,
+            "ci95": [
+              0.7768847282503808,
+              0.872236631065405
+            ]
+          },
+          "moderate": {
+            "P": 0.5296634205661063,
+            "se": 0.028666372626992186,
+            "moe95": 0.05618505791630954,
+            "ci95": [
+              0.4734783626497967,
+              0.5858484784824158
+            ]
+          },
+          "severe": {
+            "P": 0.7101078460353581,
+            "se": 0.014791912511290507,
+            "moe95": 0.02899161578459682,
+            "ci95": [
+              0.6811162302507613,
+              0.739099461819955
+            ]
+          }
+        }
+      }
+    },
+    "SVM": {
+      "A_nothicket_class": {
+        "n_used": 821,
+        "overall_accuracy": {
+          "OA": 0.6390371716420022,
+          "se": 0.01621912304698796,
+          "moe95": 0.03178889703291995,
+          "ci95": [
+            0.6072482746090823,
+            0.6708260686749222
+          ]
+        },
+        "users_accuracy": {
+          "intact": {
+            "U": 0.6753246753246753,
+            "se": 0.03087571567361336,
+            "moe95": 0.06051529071718104,
+            "ci95": [
+              0.6148093846074942,
+              0.7358399660418564
+            ]
+          },
+          "moderate": {
+            "U": 0.4528301886792453,
+            "se": 0.03063562795796184,
+            "moe95": 0.06004472744137357,
+            "ci95": [
+              0.3927854612378717,
+              0.5128749161206189
+            ]
+          },
+          "severe": {
+            "U": 0.7415384615384616,
+            "se": 0.024321608768317824,
+            "moe95": 0.047669477231976516,
+            "ci95": [
+              0.693868984306485,
+              0.7892079387704382
+            ]
+          }
+        },
+        "producers_accuracy": {
+          "intact": {
+            "P": 0.8224563980665905,
+            "se": 0.024155139866324716,
+            "moe95": 0.0473432041795241,
+            "ci95": [
+              0.7751131938870665,
+              0.8697996022461146
+            ]
+          },
+          "moderate": {
+            "P": 0.5327457422834315,
+            "se": 0.028989515677773352,
+            "moe95": 0.056818406657695025,
+            "ci95": [
+              0.4759273356257365,
+              0.5895641489411265
+            ]
+          },
+          "severe": {
+            "P": 0.7518948722536284,
+            "se": 0.01718839113328747,
+            "moe95": 0.033688627573431044,
+            "ci95": [
+              0.7182062446801973,
+              0.7855834998270594
+            ]
+          }
+        }
+      },
+      "B_nothicket_to_severe": {
+        "n_used": 821,
+        "overall_accuracy": {
+          "OA": 0.6919604430403605,
+          "se": 0.014848735943370156,
+          "moe95": 0.02910298766495089,
+          "ci95": [
+            0.6628574553754096,
+            0.7210634307053114
+          ]
+        },
+        "users_accuracy": {
+          "intact": {
+            "U": 0.6753246753246753,
+            "se": 0.03087571567361336,
+            "moe95": 0.06051529071718104,
+            "ci95": [
+              0.6148093846074942,
+              0.7358399660418564
+            ]
+          },
+          "moderate": {
+            "U": 0.4528301886792453,
+            "se": 0.03063562795796184,
+            "moe95": 0.06004472744137357,
+            "ci95": [
+              0.3927854612378717,
+              0.5128749161206189
+            ]
+          },
+          "severe": {
+            "U": 0.8646153846153846,
+            "se": 0.019007440169460023,
+            "moe95": 0.03725389817044154,
+            "ci95": [
+              0.827361486444943,
+              0.9018692827858261
+            ]
+          }
+        },
+        "producers_accuracy": {
+          "intact": {
+            "P": 0.8224563980665905,
+            "se": 0.024155139866324716,
+            "moe95": 0.0473432041795241,
+            "ci95": [
+              0.7751131938870665,
+              0.8697996022461146
+            ]
+          },
+          "moderate": {
+            "P": 0.5327457422834315,
+            "se": 0.028989515677773352,
+            "moe95": 0.056818406657695025,
+            "ci95": [
+              0.4759273356257365,
+              0.5895641489411265
+            ]
+          },
+          "severe": {
+            "P": 0.7101078460353581,
+            "se": 0.014791912511290507,
+            "moe95": 0.02899161578459682,
+            "ci95": [
+              0.6811162302507613,
+              0.739099461819955
+            ]
+          }
+        }
+      }
+    }
+  },
+  "label_disagreement": {
+    "labeller_order": [
+      "ARP",
+      "SVM",
+      "AP",
+      "MP"
+    ],
+    "submission_rows": 948,
+    "unique_labelled_ids": 846,
+    "label_counts": {
+      "ARP": {
+        "intact": 68,
+        "moderate": 43,
+        "nothicket": 31,
+        "severe": 89,
+        "transformed": 6
+      },
+      "SVM": {
+        "intact": 69,
+        "moderate": 95,
+        "nothicket": 4,
+        "severe": 66,
+        "transformed": 3
+      },
+      "AP": {
+        "intact": 36,
+        "moderate": 47,
+        "nothicket": 36,
+        "severe": 76,
+        "transformed": 7,
+        "unsure": 35
+      },
+      "MP": {
+        "intact": 37,
+        "moderate": 51,
+        "nothicket": 21,
+        "severe": 119,
+        "transformed": 9
+      }
+    },
+    "pairwise": [
+      {
+        "new_labeller": "ARP",
+        "other_labeller": "SVM",
+        "n_overlap": 12,
+        "n_new_unsure": 0,
+        "n_other_unsure": 0,
+        "n_determinate_pairs": 12,
+        "n_agree": 8,
+        "agreement_rate": 0.6666666666666666,
+        "n_disagree": 4,
+        "disagreements": [
+          {
+            "id": 150,
+            "stratum": "intact",
+            "ARP": "moderate",
+            "SVM": "intact"
+          },
+          {
+            "id": 211,
+            "stratum": "intact",
+            "ARP": "moderate",
+            "SVM": "intact"
+          },
+          {
+            "id": 291,
+            "stratum": "moderate",
+            "ARP": "moderate",
+            "SVM": "intact"
+          },
+          {
+            "id": 550,
+            "stratum": "severe",
+            "ARP": "nothicket",
+            "SVM": "severe"
+          }
+        ]
+      },
+      {
+        "new_labeller": "ARP",
+        "other_labeller": "AP",
+        "n_overlap": 22,
+        "n_new_unsure": 0,
+        "n_other_unsure": 4,
+        "n_determinate_pairs": 18,
+        "n_agree": 9,
+        "agreement_rate": 0.5,
+        "n_disagree": 9,
+        "disagreements": [
+          {
+            "id": 61,
+            "stratum": "intact",
+            "ARP": "moderate",
+            "AP": "intact"
+          },
+          {
+            "id": 100,
+            "stratum": "intact",
+            "ARP": "intact",
+            "AP": "moderate"
+          },
+          {
+            "id": 120,
+            "stratum": "intact",
+            "ARP": "intact",
+            "AP": "nothicket"
+          },
+          {
+            "id": 310,
+            "stratum": "moderate",
+            "ARP": "severe",
+            "AP": "moderate"
+          },
+          {
+            "id": 408,
+            "stratum": "moderate",
+            "ARP": "intact",
+            "AP": "moderate"
+          },
+          {
+            "id": 473,
+            "stratum": "moderate",
+            "ARP": "intact",
+            "AP": "moderate"
+          },
+          {
+            "id": 629,
+            "stratum": "severe",
+            "ARP": "nothicket",
+            "AP": "severe"
+          },
+          {
+            "id": 729,
+            "stratum": "severe",
+            "ARP": "moderate",
+            "AP": "nothicket"
+          },
+          {
+            "id": 788,
+            "stratum": "severe",
+            "ARP": "moderate",
+            "AP": "nothicket"
+          }
+        ]
+      },
+      {
+        "new_labeller": "ARP",
+        "other_labeller": "MP",
+        "n_overlap": 15,
+        "n_new_unsure": 0,
+        "n_other_unsure": 0,
+        "n_determinate_pairs": 15,
+        "n_agree": 12,
+        "agreement_rate": 0.8,
+        "n_disagree": 3,
+        "disagreements": [
+          {
+            "id": 68,
+            "stratum": "intact",
+            "ARP": "intact",
+            "MP": "severe"
+          },
+          {
+            "id": 373,
+            "stratum": "moderate",
+            "ARP": "moderate",
+            "MP": "severe"
+          },
+          {
+            "id": 810,
+            "stratum": "severe",
+            "ARP": "transformed",
+            "MP": "severe"
+          }
+        ]
+      },
+      {
+        "new_labeller": "SVM",
+        "other_labeller": "AP",
+        "n_overlap": 20,
+        "n_new_unsure": 0,
+        "n_other_unsure": 2,
+        "n_determinate_pairs": 18,
+        "n_agree": 11,
+        "agreement_rate": 0.6111111111111112,
+        "n_disagree": 7,
+        "disagreements": [
+          {
+            "id": 144,
+            "stratum": "intact",
+            "SVM": "intact",
+            "AP": "moderate"
+          },
+          {
+            "id": 247,
+            "stratum": "moderate",
+            "SVM": "moderate",
+            "AP": "severe"
+          },
+          {
+            "id": 297,
+            "stratum": "moderate",
+            "SVM": "moderate",
+            "AP": "nothicket"
+          },
+          {
+            "id": 525,
+            "stratum": "severe",
+            "SVM": "severe",
+            "AP": "transformed"
+          },
+          {
+            "id": 636,
+            "stratum": "severe",
+            "SVM": "moderate",
+            "AP": "nothicket"
+          },
+          {
+            "id": 676,
+            "stratum": "severe",
+            "SVM": "severe",
+            "AP": "nothicket"
+          },
+          {
+            "id": 829,
+            "stratum": "severe",
+            "SVM": "moderate",
+            "AP": "severe"
+          }
+        ]
+      },
+      {
+        "new_labeller": "SVM",
+        "other_labeller": "MP",
+        "n_overlap": 15,
+        "n_new_unsure": 0,
+        "n_other_unsure": 0,
+        "n_determinate_pairs": 15,
+        "n_agree": 7,
+        "agreement_rate": 0.4666666666666667,
+        "n_disagree": 8,
+        "disagreements": [
+          {
+            "id": 91,
+            "stratum": "intact",
+            "SVM": "nothicket",
+            "MP": "intact"
+          },
+          {
+            "id": 165,
+            "stratum": "intact",
+            "SVM": "intact",
+            "MP": "moderate"
+          },
+          {
+            "id": 181,
+            "stratum": "intact",
+            "SVM": "intact",
+            "MP": "severe"
+          },
+          {
+            "id": 406,
+            "stratum": "moderate",
+            "SVM": "moderate",
+            "MP": "severe"
+          },
+          {
+            "id": 685,
+            "stratum": "severe",
+            "SVM": "moderate",
+            "MP": "severe"
+          },
+          {
+            "id": 687,
+            "stratum": "severe",
+            "SVM": "severe",
+            "MP": "nothicket"
+          },
+          {
+            "id": 721,
+            "stratum": "severe",
+            "SVM": "severe",
+            "MP": "moderate"
+          },
+          {
+            "id": 740,
+            "stratum": "severe",
+            "SVM": "moderate",
+            "MP": "nothicket"
+          }
+        ]
+      },
+      {
+        "new_labeller": "AP",
+        "other_labeller": "MP",
+        "n_overlap": 18,
+        "n_new_unsure": 4,
+        "n_other_unsure": 0,
+        "n_determinate_pairs": 14,
+        "n_agree": 10,
+        "agreement_rate": 0.7142857142857143,
+        "n_disagree": 4,
+        "disagreements": [
+          {
+            "id": 67,
+            "stratum": "intact",
+            "AP": "intact",
+            "MP": "moderate"
+          },
+          {
+            "id": 274,
+            "stratum": "moderate",
+            "AP": "intact",
+            "MP": "moderate"
+          },
+          {
+            "id": 485,
+            "stratum": "moderate",
+            "AP": "moderate",
+            "MP": "severe"
+          },
+          {
+            "id": 612,
+            "stratum": "severe",
+            "AP": "nothicket",
+            "MP": "severe"
+          }
+        ]
+      }
+    ],
+    "aggregate": {
+      "n_pairwise_overlap_rows": 102,
+      "n_determinate_pairs": 92,
+      "n_agree": 57,
+      "n_disagree": 35,
+      "agreement_rate": 0.6195652173913043,
+      "disagreement_by_label_pair": {
+        "intact vs moderate": 11,
+        "intact vs nothicket": 2,
+        "intact vs severe": 2,
+        "moderate vs nothicket": 5,
+        "moderate vs severe": 8,
+        "nothicket vs severe": 5,
+        "severe vs transformed": 2
+      }
+    }
+  },
+  "sampling_se_check": {
+    "specified_target_se": 0.015,
+    "allocation_formula": "sqrt(sum_h W_h^2 S_h^2 / n_h)",
+    "expected_S_from_oof_users_accuracy": {
+      "intact": 0.42829429134649927,
+      "moderate": 0.4868305660083393,
+      "severe": 0.40659439248469714
+    },
+    "n_tot_from_target_formula": 845,
+    "allocated_counts": {
+      "intact": 232,
+      "moderate": 275,
+      "severe": 339
+    },
+    "drawn_counts": {
+      "intact": 232,
+      "moderate": 275,
+      "severe": 339
+    },
+    "draw_nominal_design_se": 0.01499002433699492,
+    "draw_se_minus_target": -9.975663005080265e-06,
+    "draw_se_ratio_to_target": 0.9993349557996614,
+    "usable_determinate_counts": {
+      "intact": 231,
+      "moderate": 265,
+      "severe": 325
+    },
+    "usable_nominal_design_se_if_expected_S": 0.01521862532520972,
+    "interpretation": "The 0.015 target was the expected SE for overall accuracy at sample design time. The draw meets it (0.01499). The 0.01485\u20130.01628 Olofsson OA SEs in the final report are realized label-dependent SEs, not a failed sampling allocation."
+  },
+  "efg_reference_budget_options": {
+    "scope": "Incremental independent, determinate labels added to the completed 821-point analysis sample.",
+    "method": "A-optimal EFG reference-area allocation: new draws in the nine EFG x mapped-class cells minimise the summed squared relative standard errors of the nine EFG x reference-condition areas.",
+    "planning_scenario": "ARP-preferred; nothicket counted as severe",
+    "planning_proportions": "Final observed EFG x mapped-cell reference proportions",
+    "starting_usable_counts": {
+      "Arid": {
+        "intact": 39,
+        "moderate": 73,
+        "severe": 203
+      },
+      "Valley": {
+        "intact": 130,
+        "moderate": 137,
+        "severe": 118
+      },
+      "Mesic": {
+        "intact": 62,
+        "moderate": 55,
+        "severe": 4
+      }
+    },
+    "current_expected_relative_moe95_by_efg_reference": {
+      "Arid": {
+        "intact": 0.25562068008833355,
+        "moderate": 0.19838529036216798,
+        "severe": 0.05732780806582064
+      },
+      "Valley": {
+        "intact": 0.13626984587447738,
+        "moderate": 0.14874939858331554,
+        "severe": 0.08815167579408986
+      },
+      "Mesic": {
+        "intact": 0.1461366955494536,
+        "moderate": 0.29814306685516156,
+        "severe": 0.2648453111753413
+      }
+    },
+    "current_largest_expected_relative_moe95": 0.29814306685516156,
+    "sample_draw_points": 846,
+    "current_excluded_points": 25,
+    "current_exclusion_rate": 0.02955082742316785,
+    "options": [
+      {
+        "budget_usable_points": 100,
+        "added_by_efg_mapped_class": {
+          "Arid": {
+            "intact": 19,
+            "moderate": 3,
+            "severe": 0
+          },
+          "Valley": {
+            "intact": 0,
+            "moderate": 0,
+            "severe": 0
+          },
+          "Mesic": {
+            "intact": 30,
+            "moderate": 39,
+            "severe": 9
+          }
+        },
+        "final_by_efg_mapped_class": {
+          "Arid": {
+            "intact": 58,
+            "moderate": 76,
+            "severe": 203
+          },
+          "Valley": {
+            "intact": 130,
+            "moderate": 137,
+            "severe": 118
+          },
+          "Mesic": {
+            "intact": 92,
+            "moderate": 94,
+            "severe": 13
+          }
+        },
+        "expected_relative_moe95_by_efg_reference": {
+          "Arid": {
+            "intact": 0.22810074181900858,
+            "moderate": 0.19100274239483656,
+            "severe": 0.056204142168013664
+          },
+          "Valley": {
+            "intact": 0.13626984587447738,
+            "moderate": 0.14874939858331554,
+            "severe": 0.08815167579408986
+          },
+          "Mesic": {
+            "intact": 0.10714495808610812,
+            "moderate": 0.23546675119820062,
+            "severe": 0.18761338717469683
+          }
+        },
+        "largest_expected_relative_moe95": 0.23546675119820062,
+        "relative_variance_reduction_percent": 28.07834159754008,
+        "assignment_capacity_at_current_exclusion_rate": 104,
+        "recommendation": "Targeted interim update: reduce the highest-uncertainty Arid and Mesic reference-area estimates."
+      },
+      {
+        "budget_usable_points": 200,
+        "added_by_efg_mapped_class": {
+          "Arid": {
+            "intact": 36,
+            "moderate": 26,
+            "severe": 0
+          },
+          "Valley": {
+            "intact": 0,
+            "moderate": 0,
+            "severe": 0
+          },
+          "Mesic": {
+            "intact": 58,
+            "moderate": 67,
+            "severe": 13
+          }
+        },
+        "final_by_efg_mapped_class": {
+          "Arid": {
+            "intact": 75,
+            "moderate": 99,
+            "severe": 203
+          },
+          "Valley": {
+            "intact": 130,
+            "moderate": 137,
+            "severe": 118
+          },
+          "Mesic": {
+            "intact": 120,
+            "moderate": 122,
+            "severe": 17
+          }
+        },
+        "expected_relative_moe95_by_efg_reference": {
+          "Arid": {
+            "intact": 0.2024217688073038,
+            "moderate": 0.17854834331971275,
+            "severe": 0.05289527299543807
+          },
+          "Valley": {
+            "intact": 0.13626984587447738,
+            "moderate": 0.14874939858331554,
+            "severe": 0.08815167579408986
+          },
+          "Mesic": {
+            "intact": 0.09362241725900451,
+            "moderate": 0.20616270741930495,
+            "severe": 0.16405447063583886
+          }
+        },
+        "largest_expected_relative_moe95": 0.20616270741930495,
+        "relative_variance_reduction_percent": 39.94161200239016,
+        "assignment_capacity_at_current_exclusion_rate": 207,
+        "recommendation": "Practical EFG refresh: brings the largest projected relative area margin close to 21%, if current class proportions persist."
+      },
+      {
+        "budget_usable_points": 300,
+        "added_by_efg_mapped_class": {
+          "Arid": {
+            "intact": 53,
+            "moderate": 50,
+            "severe": 0
+          },
+          "Valley": {
+            "intact": 0,
+            "moderate": 0,
+            "severe": 0
+          },
+          "Mesic": {
+            "intact": 85,
+            "moderate": 95,
+            "severe": 17
+          }
+        },
+        "final_by_efg_mapped_class": {
+          "Arid": {
+            "intact": 92,
+            "moderate": 123,
+            "severe": 203
+          },
+          "Valley": {
+            "intact": 130,
+            "moderate": 137,
+            "severe": 118
+          },
+          "Mesic": {
+            "intact": 147,
+            "moderate": 150,
+            "severe": 21
+          }
+        },
+        "expected_relative_moe95_by_efg_reference": {
+          "Arid": {
+            "intact": 0.18430552087054422,
+            "moderate": 0.1701252950157443,
+            "severe": 0.05066376715061778
+          },
+          "Valley": {
+            "intact": 0.13626984587447738,
+            "moderate": 0.14874939858331554,
+            "severe": 0.08815167579408986
+          },
+          "Mesic": {
+            "intact": 0.084394775088056,
+            "moderate": 0.18596059624449748,
+            "severe": 0.14776011748462226
+          }
+        },
+        "largest_expected_relative_moe95": 0.18596059624449748,
+        "relative_variance_reduction_percent": 47.30987348511384,
+        "assignment_capacity_at_current_exclusion_rate": 310,
+        "recommendation": "Preferred EFG option: brings every projected EFG x reference-condition area margin below 19%, if current class proportions persist."
+      }
+    ]
+  },
+  "method_notes": [
+    "Olofsson et al. stratified estimator retained as the primary estimator.",
+    "Original ARP/SVM disagreement adjudication remains a two-arm sensitivity.",
+    "MP determinate overlaps are QA duplicates and do not increase independent n.",
+    "Four AP-only unsure points receive MP determinate labels and enter the estimator.",
+    "Twenty-five remaining AP-only unsure points are excluded.",
+    "transformed is remapped to severe; nothicket is reported under two scenarios.",
+    "The draw-time target SE is 0.015 for expected overall accuracy; the realized draw achieves 0.01499.",
+    "All-label disagreement rates count pairwise overlaps and exclude unsure pairs from agreement denominators."
+  ]
+}
