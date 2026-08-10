@@ -1,0 +1,5368 @@
+{
+  "artifact": "design-based thicket-condition area estimation with random duplicate selection",
+  "version": "2026-08-06",
+  "generated_utc": "2026-08-06T12:53:41.884738+00:00",
+  "area_total_ha": 1898600.0,
+  "random_label_selection": {
+    "method": "independent equal-probability source-label selection for every location with two determinate labels",
+    "generator": "NumPy PCG64",
+    "seed": 0,
+    "n_duplicate_determinate_locations": 92,
+    "n_conflicting_duplicate_locations": 35,
+    "draws": [
+      {
+        "id": 16,
+        "stratum": "intact",
+        "candidate_labels": [
+          {
+            "source": "SVM",
+            "label": "intact"
+          },
+          {
+            "source": "AP",
+            "label": "intact"
+          }
+        ],
+        "selected_source": "AP",
+        "selected_label": "intact",
+        "labels_conflict": false
+      },
+      {
+        "id": 20,
+        "stratum": "intact",
+        "candidate_labels": [
+          {
+            "source": "ARP",
+            "label": "intact"
+          },
+          {
+            "source": "AP",
+            "label": "intact"
+          }
+        ],
+        "selected_source": "AP",
+        "selected_label": "intact",
+        "labels_conflict": false
+      },
+      {
+        "id": 21,
+        "stratum": "intact",
+        "candidate_labels": [
+          {
+            "source": "ARP",
+            "label": "intact"
+          },
+          {
+            "source": "SVM",
+            "label": "intact"
+          }
+        ],
+        "selected_source": "SVM",
+        "selected_label": "intact",
+        "labels_conflict": false
+      },
+      {
+        "id": 29,
+        "stratum": "intact",
+        "candidate_labels": [
+          {
+            "source": "ARP",
+            "label": "intact"
+          },
+          {
+            "source": "SVM",
+            "label": "intact"
+          }
+        ],
+        "selected_source": "ARP",
+        "selected_label": "intact",
+        "labels_conflict": false
+      },
+      {
+        "id": 31,
+        "stratum": "intact",
+        "candidate_labels": [
+          {
+            "source": "ARP",
+            "label": "intact"
+          },
+          {
+            "source": "SVM",
+            "label": "intact"
+          }
+        ],
+        "selected_source": "ARP",
+        "selected_label": "intact",
+        "labels_conflict": false
+      },
+      {
+        "id": 40,
+        "stratum": "intact",
+        "candidate_labels": [
+          {
+            "source": "ARP",
+            "label": "intact"
+          },
+          {
+            "source": "AP",
+            "label": "intact"
+          }
+        ],
+        "selected_source": "ARP",
+        "selected_label": "intact",
+        "labels_conflict": false
+      },
+      {
+        "id": 61,
+        "stratum": "intact",
+        "candidate_labels": [
+          {
+            "source": "ARP",
+            "label": "moderate"
+          },
+          {
+            "source": "AP",
+            "label": "intact"
+          }
+        ],
+        "selected_source": "ARP",
+        "selected_label": "moderate",
+        "labels_conflict": true
+      },
+      {
+        "id": 67,
+        "stratum": "intact",
+        "candidate_labels": [
+          {
+            "source": "AP",
+            "label": "intact"
+          },
+          {
+            "source": "MP",
+            "label": "moderate"
+          }
+        ],
+        "selected_source": "AP",
+        "selected_label": "intact",
+        "labels_conflict": true
+      },
+      {
+        "id": 68,
+        "stratum": "intact",
+        "candidate_labels": [
+          {
+            "source": "ARP",
+            "label": "intact"
+          },
+          {
+            "source": "MP",
+            "label": "severe"
+          }
+        ],
+        "selected_source": "ARP",
+        "selected_label": "intact",
+        "labels_conflict": true
+      },
+      {
+        "id": 85,
+        "stratum": "intact",
+        "candidate_labels": [
+          {
+            "source": "ARP",
+            "label": "moderate"
+          },
+          {
+            "source": "AP",
+            "label": "moderate"
+          }
+        ],
+        "selected_source": "AP",
+        "selected_label": "moderate",
+        "labels_conflict": false
+      },
+      {
+        "id": 91,
+        "stratum": "intact",
+        "candidate_labels": [
+          {
+            "source": "SVM",
+            "label": "nothicket"
+          },
+          {
+            "source": "MP",
+            "label": "intact"
+          }
+        ],
+        "selected_source": "MP",
+        "selected_label": "intact",
+        "labels_conflict": true
+      },
+      {
+        "id": 100,
+        "stratum": "intact",
+        "candidate_labels": [
+          {
+            "source": "ARP",
+            "label": "intact"
+          },
+          {
+            "source": "AP",
+            "label": "moderate"
+          }
+        ],
+        "selected_source": "AP",
+        "selected_label": "moderate",
+        "labels_conflict": true
+      },
+      {
+        "id": 104,
+        "stratum": "intact",
+        "candidate_labels": [
+          {
+            "source": "ARP",
+            "label": "intact"
+          },
+          {
+            "source": "MP",
+            "label": "intact"
+          }
+        ],
+        "selected_source": "MP",
+        "selected_label": "intact",
+        "labels_conflict": false
+      },
+      {
+        "id": 120,
+        "stratum": "intact",
+        "candidate_labels": [
+          {
+            "source": "ARP",
+            "label": "intact"
+          },
+          {
+            "source": "AP",
+            "label": "nothicket"
+          }
+        ],
+        "selected_source": "AP",
+        "selected_label": "nothicket",
+        "labels_conflict": true
+      },
+      {
+        "id": 122,
+        "stratum": "intact",
+        "candidate_labels": [
+          {
+            "source": "SVM",
+            "label": "intact"
+          },
+          {
+            "source": "MP",
+            "label": "intact"
+          }
+        ],
+        "selected_source": "MP",
+        "selected_label": "intact",
+        "labels_conflict": false
+      },
+      {
+        "id": 143,
+        "stratum": "intact",
+        "candidate_labels": [
+          {
+            "source": "SVM",
+            "label": "intact"
+          },
+          {
+            "source": "AP",
+            "label": "intact"
+          }
+        ],
+        "selected_source": "AP",
+        "selected_label": "intact",
+        "labels_conflict": false
+      },
+      {
+        "id": 144,
+        "stratum": "intact",
+        "candidate_labels": [
+          {
+            "source": "SVM",
+            "label": "intact"
+          },
+          {
+            "source": "AP",
+            "label": "moderate"
+          }
+        ],
+        "selected_source": "AP",
+        "selected_label": "moderate",
+        "labels_conflict": true
+      },
+      {
+        "id": 145,
+        "stratum": "intact",
+        "candidate_labels": [
+          {
+            "source": "AP",
+            "label": "moderate"
+          },
+          {
+            "source": "MP",
+            "label": "moderate"
+          }
+        ],
+        "selected_source": "MP",
+        "selected_label": "moderate",
+        "labels_conflict": false
+      },
+      {
+        "id": 150,
+        "stratum": "intact",
+        "candidate_labels": [
+          {
+            "source": "ARP",
+            "label": "moderate"
+          },
+          {
+            "source": "SVM",
+            "label": "intact"
+          }
+        ],
+        "selected_source": "SVM",
+        "selected_label": "intact",
+        "labels_conflict": true
+      },
+      {
+        "id": 162,
+        "stratum": "intact",
+        "candidate_labels": [
+          {
+            "source": "SVM",
+            "label": "intact"
+          },
+          {
+            "source": "MP",
+            "label": "intact"
+          }
+        ],
+        "selected_source": "MP",
+        "selected_label": "intact",
+        "labels_conflict": false
+      },
+      {
+        "id": 165,
+        "stratum": "intact",
+        "candidate_labels": [
+          {
+            "source": "SVM",
+            "label": "intact"
+          },
+          {
+            "source": "MP",
+            "label": "moderate"
+          }
+        ],
+        "selected_source": "SVM",
+        "selected_label": "intact",
+        "labels_conflict": true
+      },
+      {
+        "id": 169,
+        "stratum": "intact",
+        "candidate_labels": [
+          {
+            "source": "ARP",
+            "label": "moderate"
+          },
+          {
+            "source": "MP",
+            "label": "moderate"
+          }
+        ],
+        "selected_source": "MP",
+        "selected_label": "moderate",
+        "labels_conflict": false
+      },
+      {
+        "id": 172,
+        "stratum": "intact",
+        "candidate_labels": [
+          {
+            "source": "ARP",
+            "label": "moderate"
+          },
+          {
+            "source": "AP",
+            "label": "moderate"
+          }
+        ],
+        "selected_source": "AP",
+        "selected_label": "moderate",
+        "labels_conflict": false
+      },
+      {
+        "id": 181,
+        "stratum": "intact",
+        "candidate_labels": [
+          {
+            "source": "SVM",
+            "label": "intact"
+          },
+          {
+            "source": "MP",
+            "label": "severe"
+          }
+        ],
+        "selected_source": "SVM",
+        "selected_label": "intact",
+        "labels_conflict": true
+      },
+      {
+        "id": 185,
+        "stratum": "intact",
+        "candidate_labels": [
+          {
+            "source": "ARP",
+            "label": "intact"
+          },
+          {
+            "source": "SVM",
+            "label": "intact"
+          }
+        ],
+        "selected_source": "ARP",
+        "selected_label": "intact",
+        "labels_conflict": false
+      },
+      {
+        "id": 203,
+        "stratum": "intact",
+        "candidate_labels": [
+          {
+            "source": "SVM",
+            "label": "intact"
+          },
+          {
+            "source": "AP",
+            "label": "intact"
+          }
+        ],
+        "selected_source": "AP",
+        "selected_label": "intact",
+        "labels_conflict": false
+      },
+      {
+        "id": 211,
+        "stratum": "intact",
+        "candidate_labels": [
+          {
+            "source": "ARP",
+            "label": "moderate"
+          },
+          {
+            "source": "SVM",
+            "label": "intact"
+          }
+        ],
+        "selected_source": "SVM",
+        "selected_label": "intact",
+        "labels_conflict": true
+      },
+      {
+        "id": 239,
+        "stratum": "moderate",
+        "candidate_labels": [
+          {
+            "source": "AP",
+            "label": "moderate"
+          },
+          {
+            "source": "MP",
+            "label": "moderate"
+          }
+        ],
+        "selected_source": "AP",
+        "selected_label": "moderate",
+        "labels_conflict": false
+      },
+      {
+        "id": 247,
+        "stratum": "moderate",
+        "candidate_labels": [
+          {
+            "source": "SVM",
+            "label": "moderate"
+          },
+          {
+            "source": "AP",
+            "label": "severe"
+          }
+        ],
+        "selected_source": "AP",
+        "selected_label": "severe",
+        "labels_conflict": true
+      },
+      {
+        "id": 262,
+        "stratum": "moderate",
+        "candidate_labels": [
+          {
+            "source": "ARP",
+            "label": "severe"
+          },
+          {
+            "source": "MP",
+            "label": "severe"
+          }
+        ],
+        "selected_source": "MP",
+        "selected_label": "severe",
+        "labels_conflict": false
+      },
+      {
+        "id": 274,
+        "stratum": "moderate",
+        "candidate_labels": [
+          {
+            "source": "AP",
+            "label": "intact"
+          },
+          {
+            "source": "MP",
+            "label": "moderate"
+          }
+        ],
+        "selected_source": "MP",
+        "selected_label": "moderate",
+        "labels_conflict": true
+      },
+      {
+        "id": 277,
+        "stratum": "moderate",
+        "candidate_labels": [
+          {
+            "source": "SVM",
+            "label": "moderate"
+          },
+          {
+            "source": "AP",
+            "label": "moderate"
+          }
+        ],
+        "selected_source": "SVM",
+        "selected_label": "moderate",
+        "labels_conflict": false
+      },
+      {
+        "id": 284,
+        "stratum": "moderate",
+        "candidate_labels": [
+          {
+            "source": "ARP",
+            "label": "moderate"
+          },
+          {
+            "source": "SVM",
+            "label": "moderate"
+          }
+        ],
+        "selected_source": "ARP",
+        "selected_label": "moderate",
+        "labels_conflict": false
+      },
+      {
+        "id": 291,
+        "stratum": "moderate",
+        "candidate_labels": [
+          {
+            "source": "ARP",
+            "label": "moderate"
+          },
+          {
+            "source": "SVM",
+            "label": "intact"
+          }
+        ],
+        "selected_source": "SVM",
+        "selected_label": "intact",
+        "labels_conflict": true
+      },
+      {
+        "id": 297,
+        "stratum": "moderate",
+        "candidate_labels": [
+          {
+            "source": "SVM",
+            "label": "moderate"
+          },
+          {
+            "source": "AP",
+            "label": "nothicket"
+          }
+        ],
+        "selected_source": "SVM",
+        "selected_label": "moderate",
+        "labels_conflict": true
+      },
+      {
+        "id": 300,
+        "stratum": "moderate",
+        "candidate_labels": [
+          {
+            "source": "SVM",
+            "label": "moderate"
+          },
+          {
+            "source": "MP",
+            "label": "moderate"
+          }
+        ],
+        "selected_source": "MP",
+        "selected_label": "moderate",
+        "labels_conflict": false
+      },
+      {
+        "id": 303,
+        "stratum": "moderate",
+        "candidate_labels": [
+          {
+            "source": "SVM",
+            "label": "intact"
+          },
+          {
+            "source": "MP",
+            "label": "intact"
+          }
+        ],
+        "selected_source": "SVM",
+        "selected_label": "intact",
+        "labels_conflict": false
+      },
+      {
+        "id": 310,
+        "stratum": "moderate",
+        "candidate_labels": [
+          {
+            "source": "ARP",
+            "label": "severe"
+          },
+          {
+            "source": "AP",
+            "label": "moderate"
+          }
+        ],
+        "selected_source": "ARP",
+        "selected_label": "severe",
+        "labels_conflict": true
+      },
+      {
+        "id": 324,
+        "stratum": "moderate",
+        "candidate_labels": [
+          {
+            "source": "AP",
+            "label": "severe"
+          },
+          {
+            "source": "MP",
+            "label": "severe"
+          }
+        ],
+        "selected_source": "AP",
+        "selected_label": "severe",
+        "labels_conflict": false
+      },
+      {
+        "id": 325,
+        "stratum": "moderate",
+        "candidate_labels": [
+          {
+            "source": "ARP",
+            "label": "severe"
+          },
+          {
+            "source": "AP",
+            "label": "severe"
+          }
+        ],
+        "selected_source": "ARP",
+        "selected_label": "severe",
+        "labels_conflict": false
+      },
+      {
+        "id": 330,
+        "stratum": "moderate",
+        "candidate_labels": [
+          {
+            "source": "AP",
+            "label": "severe"
+          },
+          {
+            "source": "MP",
+            "label": "severe"
+          }
+        ],
+        "selected_source": "AP",
+        "selected_label": "severe",
+        "labels_conflict": false
+      },
+      {
+        "id": 331,
+        "stratum": "moderate",
+        "candidate_labels": [
+          {
+            "source": "ARP",
+            "label": "severe"
+          },
+          {
+            "source": "MP",
+            "label": "severe"
+          }
+        ],
+        "selected_source": "ARP",
+        "selected_label": "severe",
+        "labels_conflict": false
+      },
+      {
+        "id": 339,
+        "stratum": "moderate",
+        "candidate_labels": [
+          {
+            "source": "ARP",
+            "label": "moderate"
+          },
+          {
+            "source": "SVM",
+            "label": "moderate"
+          }
+        ],
+        "selected_source": "ARP",
+        "selected_label": "moderate",
+        "labels_conflict": false
+      },
+      {
+        "id": 343,
+        "stratum": "moderate",
+        "candidate_labels": [
+          {
+            "source": "ARP",
+            "label": "severe"
+          },
+          {
+            "source": "MP",
+            "label": "severe"
+          }
+        ],
+        "selected_source": "ARP",
+        "selected_label": "severe",
+        "labels_conflict": false
+      },
+      {
+        "id": 359,
+        "stratum": "moderate",
+        "candidate_labels": [
+          {
+            "source": "SVM",
+            "label": "intact"
+          },
+          {
+            "source": "AP",
+            "label": "intact"
+          }
+        ],
+        "selected_source": "SVM",
+        "selected_label": "intact",
+        "labels_conflict": false
+      },
+      {
+        "id": 361,
+        "stratum": "moderate",
+        "candidate_labels": [
+          {
+            "source": "AP",
+            "label": "nothicket"
+          },
+          {
+            "source": "MP",
+            "label": "nothicket"
+          }
+        ],
+        "selected_source": "MP",
+        "selected_label": "nothicket",
+        "labels_conflict": false
+      },
+      {
+        "id": 373,
+        "stratum": "moderate",
+        "candidate_labels": [
+          {
+            "source": "ARP",
+            "label": "moderate"
+          },
+          {
+            "source": "MP",
+            "label": "severe"
+          }
+        ],
+        "selected_source": "MP",
+        "selected_label": "severe",
+        "labels_conflict": true
+      },
+      {
+        "id": 400,
+        "stratum": "moderate",
+        "candidate_labels": [
+          {
+            "source": "ARP",
+            "label": "moderate"
+          },
+          {
+            "source": "AP",
+            "label": "moderate"
+          }
+        ],
+        "selected_source": "AP",
+        "selected_label": "moderate",
+        "labels_conflict": false
+      },
+      {
+        "id": 406,
+        "stratum": "moderate",
+        "candidate_labels": [
+          {
+            "source": "SVM",
+            "label": "moderate"
+          },
+          {
+            "source": "MP",
+            "label": "severe"
+          }
+        ],
+        "selected_source": "SVM",
+        "selected_label": "moderate",
+        "labels_conflict": true
+      },
+      {
+        "id": 408,
+        "stratum": "moderate",
+        "candidate_labels": [
+          {
+            "source": "ARP",
+            "label": "intact"
+          },
+          {
+            "source": "AP",
+            "label": "moderate"
+          }
+        ],
+        "selected_source": "AP",
+        "selected_label": "moderate",
+        "labels_conflict": true
+      },
+      {
+        "id": 421,
+        "stratum": "moderate",
+        "candidate_labels": [
+          {
+            "source": "SVM",
+            "label": "moderate"
+          },
+          {
+            "source": "AP",
+            "label": "moderate"
+          }
+        ],
+        "selected_source": "AP",
+        "selected_label": "moderate",
+        "labels_conflict": false
+      },
+      {
+        "id": 443,
+        "stratum": "moderate",
+        "candidate_labels": [
+          {
+            "source": "SVM",
+            "label": "intact"
+          },
+          {
+            "source": "AP",
+            "label": "intact"
+          }
+        ],
+        "selected_source": "SVM",
+        "selected_label": "intact",
+        "labels_conflict": false
+      },
+      {
+        "id": 473,
+        "stratum": "moderate",
+        "candidate_labels": [
+          {
+            "source": "ARP",
+            "label": "intact"
+          },
+          {
+            "source": "AP",
+            "label": "moderate"
+          }
+        ],
+        "selected_source": "ARP",
+        "selected_label": "intact",
+        "labels_conflict": true
+      },
+      {
+        "id": 475,
+        "stratum": "moderate",
+        "candidate_labels": [
+          {
+            "source": "AP",
+            "label": "intact"
+          },
+          {
+            "source": "MP",
+            "label": "intact"
+          }
+        ],
+        "selected_source": "MP",
+        "selected_label": "intact",
+        "labels_conflict": false
+      },
+      {
+        "id": 485,
+        "stratum": "moderate",
+        "candidate_labels": [
+          {
+            "source": "AP",
+            "label": "moderate"
+          },
+          {
+            "source": "MP",
+            "label": "severe"
+          }
+        ],
+        "selected_source": "MP",
+        "selected_label": "severe",
+        "labels_conflict": true
+      },
+      {
+        "id": 489,
+        "stratum": "moderate",
+        "candidate_labels": [
+          {
+            "source": "AP",
+            "label": "transformed"
+          },
+          {
+            "source": "MP",
+            "label": "transformed"
+          }
+        ],
+        "selected_source": "MP",
+        "selected_label": "transformed",
+        "labels_conflict": false
+      },
+      {
+        "id": 515,
+        "stratum": "severe",
+        "candidate_labels": [
+          {
+            "source": "ARP",
+            "label": "severe"
+          },
+          {
+            "source": "MP",
+            "label": "severe"
+          }
+        ],
+        "selected_source": "ARP",
+        "selected_label": "severe",
+        "labels_conflict": false
+      },
+      {
+        "id": 525,
+        "stratum": "severe",
+        "candidate_labels": [
+          {
+            "source": "SVM",
+            "label": "severe"
+          },
+          {
+            "source": "AP",
+            "label": "transformed"
+          }
+        ],
+        "selected_source": "AP",
+        "selected_label": "transformed",
+        "labels_conflict": true
+      },
+      {
+        "id": 529,
+        "stratum": "severe",
+        "candidate_labels": [
+          {
+            "source": "SVM",
+            "label": "severe"
+          },
+          {
+            "source": "AP",
+            "label": "severe"
+          }
+        ],
+        "selected_source": "AP",
+        "selected_label": "severe",
+        "labels_conflict": false
+      },
+      {
+        "id": 543,
+        "stratum": "severe",
+        "candidate_labels": [
+          {
+            "source": "ARP",
+            "label": "nothicket"
+          },
+          {
+            "source": "AP",
+            "label": "nothicket"
+          }
+        ],
+        "selected_source": "AP",
+        "selected_label": "nothicket",
+        "labels_conflict": false
+      },
+      {
+        "id": 550,
+        "stratum": "severe",
+        "candidate_labels": [
+          {
+            "source": "ARP",
+            "label": "nothicket"
+          },
+          {
+            "source": "SVM",
+            "label": "severe"
+          }
+        ],
+        "selected_source": "SVM",
+        "selected_label": "severe",
+        "labels_conflict": true
+      },
+      {
+        "id": 568,
+        "stratum": "severe",
+        "candidate_labels": [
+          {
+            "source": "SVM",
+            "label": "severe"
+          },
+          {
+            "source": "MP",
+            "label": "severe"
+          }
+        ],
+        "selected_source": "MP",
+        "selected_label": "severe",
+        "labels_conflict": false
+      },
+      {
+        "id": 573,
+        "stratum": "severe",
+        "candidate_labels": [
+          {
+            "source": "AP",
+            "label": "severe"
+          },
+          {
+            "source": "MP",
+            "label": "severe"
+          }
+        ],
+        "selected_source": "MP",
+        "selected_label": "severe",
+        "labels_conflict": false
+      },
+      {
+        "id": 597,
+        "stratum": "severe",
+        "candidate_labels": [
+          {
+            "source": "ARP",
+            "label": "severe"
+          },
+          {
+            "source": "AP",
+            "label": "severe"
+          }
+        ],
+        "selected_source": "ARP",
+        "selected_label": "severe",
+        "labels_conflict": false
+      },
+      {
+        "id": 612,
+        "stratum": "severe",
+        "candidate_labels": [
+          {
+            "source": "AP",
+            "label": "nothicket"
+          },
+          {
+            "source": "MP",
+            "label": "severe"
+          }
+        ],
+        "selected_source": "MP",
+        "selected_label": "severe",
+        "labels_conflict": true
+      },
+      {
+        "id": 614,
+        "stratum": "severe",
+        "candidate_labels": [
+          {
+            "source": "ARP",
+            "label": "severe"
+          },
+          {
+            "source": "MP",
+            "label": "severe"
+          }
+        ],
+        "selected_source": "ARP",
+        "selected_label": "severe",
+        "labels_conflict": false
+      },
+      {
+        "id": 629,
+        "stratum": "severe",
+        "candidate_labels": [
+          {
+            "source": "ARP",
+            "label": "nothicket"
+          },
+          {
+            "source": "AP",
+            "label": "severe"
+          }
+        ],
+        "selected_source": "AP",
+        "selected_label": "severe",
+        "labels_conflict": true
+      },
+      {
+        "id": 630,
+        "stratum": "severe",
+        "candidate_labels": [
+          {
+            "source": "AP",
+            "label": "severe"
+          },
+          {
+            "source": "MP",
+            "label": "severe"
+          }
+        ],
+        "selected_source": "MP",
+        "selected_label": "severe",
+        "labels_conflict": false
+      },
+      {
+        "id": 636,
+        "stratum": "severe",
+        "candidate_labels": [
+          {
+            "source": "SVM",
+            "label": "moderate"
+          },
+          {
+            "source": "AP",
+            "label": "nothicket"
+          }
+        ],
+        "selected_source": "AP",
+        "selected_label": "nothicket",
+        "labels_conflict": true
+      },
+      {
+        "id": 665,
+        "stratum": "severe",
+        "candidate_labels": [
+          {
+            "source": "SVM",
+            "label": "moderate"
+          },
+          {
+            "source": "MP",
+            "label": "moderate"
+          }
+        ],
+        "selected_source": "MP",
+        "selected_label": "moderate",
+        "labels_conflict": false
+      },
+      {
+        "id": 669,
+        "stratum": "severe",
+        "candidate_labels": [
+          {
+            "source": "ARP",
+            "label": "severe"
+          },
+          {
+            "source": "SVM",
+            "label": "severe"
+          }
+        ],
+        "selected_source": "ARP",
+        "selected_label": "severe",
+        "labels_conflict": false
+      },
+      {
+        "id": 676,
+        "stratum": "severe",
+        "candidate_labels": [
+          {
+            "source": "SVM",
+            "label": "severe"
+          },
+          {
+            "source": "AP",
+            "label": "nothicket"
+          }
+        ],
+        "selected_source": "SVM",
+        "selected_label": "severe",
+        "labels_conflict": true
+      },
+      {
+        "id": 685,
+        "stratum": "severe",
+        "candidate_labels": [
+          {
+            "source": "SVM",
+            "label": "moderate"
+          },
+          {
+            "source": "MP",
+            "label": "severe"
+          }
+        ],
+        "selected_source": "SVM",
+        "selected_label": "moderate",
+        "labels_conflict": true
+      },
+      {
+        "id": 687,
+        "stratum": "severe",
+        "candidate_labels": [
+          {
+            "source": "SVM",
+            "label": "severe"
+          },
+          {
+            "source": "MP",
+            "label": "nothicket"
+          }
+        ],
+        "selected_source": "SVM",
+        "selected_label": "severe",
+        "labels_conflict": true
+      },
+      {
+        "id": 693,
+        "stratum": "severe",
+        "candidate_labels": [
+          {
+            "source": "SVM",
+            "label": "severe"
+          },
+          {
+            "source": "AP",
+            "label": "severe"
+          }
+        ],
+        "selected_source": "AP",
+        "selected_label": "severe",
+        "labels_conflict": false
+      },
+      {
+        "id": 695,
+        "stratum": "severe",
+        "candidate_labels": [
+          {
+            "source": "ARP",
+            "label": "transformed"
+          },
+          {
+            "source": "MP",
+            "label": "transformed"
+          }
+        ],
+        "selected_source": "MP",
+        "selected_label": "transformed",
+        "labels_conflict": false
+      },
+      {
+        "id": 703,
+        "stratum": "severe",
+        "candidate_labels": [
+          {
+            "source": "ARP",
+            "label": "severe"
+          },
+          {
+            "source": "MP",
+            "label": "severe"
+          }
+        ],
+        "selected_source": "ARP",
+        "selected_label": "severe",
+        "labels_conflict": false
+      },
+      {
+        "id": 721,
+        "stratum": "severe",
+        "candidate_labels": [
+          {
+            "source": "SVM",
+            "label": "severe"
+          },
+          {
+            "source": "MP",
+            "label": "moderate"
+          }
+        ],
+        "selected_source": "MP",
+        "selected_label": "moderate",
+        "labels_conflict": true
+      },
+      {
+        "id": 729,
+        "stratum": "severe",
+        "candidate_labels": [
+          {
+            "source": "ARP",
+            "label": "moderate"
+          },
+          {
+            "source": "AP",
+            "label": "nothicket"
+          }
+        ],
+        "selected_source": "AP",
+        "selected_label": "nothicket",
+        "labels_conflict": true
+      },
+      {
+        "id": 738,
+        "stratum": "severe",
+        "candidate_labels": [
+          {
+            "source": "ARP",
+            "label": "severe"
+          },
+          {
+            "source": "SVM",
+            "label": "severe"
+          }
+        ],
+        "selected_source": "ARP",
+        "selected_label": "severe",
+        "labels_conflict": false
+      },
+      {
+        "id": 740,
+        "stratum": "severe",
+        "candidate_labels": [
+          {
+            "source": "SVM",
+            "label": "moderate"
+          },
+          {
+            "source": "MP",
+            "label": "nothicket"
+          }
+        ],
+        "selected_source": "MP",
+        "selected_label": "nothicket",
+        "labels_conflict": true
+      },
+      {
+        "id": 745,
+        "stratum": "severe",
+        "candidate_labels": [
+          {
+            "source": "ARP",
+            "label": "severe"
+          },
+          {
+            "source": "MP",
+            "label": "severe"
+          }
+        ],
+        "selected_source": "MP",
+        "selected_label": "severe",
+        "labels_conflict": false
+      },
+      {
+        "id": 750,
+        "stratum": "severe",
+        "candidate_labels": [
+          {
+            "source": "SVM",
+            "label": "severe"
+          },
+          {
+            "source": "AP",
+            "label": "severe"
+          }
+        ],
+        "selected_source": "SVM",
+        "selected_label": "severe",
+        "labels_conflict": false
+      },
+      {
+        "id": 754,
+        "stratum": "severe",
+        "candidate_labels": [
+          {
+            "source": "ARP",
+            "label": "severe"
+          },
+          {
+            "source": "AP",
+            "label": "severe"
+          }
+        ],
+        "selected_source": "ARP",
+        "selected_label": "severe",
+        "labels_conflict": false
+      },
+      {
+        "id": 764,
+        "stratum": "severe",
+        "candidate_labels": [
+          {
+            "source": "AP",
+            "label": "severe"
+          },
+          {
+            "source": "MP",
+            "label": "severe"
+          }
+        ],
+        "selected_source": "MP",
+        "selected_label": "severe",
+        "labels_conflict": false
+      },
+      {
+        "id": 766,
+        "stratum": "severe",
+        "candidate_labels": [
+          {
+            "source": "SVM",
+            "label": "severe"
+          },
+          {
+            "source": "AP",
+            "label": "severe"
+          }
+        ],
+        "selected_source": "AP",
+        "selected_label": "severe",
+        "labels_conflict": false
+      },
+      {
+        "id": 785,
+        "stratum": "severe",
+        "candidate_labels": [
+          {
+            "source": "SVM",
+            "label": "severe"
+          },
+          {
+            "source": "MP",
+            "label": "severe"
+          }
+        ],
+        "selected_source": "MP",
+        "selected_label": "severe",
+        "labels_conflict": false
+      },
+      {
+        "id": 788,
+        "stratum": "severe",
+        "candidate_labels": [
+          {
+            "source": "ARP",
+            "label": "moderate"
+          },
+          {
+            "source": "AP",
+            "label": "nothicket"
+          }
+        ],
+        "selected_source": "ARP",
+        "selected_label": "moderate",
+        "labels_conflict": true
+      },
+      {
+        "id": 810,
+        "stratum": "severe",
+        "candidate_labels": [
+          {
+            "source": "ARP",
+            "label": "transformed"
+          },
+          {
+            "source": "MP",
+            "label": "severe"
+          }
+        ],
+        "selected_source": "MP",
+        "selected_label": "severe",
+        "labels_conflict": true
+      },
+      {
+        "id": 821,
+        "stratum": "severe",
+        "candidate_labels": [
+          {
+            "source": "ARP",
+            "label": "severe"
+          },
+          {
+            "source": "MP",
+            "label": "severe"
+          }
+        ],
+        "selected_source": "ARP",
+        "selected_label": "severe",
+        "labels_conflict": false
+      },
+      {
+        "id": 829,
+        "stratum": "severe",
+        "candidate_labels": [
+          {
+            "source": "SVM",
+            "label": "moderate"
+          },
+          {
+            "source": "AP",
+            "label": "severe"
+          }
+        ],
+        "selected_source": "SVM",
+        "selected_label": "moderate",
+        "labels_conflict": true
+      },
+      {
+        "id": 838,
+        "stratum": "severe",
+        "candidate_labels": [
+          {
+            "source": "ARP",
+            "label": "severe"
+          },
+          {
+            "source": "MP",
+            "label": "severe"
+          }
+        ],
+        "selected_source": "MP",
+        "selected_label": "severe",
+        "labels_conflict": false
+      }
+    ]
+  },
+  "reference_label_handling": {
+    "one_label_per_point": true,
+    "duplicate_determinate_labels": "select one submitted source label at random",
+    "unsure_labels": "ineligible for random selection",
+    "no_determinate_label": "excluded",
+    "no_determinate_label_n": 25,
+    "no_determinate_label_ids": [
+      51,
+      327,
+      334,
+      362,
+      363,
+      371,
+      416,
+      470,
+      472,
+      476,
+      498,
+      534,
+      551,
+      556,
+      596,
+      633,
+      656,
+      681,
+      688,
+      732,
+      742,
+      776,
+      792,
+      823,
+      844
+    ],
+    "n_final_unique_points": 821,
+    "nothicket_treatment": "reported as a class (scenario A) or grouped with severe (scenario B)"
+  },
+  "source_submission": {
+    "file": "thicket_labels_MichaelPowell_MP_2026-07-31-10-35-52.json",
+    "labeler": "Michael Powell",
+    "assignment": {
+      "campaign": "thicket-2026-r1",
+      "code": "MP",
+      "id": "a98608250309730d",
+      "assigned": 237
+    },
+    "completion": {
+      "complete": true,
+      "total": 237,
+      "labeled": 237,
+      "flagged": 0,
+      "unsure": 0,
+      "legacyCombined": 0,
+      "lowConfidence": 0
+    },
+    "checksum": {
+      "algorithm": "fnv1a-32",
+      "value": "bcbc113b"
+    },
+    "validation": {
+      "passed": true,
+      "checks": {
+        "dataset_matches_manifest": true,
+        "campaign_matches_manifest": true,
+        "assignment_code_matches": true,
+        "assignment_id_matches": true,
+        "row_count_matches_assignment": true,
+        "id_set_matches_assignment": true,
+        "ids_are_unique": true,
+        "completion_is_final": true,
+        "labels_are_valid": true,
+        "strata_are_valid": true,
+        "checksum_matches": true
+      },
+      "calculated_checksum": "bcbc113b"
+    }
+  },
+  "sampling": {
+    "sampled_locations": 846,
+    "all_label_submissions": 948,
+    "duplicate_locations": 102,
+    "final_unique_points": 821,
+    "excluded_no_determinate_label": 25
+  },
+  "sensitivity_adjudication": {
+    "random": {
+      "final": {
+        "adjudicate": "random",
+        "inputs": {
+          "labellers": [
+            "ARP",
+            "SVM/Steph",
+            "Alastair Potts",
+            "Michael Powell"
+          ],
+          "adjudication": "For every location with two determinate labels, select one submitted source label independently with equal probability using NumPy PCG64 seed 0; unsure labels are ineligible and locations with no determinate label are excluded.",
+          "n_unique_points": 821,
+          "qa_agreement_mp": [
+            {
+              "new_labeller": "ARP",
+              "other_labeller": "SVM",
+              "n_overlap": 12,
+              "n_new_unsure": 0,
+              "n_other_unsure": 0,
+              "n_determinate_pairs": 12,
+              "n_agree": 8,
+              "agreement_rate": 0.6666666666666666,
+              "n_disagree": 4,
+              "disagreements": [
+                {
+                  "id": 150,
+                  "stratum": "intact",
+                  "ARP": "moderate",
+                  "SVM": "intact"
+                },
+                {
+                  "id": 211,
+                  "stratum": "intact",
+                  "ARP": "moderate",
+                  "SVM": "intact"
+                },
+                {
+                  "id": 291,
+                  "stratum": "moderate",
+                  "ARP": "moderate",
+                  "SVM": "intact"
+                },
+                {
+                  "id": 550,
+                  "stratum": "severe",
+                  "ARP": "nothicket",
+                  "SVM": "severe"
+                }
+              ]
+            },
+            {
+              "new_labeller": "ARP",
+              "other_labeller": "AP",
+              "n_overlap": 22,
+              "n_new_unsure": 0,
+              "n_other_unsure": 4,
+              "n_determinate_pairs": 18,
+              "n_agree": 9,
+              "agreement_rate": 0.5,
+              "n_disagree": 9,
+              "disagreements": [
+                {
+                  "id": 61,
+                  "stratum": "intact",
+                  "ARP": "moderate",
+                  "AP": "intact"
+                },
+                {
+                  "id": 100,
+                  "stratum": "intact",
+                  "ARP": "intact",
+                  "AP": "moderate"
+                },
+                {
+                  "id": 120,
+                  "stratum": "intact",
+                  "ARP": "intact",
+                  "AP": "nothicket"
+                },
+                {
+                  "id": 310,
+                  "stratum": "moderate",
+                  "ARP": "severe",
+                  "AP": "moderate"
+                },
+                {
+                  "id": 408,
+                  "stratum": "moderate",
+                  "ARP": "intact",
+                  "AP": "moderate"
+                },
+                {
+                  "id": 473,
+                  "stratum": "moderate",
+                  "ARP": "intact",
+                  "AP": "moderate"
+                },
+                {
+                  "id": 629,
+                  "stratum": "severe",
+                  "ARP": "nothicket",
+                  "AP": "severe"
+                },
+                {
+                  "id": 729,
+                  "stratum": "severe",
+                  "ARP": "moderate",
+                  "AP": "nothicket"
+                },
+                {
+                  "id": 788,
+                  "stratum": "severe",
+                  "ARP": "moderate",
+                  "AP": "nothicket"
+                }
+              ]
+            },
+            {
+              "new_labeller": "ARP",
+              "other_labeller": "MP",
+              "n_overlap": 15,
+              "n_new_unsure": 0,
+              "n_other_unsure": 0,
+              "n_determinate_pairs": 15,
+              "n_agree": 12,
+              "agreement_rate": 0.8,
+              "n_disagree": 3,
+              "disagreements": [
+                {
+                  "id": 68,
+                  "stratum": "intact",
+                  "ARP": "intact",
+                  "MP": "severe"
+                },
+                {
+                  "id": 373,
+                  "stratum": "moderate",
+                  "ARP": "moderate",
+                  "MP": "severe"
+                },
+                {
+                  "id": 810,
+                  "stratum": "severe",
+                  "ARP": "transformed",
+                  "MP": "severe"
+                }
+              ]
+            },
+            {
+              "new_labeller": "SVM",
+              "other_labeller": "AP",
+              "n_overlap": 20,
+              "n_new_unsure": 0,
+              "n_other_unsure": 2,
+              "n_determinate_pairs": 18,
+              "n_agree": 11,
+              "agreement_rate": 0.6111111111111112,
+              "n_disagree": 7,
+              "disagreements": [
+                {
+                  "id": 144,
+                  "stratum": "intact",
+                  "SVM": "intact",
+                  "AP": "moderate"
+                },
+                {
+                  "id": 247,
+                  "stratum": "moderate",
+                  "SVM": "moderate",
+                  "AP": "severe"
+                },
+                {
+                  "id": 297,
+                  "stratum": "moderate",
+                  "SVM": "moderate",
+                  "AP": "nothicket"
+                },
+                {
+                  "id": 525,
+                  "stratum": "severe",
+                  "SVM": "severe",
+                  "AP": "transformed"
+                },
+                {
+                  "id": 636,
+                  "stratum": "severe",
+                  "SVM": "moderate",
+                  "AP": "nothicket"
+                },
+                {
+                  "id": 676,
+                  "stratum": "severe",
+                  "SVM": "severe",
+                  "AP": "nothicket"
+                },
+                {
+                  "id": 829,
+                  "stratum": "severe",
+                  "SVM": "moderate",
+                  "AP": "severe"
+                }
+              ]
+            },
+            {
+              "new_labeller": "SVM",
+              "other_labeller": "MP",
+              "n_overlap": 15,
+              "n_new_unsure": 0,
+              "n_other_unsure": 0,
+              "n_determinate_pairs": 15,
+              "n_agree": 7,
+              "agreement_rate": 0.4666666666666667,
+              "n_disagree": 8,
+              "disagreements": [
+                {
+                  "id": 91,
+                  "stratum": "intact",
+                  "SVM": "nothicket",
+                  "MP": "intact"
+                },
+                {
+                  "id": 165,
+                  "stratum": "intact",
+                  "SVM": "intact",
+                  "MP": "moderate"
+                },
+                {
+                  "id": 181,
+                  "stratum": "intact",
+                  "SVM": "intact",
+                  "MP": "severe"
+                },
+                {
+                  "id": 406,
+                  "stratum": "moderate",
+                  "SVM": "moderate",
+                  "MP": "severe"
+                },
+                {
+                  "id": 685,
+                  "stratum": "severe",
+                  "SVM": "moderate",
+                  "MP": "severe"
+                },
+                {
+                  "id": 687,
+                  "stratum": "severe",
+                  "SVM": "severe",
+                  "MP": "nothicket"
+                },
+                {
+                  "id": 721,
+                  "stratum": "severe",
+                  "SVM": "severe",
+                  "MP": "moderate"
+                },
+                {
+                  "id": 740,
+                  "stratum": "severe",
+                  "SVM": "moderate",
+                  "MP": "nothicket"
+                }
+              ]
+            },
+            {
+              "new_labeller": "AP",
+              "other_labeller": "MP",
+              "n_overlap": 18,
+              "n_new_unsure": 4,
+              "n_other_unsure": 0,
+              "n_determinate_pairs": 14,
+              "n_agree": 10,
+              "agreement_rate": 0.7142857142857143,
+              "n_disagree": 4,
+              "disagreements": [
+                {
+                  "id": 67,
+                  "stratum": "intact",
+                  "AP": "intact",
+                  "MP": "moderate"
+                },
+                {
+                  "id": 274,
+                  "stratum": "moderate",
+                  "AP": "intact",
+                  "MP": "moderate"
+                },
+                {
+                  "id": 485,
+                  "stratum": "moderate",
+                  "AP": "moderate",
+                  "MP": "severe"
+                },
+                {
+                  "id": 612,
+                  "stratum": "severe",
+                  "AP": "nothicket",
+                  "MP": "severe"
+                }
+              ]
+            }
+          ],
+          "W": {
+            "intact": 0.2789371115558833,
+            "moderate": 0.29106130833245547,
+            "severe": 0.43000158011166123
+          },
+          "area_total_ha": 1898600.0,
+          "remap": {
+            "transformed": "severe",
+            "nothicket": "tested: class (kept) | severe",
+            "unsure": "excluded"
+          },
+          "random_selection": {
+            "generator": "NumPy PCG64",
+            "seed": 0,
+            "n_duplicate_determinate_locations": 92,
+            "n_conflicting_duplicate_locations": 35,
+            "draws": [
+              {
+                "id": 16,
+                "stratum": "intact",
+                "candidate_labels": [
+                  {
+                    "source": "SVM",
+                    "label": "intact"
+                  },
+                  {
+                    "source": "AP",
+                    "label": "intact"
+                  }
+                ],
+                "selected_source": "AP",
+                "selected_label": "intact",
+                "labels_conflict": false
+              },
+              {
+                "id": 20,
+                "stratum": "intact",
+                "candidate_labels": [
+                  {
+                    "source": "ARP",
+                    "label": "intact"
+                  },
+                  {
+                    "source": "AP",
+                    "label": "intact"
+                  }
+                ],
+                "selected_source": "AP",
+                "selected_label": "intact",
+                "labels_conflict": false
+              },
+              {
+                "id": 21,
+                "stratum": "intact",
+                "candidate_labels": [
+                  {
+                    "source": "ARP",
+                    "label": "intact"
+                  },
+                  {
+                    "source": "SVM",
+                    "label": "intact"
+                  }
+                ],
+                "selected_source": "SVM",
+                "selected_label": "intact",
+                "labels_conflict": false
+              },
+              {
+                "id": 29,
+                "stratum": "intact",
+                "candidate_labels": [
+                  {
+                    "source": "ARP",
+                    "label": "intact"
+                  },
+                  {
+                    "source": "SVM",
+                    "label": "intact"
+                  }
+                ],
+                "selected_source": "ARP",
+                "selected_label": "intact",
+                "labels_conflict": false
+              },
+              {
+                "id": 31,
+                "stratum": "intact",
+                "candidate_labels": [
+                  {
+                    "source": "ARP",
+                    "label": "intact"
+                  },
+                  {
+                    "source": "SVM",
+                    "label": "intact"
+                  }
+                ],
+                "selected_source": "ARP",
+                "selected_label": "intact",
+                "labels_conflict": false
+              },
+              {
+                "id": 40,
+                "stratum": "intact",
+                "candidate_labels": [
+                  {
+                    "source": "ARP",
+                    "label": "intact"
+                  },
+                  {
+                    "source": "AP",
+                    "label": "intact"
+                  }
+                ],
+                "selected_source": "ARP",
+                "selected_label": "intact",
+                "labels_conflict": false
+              },
+              {
+                "id": 61,
+                "stratum": "intact",
+                "candidate_labels": [
+                  {
+                    "source": "ARP",
+                    "label": "moderate"
+                  },
+                  {
+                    "source": "AP",
+                    "label": "intact"
+                  }
+                ],
+                "selected_source": "ARP",
+                "selected_label": "moderate",
+                "labels_conflict": true
+              },
+              {
+                "id": 67,
+                "stratum": "intact",
+                "candidate_labels": [
+                  {
+                    "source": "AP",
+                    "label": "intact"
+                  },
+                  {
+                    "source": "MP",
+                    "label": "moderate"
+                  }
+                ],
+                "selected_source": "AP",
+                "selected_label": "intact",
+                "labels_conflict": true
+              },
+              {
+                "id": 68,
+                "stratum": "intact",
+                "candidate_labels": [
+                  {
+                    "source": "ARP",
+                    "label": "intact"
+                  },
+                  {
+                    "source": "MP",
+                    "label": "severe"
+                  }
+                ],
+                "selected_source": "ARP",
+                "selected_label": "intact",
+                "labels_conflict": true
+              },
+              {
+                "id": 85,
+                "stratum": "intact",
+                "candidate_labels": [
+                  {
+                    "source": "ARP",
+                    "label": "moderate"
+                  },
+                  {
+                    "source": "AP",
+                    "label": "moderate"
+                  }
+                ],
+                "selected_source": "AP",
+                "selected_label": "moderate",
+                "labels_conflict": false
+              },
+              {
+                "id": 91,
+                "stratum": "intact",
+                "candidate_labels": [
+                  {
+                    "source": "SVM",
+                    "label": "nothicket"
+                  },
+                  {
+                    "source": "MP",
+                    "label": "intact"
+                  }
+                ],
+                "selected_source": "MP",
+                "selected_label": "intact",
+                "labels_conflict": true
+              },
+              {
+                "id": 100,
+                "stratum": "intact",
+                "candidate_labels": [
+                  {
+                    "source": "ARP",
+                    "label": "intact"
+                  },
+                  {
+                    "source": "AP",
+                    "label": "moderate"
+                  }
+                ],
+                "selected_source": "AP",
+                "selected_label": "moderate",
+                "labels_conflict": true
+              },
+              {
+                "id": 104,
+                "stratum": "intact",
+                "candidate_labels": [
+                  {
+                    "source": "ARP",
+                    "label": "intact"
+                  },
+                  {
+                    "source": "MP",
+                    "label": "intact"
+                  }
+                ],
+                "selected_source": "MP",
+                "selected_label": "intact",
+                "labels_conflict": false
+              },
+              {
+                "id": 120,
+                "stratum": "intact",
+                "candidate_labels": [
+                  {
+                    "source": "ARP",
+                    "label": "intact"
+                  },
+                  {
+                    "source": "AP",
+                    "label": "nothicket"
+                  }
+                ],
+                "selected_source": "AP",
+                "selected_label": "nothicket",
+                "labels_conflict": true
+              },
+              {
+                "id": 122,
+                "stratum": "intact",
+                "candidate_labels": [
+                  {
+                    "source": "SVM",
+                    "label": "intact"
+                  },
+                  {
+                    "source": "MP",
+                    "label": "intact"
+                  }
+                ],
+                "selected_source": "MP",
+                "selected_label": "intact",
+                "labels_conflict": false
+              },
+              {
+                "id": 143,
+                "stratum": "intact",
+                "candidate_labels": [
+                  {
+                    "source": "SVM",
+                    "label": "intact"
+                  },
+                  {
+                    "source": "AP",
+                    "label": "intact"
+                  }
+                ],
+                "selected_source": "AP",
+                "selected_label": "intact",
+                "labels_conflict": false
+              },
+              {
+                "id": 144,
+                "stratum": "intact",
+                "candidate_labels": [
+                  {
+                    "source": "SVM",
+                    "label": "intact"
+                  },
+                  {
+                    "source": "AP",
+                    "label": "moderate"
+                  }
+                ],
+                "selected_source": "AP",
+                "selected_label": "moderate",
+                "labels_conflict": true
+              },
+              {
+                "id": 145,
+                "stratum": "intact",
+                "candidate_labels": [
+                  {
+                    "source": "AP",
+                    "label": "moderate"
+                  },
+                  {
+                    "source": "MP",
+                    "label": "moderate"
+                  }
+                ],
+                "selected_source": "MP",
+                "selected_label": "moderate",
+                "labels_conflict": false
+              },
+              {
+                "id": 150,
+                "stratum": "intact",
+                "candidate_labels": [
+                  {
+                    "source": "ARP",
+                    "label": "moderate"
+                  },
+                  {
+                    "source": "SVM",
+                    "label": "intact"
+                  }
+                ],
+                "selected_source": "SVM",
+                "selected_label": "intact",
+                "labels_conflict": true
+              },
+              {
+                "id": 162,
+                "stratum": "intact",
+                "candidate_labels": [
+                  {
+                    "source": "SVM",
+                    "label": "intact"
+                  },
+                  {
+                    "source": "MP",
+                    "label": "intact"
+                  }
+                ],
+                "selected_source": "MP",
+                "selected_label": "intact",
+                "labels_conflict": false
+              },
+              {
+                "id": 165,
+                "stratum": "intact",
+                "candidate_labels": [
+                  {
+                    "source": "SVM",
+                    "label": "intact"
+                  },
+                  {
+                    "source": "MP",
+                    "label": "moderate"
+                  }
+                ],
+                "selected_source": "SVM",
+                "selected_label": "intact",
+                "labels_conflict": true
+              },
+              {
+                "id": 169,
+                "stratum": "intact",
+                "candidate_labels": [
+                  {
+                    "source": "ARP",
+                    "label": "moderate"
+                  },
+                  {
+                    "source": "MP",
+                    "label": "moderate"
+                  }
+                ],
+                "selected_source": "MP",
+                "selected_label": "moderate",
+                "labels_conflict": false
+              },
+              {
+                "id": 172,
+                "stratum": "intact",
+                "candidate_labels": [
+                  {
+                    "source": "ARP",
+                    "label": "moderate"
+                  },
+                  {
+                    "source": "AP",
+                    "label": "moderate"
+                  }
+                ],
+                "selected_source": "AP",
+                "selected_label": "moderate",
+                "labels_conflict": false
+              },
+              {
+                "id": 181,
+                "stratum": "intact",
+                "candidate_labels": [
+                  {
+                    "source": "SVM",
+                    "label": "intact"
+                  },
+                  {
+                    "source": "MP",
+                    "label": "severe"
+                  }
+                ],
+                "selected_source": "SVM",
+                "selected_label": "intact",
+                "labels_conflict": true
+              },
+              {
+                "id": 185,
+                "stratum": "intact",
+                "candidate_labels": [
+                  {
+                    "source": "ARP",
+                    "label": "intact"
+                  },
+                  {
+                    "source": "SVM",
+                    "label": "intact"
+                  }
+                ],
+                "selected_source": "ARP",
+                "selected_label": "intact",
+                "labels_conflict": false
+              },
+              {
+                "id": 203,
+                "stratum": "intact",
+                "candidate_labels": [
+                  {
+                    "source": "SVM",
+                    "label": "intact"
+                  },
+                  {
+                    "source": "AP",
+                    "label": "intact"
+                  }
+                ],
+                "selected_source": "AP",
+                "selected_label": "intact",
+                "labels_conflict": false
+              },
+              {
+                "id": 211,
+                "stratum": "intact",
+                "candidate_labels": [
+                  {
+                    "source": "ARP",
+                    "label": "moderate"
+                  },
+                  {
+                    "source": "SVM",
+                    "label": "intact"
+                  }
+                ],
+                "selected_source": "SVM",
+                "selected_label": "intact",
+                "labels_conflict": true
+              },
+              {
+                "id": 239,
+                "stratum": "moderate",
+                "candidate_labels": [
+                  {
+                    "source": "AP",
+                    "label": "moderate"
+                  },
+                  {
+                    "source": "MP",
+                    "label": "moderate"
+                  }
+                ],
+                "selected_source": "AP",
+                "selected_label": "moderate",
+                "labels_conflict": false
+              },
+              {
+                "id": 247,
+                "stratum": "moderate",
+                "candidate_labels": [
+                  {
+                    "source": "SVM",
+                    "label": "moderate"
+                  },
+                  {
+                    "source": "AP",
+                    "label": "severe"
+                  }
+                ],
+                "selected_source": "AP",
+                "selected_label": "severe",
+                "labels_conflict": true
+              },
+              {
+                "id": 262,
+                "stratum": "moderate",
+                "candidate_labels": [
+                  {
+                    "source": "ARP",
+                    "label": "severe"
+                  },
+                  {
+                    "source": "MP",
+                    "label": "severe"
+                  }
+                ],
+                "selected_source": "MP",
+                "selected_label": "severe",
+                "labels_conflict": false
+              },
+              {
+                "id": 274,
+                "stratum": "moderate",
+                "candidate_labels": [
+                  {
+                    "source": "AP",
+                    "label": "intact"
+                  },
+                  {
+                    "source": "MP",
+                    "label": "moderate"
+                  }
+                ],
+                "selected_source": "MP",
+                "selected_label": "moderate",
+                "labels_conflict": true
+              },
+              {
+                "id": 277,
+                "stratum": "moderate",
+                "candidate_labels": [
+                  {
+                    "source": "SVM",
+                    "label": "moderate"
+                  },
+                  {
+                    "source": "AP",
+                    "label": "moderate"
+                  }
+                ],
+                "selected_source": "SVM",
+                "selected_label": "moderate",
+                "labels_conflict": false
+              },
+              {
+                "id": 284,
+                "stratum": "moderate",
+                "candidate_labels": [
+                  {
+                    "source": "ARP",
+                    "label": "moderate"
+                  },
+                  {
+                    "source": "SVM",
+                    "label": "moderate"
+                  }
+                ],
+                "selected_source": "ARP",
+                "selected_label": "moderate",
+                "labels_conflict": false
+              },
+              {
+                "id": 291,
+                "stratum": "moderate",
+                "candidate_labels": [
+                  {
+                    "source": "ARP",
+                    "label": "moderate"
+                  },
+                  {
+                    "source": "SVM",
+                    "label": "intact"
+                  }
+                ],
+                "selected_source": "SVM",
+                "selected_label": "intact",
+                "labels_conflict": true
+              },
+              {
+                "id": 297,
+                "stratum": "moderate",
+                "candidate_labels": [
+                  {
+                    "source": "SVM",
+                    "label": "moderate"
+                  },
+                  {
+                    "source": "AP",
+                    "label": "nothicket"
+                  }
+                ],
+                "selected_source": "SVM",
+                "selected_label": "moderate",
+                "labels_conflict": true
+              },
+              {
+                "id": 300,
+                "stratum": "moderate",
+                "candidate_labels": [
+                  {
+                    "source": "SVM",
+                    "label": "moderate"
+                  },
+                  {
+                    "source": "MP",
+                    "label": "moderate"
+                  }
+                ],
+                "selected_source": "MP",
+                "selected_label": "moderate",
+                "labels_conflict": false
+              },
+              {
+                "id": 303,
+                "stratum": "moderate",
+                "candidate_labels": [
+                  {
+                    "source": "SVM",
+                    "label": "intact"
+                  },
+                  {
+                    "source": "MP",
+                    "label": "intact"
+                  }
+                ],
+                "selected_source": "SVM",
+                "selected_label": "intact",
+                "labels_conflict": false
+              },
+              {
+                "id": 310,
+                "stratum": "moderate",
+                "candidate_labels": [
+                  {
+                    "source": "ARP",
+                    "label": "severe"
+                  },
+                  {
+                    "source": "AP",
+                    "label": "moderate"
+                  }
+                ],
+                "selected_source": "ARP",
+                "selected_label": "severe",
+                "labels_conflict": true
+              },
+              {
+                "id": 324,
+                "stratum": "moderate",
+                "candidate_labels": [
+                  {
+                    "source": "AP",
+                    "label": "severe"
+                  },
+                  {
+                    "source": "MP",
+                    "label": "severe"
+                  }
+                ],
+                "selected_source": "AP",
+                "selected_label": "severe",
+                "labels_conflict": false
+              },
+              {
+                "id": 325,
+                "stratum": "moderate",
+                "candidate_labels": [
+                  {
+                    "source": "ARP",
+                    "label": "severe"
+                  },
+                  {
+                    "source": "AP",
+                    "label": "severe"
+                  }
+                ],
+                "selected_source": "ARP",
+                "selected_label": "severe",
+                "labels_conflict": false
+              },
+              {
+                "id": 330,
+                "stratum": "moderate",
+                "candidate_labels": [
+                  {
+                    "source": "AP",
+                    "label": "severe"
+                  },
+                  {
+                    "source": "MP",
+                    "label": "severe"
+                  }
+                ],
+                "selected_source": "AP",
+                "selected_label": "severe",
+                "labels_conflict": false
+              },
+              {
+                "id": 331,
+                "stratum": "moderate",
+                "candidate_labels": [
+                  {
+                    "source": "ARP",
+                    "label": "severe"
+                  },
+                  {
+                    "source": "MP",
+                    "label": "severe"
+                  }
+                ],
+                "selected_source": "ARP",
+                "selected_label": "severe",
+                "labels_conflict": false
+              },
+              {
+                "id": 339,
+                "stratum": "moderate",
+                "candidate_labels": [
+                  {
+                    "source": "ARP",
+                    "label": "moderate"
+                  },
+                  {
+                    "source": "SVM",
+                    "label": "moderate"
+                  }
+                ],
+                "selected_source": "ARP",
+                "selected_label": "moderate",
+                "labels_conflict": false
+              },
+              {
+                "id": 343,
+                "stratum": "moderate",
+                "candidate_labels": [
+                  {
+                    "source": "ARP",
+                    "label": "severe"
+                  },
+                  {
+                    "source": "MP",
+                    "label": "severe"
+                  }
+                ],
+                "selected_source": "ARP",
+                "selected_label": "severe",
+                "labels_conflict": false
+              },
+              {
+                "id": 359,
+                "stratum": "moderate",
+                "candidate_labels": [
+                  {
+                    "source": "SVM",
+                    "label": "intact"
+                  },
+                  {
+                    "source": "AP",
+                    "label": "intact"
+                  }
+                ],
+                "selected_source": "SVM",
+                "selected_label": "intact",
+                "labels_conflict": false
+              },
+              {
+                "id": 361,
+                "stratum": "moderate",
+                "candidate_labels": [
+                  {
+                    "source": "AP",
+                    "label": "nothicket"
+                  },
+                  {
+                    "source": "MP",
+                    "label": "nothicket"
+                  }
+                ],
+                "selected_source": "MP",
+                "selected_label": "nothicket",
+                "labels_conflict": false
+              },
+              {
+                "id": 373,
+                "stratum": "moderate",
+                "candidate_labels": [
+                  {
+                    "source": "ARP",
+                    "label": "moderate"
+                  },
+                  {
+                    "source": "MP",
+                    "label": "severe"
+                  }
+                ],
+                "selected_source": "MP",
+                "selected_label": "severe",
+                "labels_conflict": true
+              },
+              {
+                "id": 400,
+                "stratum": "moderate",
+                "candidate_labels": [
+                  {
+                    "source": "ARP",
+                    "label": "moderate"
+                  },
+                  {
+                    "source": "AP",
+                    "label": "moderate"
+                  }
+                ],
+                "selected_source": "AP",
+                "selected_label": "moderate",
+                "labels_conflict": false
+              },
+              {
+                "id": 406,
+                "stratum": "moderate",
+                "candidate_labels": [
+                  {
+                    "source": "SVM",
+                    "label": "moderate"
+                  },
+                  {
+                    "source": "MP",
+                    "label": "severe"
+                  }
+                ],
+                "selected_source": "SVM",
+                "selected_label": "moderate",
+                "labels_conflict": true
+              },
+              {
+                "id": 408,
+                "stratum": "moderate",
+                "candidate_labels": [
+                  {
+                    "source": "ARP",
+                    "label": "intact"
+                  },
+                  {
+                    "source": "AP",
+                    "label": "moderate"
+                  }
+                ],
+                "selected_source": "AP",
+                "selected_label": "moderate",
+                "labels_conflict": true
+              },
+              {
+                "id": 421,
+                "stratum": "moderate",
+                "candidate_labels": [
+                  {
+                    "source": "SVM",
+                    "label": "moderate"
+                  },
+                  {
+                    "source": "AP",
+                    "label": "moderate"
+                  }
+                ],
+                "selected_source": "AP",
+                "selected_label": "moderate",
+                "labels_conflict": false
+              },
+              {
+                "id": 443,
+                "stratum": "moderate",
+                "candidate_labels": [
+                  {
+                    "source": "SVM",
+                    "label": "intact"
+                  },
+                  {
+                    "source": "AP",
+                    "label": "intact"
+                  }
+                ],
+                "selected_source": "SVM",
+                "selected_label": "intact",
+                "labels_conflict": false
+              },
+              {
+                "id": 473,
+                "stratum": "moderate",
+                "candidate_labels": [
+                  {
+                    "source": "ARP",
+                    "label": "intact"
+                  },
+                  {
+                    "source": "AP",
+                    "label": "moderate"
+                  }
+                ],
+                "selected_source": "ARP",
+                "selected_label": "intact",
+                "labels_conflict": true
+              },
+              {
+                "id": 475,
+                "stratum": "moderate",
+                "candidate_labels": [
+                  {
+                    "source": "AP",
+                    "label": "intact"
+                  },
+                  {
+                    "source": "MP",
+                    "label": "intact"
+                  }
+                ],
+                "selected_source": "MP",
+                "selected_label": "intact",
+                "labels_conflict": false
+              },
+              {
+                "id": 485,
+                "stratum": "moderate",
+                "candidate_labels": [
+                  {
+                    "source": "AP",
+                    "label": "moderate"
+                  },
+                  {
+                    "source": "MP",
+                    "label": "severe"
+                  }
+                ],
+                "selected_source": "MP",
+                "selected_label": "severe",
+                "labels_conflict": true
+              },
+              {
+                "id": 489,
+                "stratum": "moderate",
+                "candidate_labels": [
+                  {
+                    "source": "AP",
+                    "label": "transformed"
+                  },
+                  {
+                    "source": "MP",
+                    "label": "transformed"
+                  }
+                ],
+                "selected_source": "MP",
+                "selected_label": "transformed",
+                "labels_conflict": false
+              },
+              {
+                "id": 515,
+                "stratum": "severe",
+                "candidate_labels": [
+                  {
+                    "source": "ARP",
+                    "label": "severe"
+                  },
+                  {
+                    "source": "MP",
+                    "label": "severe"
+                  }
+                ],
+                "selected_source": "ARP",
+                "selected_label": "severe",
+                "labels_conflict": false
+              },
+              {
+                "id": 525,
+                "stratum": "severe",
+                "candidate_labels": [
+                  {
+                    "source": "SVM",
+                    "label": "severe"
+                  },
+                  {
+                    "source": "AP",
+                    "label": "transformed"
+                  }
+                ],
+                "selected_source": "AP",
+                "selected_label": "transformed",
+                "labels_conflict": true
+              },
+              {
+                "id": 529,
+                "stratum": "severe",
+                "candidate_labels": [
+                  {
+                    "source": "SVM",
+                    "label": "severe"
+                  },
+                  {
+                    "source": "AP",
+                    "label": "severe"
+                  }
+                ],
+                "selected_source": "AP",
+                "selected_label": "severe",
+                "labels_conflict": false
+              },
+              {
+                "id": 543,
+                "stratum": "severe",
+                "candidate_labels": [
+                  {
+                    "source": "ARP",
+                    "label": "nothicket"
+                  },
+                  {
+                    "source": "AP",
+                    "label": "nothicket"
+                  }
+                ],
+                "selected_source": "AP",
+                "selected_label": "nothicket",
+                "labels_conflict": false
+              },
+              {
+                "id": 550,
+                "stratum": "severe",
+                "candidate_labels": [
+                  {
+                    "source": "ARP",
+                    "label": "nothicket"
+                  },
+                  {
+                    "source": "SVM",
+                    "label": "severe"
+                  }
+                ],
+                "selected_source": "SVM",
+                "selected_label": "severe",
+                "labels_conflict": true
+              },
+              {
+                "id": 568,
+                "stratum": "severe",
+                "candidate_labels": [
+                  {
+                    "source": "SVM",
+                    "label": "severe"
+                  },
+                  {
+                    "source": "MP",
+                    "label": "severe"
+                  }
+                ],
+                "selected_source": "MP",
+                "selected_label": "severe",
+                "labels_conflict": false
+              },
+              {
+                "id": 573,
+                "stratum": "severe",
+                "candidate_labels": [
+                  {
+                    "source": "AP",
+                    "label": "severe"
+                  },
+                  {
+                    "source": "MP",
+                    "label": "severe"
+                  }
+                ],
+                "selected_source": "MP",
+                "selected_label": "severe",
+                "labels_conflict": false
+              },
+              {
+                "id": 597,
+                "stratum": "severe",
+                "candidate_labels": [
+                  {
+                    "source": "ARP",
+                    "label": "severe"
+                  },
+                  {
+                    "source": "AP",
+                    "label": "severe"
+                  }
+                ],
+                "selected_source": "ARP",
+                "selected_label": "severe",
+                "labels_conflict": false
+              },
+              {
+                "id": 612,
+                "stratum": "severe",
+                "candidate_labels": [
+                  {
+                    "source": "AP",
+                    "label": "nothicket"
+                  },
+                  {
+                    "source": "MP",
+                    "label": "severe"
+                  }
+                ],
+                "selected_source": "MP",
+                "selected_label": "severe",
+                "labels_conflict": true
+              },
+              {
+                "id": 614,
+                "stratum": "severe",
+                "candidate_labels": [
+                  {
+                    "source": "ARP",
+                    "label": "severe"
+                  },
+                  {
+                    "source": "MP",
+                    "label": "severe"
+                  }
+                ],
+                "selected_source": "ARP",
+                "selected_label": "severe",
+                "labels_conflict": false
+              },
+              {
+                "id": 629,
+                "stratum": "severe",
+                "candidate_labels": [
+                  {
+                    "source": "ARP",
+                    "label": "nothicket"
+                  },
+                  {
+                    "source": "AP",
+                    "label": "severe"
+                  }
+                ],
+                "selected_source": "AP",
+                "selected_label": "severe",
+                "labels_conflict": true
+              },
+              {
+                "id": 630,
+                "stratum": "severe",
+                "candidate_labels": [
+                  {
+                    "source": "AP",
+                    "label": "severe"
+                  },
+                  {
+                    "source": "MP",
+                    "label": "severe"
+                  }
+                ],
+                "selected_source": "MP",
+                "selected_label": "severe",
+                "labels_conflict": false
+              },
+              {
+                "id": 636,
+                "stratum": "severe",
+                "candidate_labels": [
+                  {
+                    "source": "SVM",
+                    "label": "moderate"
+                  },
+                  {
+                    "source": "AP",
+                    "label": "nothicket"
+                  }
+                ],
+                "selected_source": "AP",
+                "selected_label": "nothicket",
+                "labels_conflict": true
+              },
+              {
+                "id": 665,
+                "stratum": "severe",
+                "candidate_labels": [
+                  {
+                    "source": "SVM",
+                    "label": "moderate"
+                  },
+                  {
+                    "source": "MP",
+                    "label": "moderate"
+                  }
+                ],
+                "selected_source": "MP",
+                "selected_label": "moderate",
+                "labels_conflict": false
+              },
+              {
+                "id": 669,
+                "stratum": "severe",
+                "candidate_labels": [
+                  {
+                    "source": "ARP",
+                    "label": "severe"
+                  },
+                  {
+                    "source": "SVM",
+                    "label": "severe"
+                  }
+                ],
+                "selected_source": "ARP",
+                "selected_label": "severe",
+                "labels_conflict": false
+              },
+              {
+                "id": 676,
+                "stratum": "severe",
+                "candidate_labels": [
+                  {
+                    "source": "SVM",
+                    "label": "severe"
+                  },
+                  {
+                    "source": "AP",
+                    "label": "nothicket"
+                  }
+                ],
+                "selected_source": "SVM",
+                "selected_label": "severe",
+                "labels_conflict": true
+              },
+              {
+                "id": 685,
+                "stratum": "severe",
+                "candidate_labels": [
+                  {
+                    "source": "SVM",
+                    "label": "moderate"
+                  },
+                  {
+                    "source": "MP",
+                    "label": "severe"
+                  }
+                ],
+                "selected_source": "SVM",
+                "selected_label": "moderate",
+                "labels_conflict": true
+              },
+              {
+                "id": 687,
+                "stratum": "severe",
+                "candidate_labels": [
+                  {
+                    "source": "SVM",
+                    "label": "severe"
+                  },
+                  {
+                    "source": "MP",
+                    "label": "nothicket"
+                  }
+                ],
+                "selected_source": "SVM",
+                "selected_label": "severe",
+                "labels_conflict": true
+              },
+              {
+                "id": 693,
+                "stratum": "severe",
+                "candidate_labels": [
+                  {
+                    "source": "SVM",
+                    "label": "severe"
+                  },
+                  {
+                    "source": "AP",
+                    "label": "severe"
+                  }
+                ],
+                "selected_source": "AP",
+                "selected_label": "severe",
+                "labels_conflict": false
+              },
+              {
+                "id": 695,
+                "stratum": "severe",
+                "candidate_labels": [
+                  {
+                    "source": "ARP",
+                    "label": "transformed"
+                  },
+                  {
+                    "source": "MP",
+                    "label": "transformed"
+                  }
+                ],
+                "selected_source": "MP",
+                "selected_label": "transformed",
+                "labels_conflict": false
+              },
+              {
+                "id": 703,
+                "stratum": "severe",
+                "candidate_labels": [
+                  {
+                    "source": "ARP",
+                    "label": "severe"
+                  },
+                  {
+                    "source": "MP",
+                    "label": "severe"
+                  }
+                ],
+                "selected_source": "ARP",
+                "selected_label": "severe",
+                "labels_conflict": false
+              },
+              {
+                "id": 721,
+                "stratum": "severe",
+                "candidate_labels": [
+                  {
+                    "source": "SVM",
+                    "label": "severe"
+                  },
+                  {
+                    "source": "MP",
+                    "label": "moderate"
+                  }
+                ],
+                "selected_source": "MP",
+                "selected_label": "moderate",
+                "labels_conflict": true
+              },
+              {
+                "id": 729,
+                "stratum": "severe",
+                "candidate_labels": [
+                  {
+                    "source": "ARP",
+                    "label": "moderate"
+                  },
+                  {
+                    "source": "AP",
+                    "label": "nothicket"
+                  }
+                ],
+                "selected_source": "AP",
+                "selected_label": "nothicket",
+                "labels_conflict": true
+              },
+              {
+                "id": 738,
+                "stratum": "severe",
+                "candidate_labels": [
+                  {
+                    "source": "ARP",
+                    "label": "severe"
+                  },
+                  {
+                    "source": "SVM",
+                    "label": "severe"
+                  }
+                ],
+                "selected_source": "ARP",
+                "selected_label": "severe",
+                "labels_conflict": false
+              },
+              {
+                "id": 740,
+                "stratum": "severe",
+                "candidate_labels": [
+                  {
+                    "source": "SVM",
+                    "label": "moderate"
+                  },
+                  {
+                    "source": "MP",
+                    "label": "nothicket"
+                  }
+                ],
+                "selected_source": "MP",
+                "selected_label": "nothicket",
+                "labels_conflict": true
+              },
+              {
+                "id": 745,
+                "stratum": "severe",
+                "candidate_labels": [
+                  {
+                    "source": "ARP",
+                    "label": "severe"
+                  },
+                  {
+                    "source": "MP",
+                    "label": "severe"
+                  }
+                ],
+                "selected_source": "MP",
+                "selected_label": "severe",
+                "labels_conflict": false
+              },
+              {
+                "id": 750,
+                "stratum": "severe",
+                "candidate_labels": [
+                  {
+                    "source": "SVM",
+                    "label": "severe"
+                  },
+                  {
+                    "source": "AP",
+                    "label": "severe"
+                  }
+                ],
+                "selected_source": "SVM",
+                "selected_label": "severe",
+                "labels_conflict": false
+              },
+              {
+                "id": 754,
+                "stratum": "severe",
+                "candidate_labels": [
+                  {
+                    "source": "ARP",
+                    "label": "severe"
+                  },
+                  {
+                    "source": "AP",
+                    "label": "severe"
+                  }
+                ],
+                "selected_source": "ARP",
+                "selected_label": "severe",
+                "labels_conflict": false
+              },
+              {
+                "id": 764,
+                "stratum": "severe",
+                "candidate_labels": [
+                  {
+                    "source": "AP",
+                    "label": "severe"
+                  },
+                  {
+                    "source": "MP",
+                    "label": "severe"
+                  }
+                ],
+                "selected_source": "MP",
+                "selected_label": "severe",
+                "labels_conflict": false
+              },
+              {
+                "id": 766,
+                "stratum": "severe",
+                "candidate_labels": [
+                  {
+                    "source": "SVM",
+                    "label": "severe"
+                  },
+                  {
+                    "source": "AP",
+                    "label": "severe"
+                  }
+                ],
+                "selected_source": "AP",
+                "selected_label": "severe",
+                "labels_conflict": false
+              },
+              {
+                "id": 785,
+                "stratum": "severe",
+                "candidate_labels": [
+                  {
+                    "source": "SVM",
+                    "label": "severe"
+                  },
+                  {
+                    "source": "MP",
+                    "label": "severe"
+                  }
+                ],
+                "selected_source": "MP",
+                "selected_label": "severe",
+                "labels_conflict": false
+              },
+              {
+                "id": 788,
+                "stratum": "severe",
+                "candidate_labels": [
+                  {
+                    "source": "ARP",
+                    "label": "moderate"
+                  },
+                  {
+                    "source": "AP",
+                    "label": "nothicket"
+                  }
+                ],
+                "selected_source": "ARP",
+                "selected_label": "moderate",
+                "labels_conflict": true
+              },
+              {
+                "id": 810,
+                "stratum": "severe",
+                "candidate_labels": [
+                  {
+                    "source": "ARP",
+                    "label": "transformed"
+                  },
+                  {
+                    "source": "MP",
+                    "label": "severe"
+                  }
+                ],
+                "selected_source": "MP",
+                "selected_label": "severe",
+                "labels_conflict": true
+              },
+              {
+                "id": 821,
+                "stratum": "severe",
+                "candidate_labels": [
+                  {
+                    "source": "ARP",
+                    "label": "severe"
+                  },
+                  {
+                    "source": "MP",
+                    "label": "severe"
+                  }
+                ],
+                "selected_source": "ARP",
+                "selected_label": "severe",
+                "labels_conflict": false
+              },
+              {
+                "id": 829,
+                "stratum": "severe",
+                "candidate_labels": [
+                  {
+                    "source": "SVM",
+                    "label": "moderate"
+                  },
+                  {
+                    "source": "AP",
+                    "label": "severe"
+                  }
+                ],
+                "selected_source": "SVM",
+                "selected_label": "moderate",
+                "labels_conflict": true
+              },
+              {
+                "id": 838,
+                "stratum": "severe",
+                "candidate_labels": [
+                  {
+                    "source": "ARP",
+                    "label": "severe"
+                  },
+                  {
+                    "source": "MP",
+                    "label": "severe"
+                  }
+                ],
+                "selected_source": "MP",
+                "selected_label": "severe",
+                "labels_conflict": false
+              }
+            ]
+          }
+        },
+        "scenarios": {
+          "A_nothicket_class": {
+            "nothicket_mode": "class",
+            "ref_classes": [
+              "intact",
+              "moderate",
+              "severe",
+              "nothicket"
+            ],
+            "n_used": 821,
+            "olofsson": {
+              "ref_classes": [
+                "intact",
+                "moderate",
+                "severe",
+                "nothicket"
+              ],
+              "n_h": {
+                "intact": 231,
+                "moderate": 265,
+                "severe": 325
+              },
+              "confusion_map_x_ref": {
+                "intact": {
+                  "intact": 154,
+                  "moderate": 55,
+                  "severe": 8,
+                  "nothicket": 14
+                },
+                "moderate": {
+                  "intact": 29,
+                  "moderate": 119,
+                  "severe": 90,
+                  "nothicket": 27
+                },
+                "severe": {
+                  "intact": 5,
+                  "moderate": 37,
+                  "severe": 242,
+                  "nothicket": 41
+                }
+              },
+              "area_proportion": {
+                "intact": {
+                  "p": 0.224425475527992,
+                  "se": 0.010728161640812027,
+                  "ci95": [
+                    0.20339866509167628,
+                    0.2454522859643077
+                  ]
+                },
+                "moderate": {
+                  "p": 0.24607062664264615,
+                  "se": 0.014083039661363018,
+                  "ci95": [
+                    0.21846837611352546,
+                    0.2736728771717668
+                  ]
+                },
+                "severe": {
+                  "p": 0.42869696204469115,
+                  "se": 0.013849303790606818,
+                  "ci95": [
+                    0.4015528254041477,
+                    0.4558410986852346
+                  ]
+                },
+                "nothicket": {
+                  "p": 0.10080693578467072,
+                  "se": 0.010561020421323732,
+                  "ci95": [
+                    0.08010771611888418,
+                    0.12150615545045726
+                  ]
+                }
+              },
+              "area_ha": {
+                "intact": {
+                  "area": 426094.2078374456,
+                  "se": 20368.487691245715,
+                  "ci95": [
+                    386172.7055430566,
+                    466015.7101318346
+                  ]
+                },
+                "moderate": {
+                  "area": 467189.69174372795,
+                  "se": 26738.059101063827,
+                  "ci95": [
+                    414784.05888913944,
+                    519595.32459831645
+                  ]
+                },
+                "severe": {
+                  "area": 813924.0521380507,
+                  "se": 26294.288176846105,
+                  "ci95": [
+                    762388.1943123149,
+                    865459.9099637864
+                  ]
+                },
+                "nothicket": {
+                  "area": 191392.04828077584,
+                  "se": 20051.153371925237,
+                  "ci95": [
+                    152092.5098233135,
+                    230691.58673823814
+                  ]
+                }
+              },
+              "overall_accuracy": {
+                "OA": 0.6368468689403253,
+                "se": 0.01622002273401626,
+                "ci95": [
+                  0.6050562085532325,
+                  0.668637529327418
+                ]
+              },
+              "users_accuracy": {
+                "intact": {
+                  "U": 0.6666666666666666,
+                  "se": 0.03108349360801046
+                },
+                "moderate": {
+                  "U": 0.4490566037735849,
+                  "se": 0.03061273071364107
+                },
+                "severe": {
+                  "U": 0.7446153846153846,
+                  "se": 0.02422651042632075
+                }
+              },
+              "producers_accuracy": {
+                "intact": {
+                  "P": 0.8285961027066858,
+                  "se": 0.024248678735405312
+                },
+                "moderate": {
+                  "P": 0.5311605224604111,
+                  "se": 0.029024128196339035
+                },
+                "severe": {
+                  "P": 0.7468814111322971,
+                  "se": 0.017047397672737066
+                }
+              },
+              "area_total_ha": 1898600.0
+            },
+            "ppi_pp": {
+              "intact": {
+                "ppi": {
+                  "p": 0.2244254070387568,
+                  "ci95": [
+                    0.2033053227147364,
+                    0.2455454913627771
+                  ],
+                  "se_implied": 0.010775751233498616,
+                  "area": 426094.07780378364,
+                  "area_ci95": [
+                    385995.4857061985,
+                    466192.66990136856
+                  ]
+                },
+                "stratified": {
+                  "p": 0.224425475527992,
+                  "se": 0.010728161640812027,
+                  "ci95": [
+                    0.20339866509167628,
+                    0.2454522859643077
+                  ],
+                  "area": 426094.2078374456,
+                  "area_ci95": [
+                    386172.7055430566,
+                    466015.7101318346
+                  ]
+                },
+                "ppi_beats_stratified": false
+              },
+              "moderate": {
+                "ppi": {
+                  "p": 0.24607067855275852,
+                  "ci95": [
+                    0.21834209138551028,
+                    0.2737992657200068
+                  ],
+                  "se_implied": 0.014147498314238331,
+                  "area": 467189.79030026734,
+                  "area_ci95": [
+                    414544.2947045298,
+                    519835.2858960049
+                  ]
+                },
+                "stratified": {
+                  "p": 0.24607062664264612,
+                  "se": 0.014083039661363018,
+                  "ci95": [
+                    0.21846837611352543,
+                    0.2736728771717668
+                  ],
+                  "area": 467189.6917437279,
+                  "area_ci95": [
+                    414784.0588891394,
+                    519595.32459831645
+                  ]
+                },
+                "ppi_beats_stratified": false
+              },
+              "severe": {
+                "ppi": {
+                  "p": 0.42869691596461645,
+                  "ci95": [
+                    0.4006527580453215,
+                    0.4567410738839114
+                  ],
+                  "se_implied": 0.014308506758544379,
+                  "area": 813923.9646504208,
+                  "area_ci95": [
+                    760679.3264248475,
+                    867168.6028759942
+                  ]
+                },
+                "stratified": {
+                  "p": 0.42869696204469115,
+                  "se": 0.013849303790606818,
+                  "ci95": [
+                    0.4015528254041477,
+                    0.4558410986852346
+                  ],
+                  "area": 813924.0521380507,
+                  "area_ci95": [
+                    762388.1943123149,
+                    865459.9099637864
+                  ]
+                },
+                "ppi_beats_stratified": false
+              },
+              "nothicket": {
+                "ppi": {
+                  "p": 0.10080693578467072,
+                  "ci95": [
+                    0.08002947506545233,
+                    0.12158439650388911
+                  ],
+                  "se_implied": 0.010600940059668622,
+                  "area": 191392.04828077584,
+                  "area_ci95": [
+                    151943.9613592678,
+                    230840.13520228385
+                  ]
+                },
+                "stratified": {
+                  "p": 0.10080693578467072,
+                  "se": 0.010561020421323732,
+                  "ci95": [
+                    0.08010771611888418,
+                    0.12150615545045726
+                  ],
+                  "area": 191392.04828077584,
+                  "area_ci95": [
+                    152092.5098233135,
+                    230691.58673823814
+                  ]
+                },
+                "ppi_beats_stratified": false
+              }
+            }
+          },
+          "B_nothicket_to_severe": {
+            "nothicket_mode": "severe",
+            "ref_classes": [
+              "intact",
+              "moderate",
+              "severe"
+            ],
+            "n_used": 821,
+            "olofsson": {
+              "ref_classes": [
+                "intact",
+                "moderate",
+                "severe"
+              ],
+              "n_h": {
+                "intact": 231,
+                "moderate": 265,
+                "severe": 325
+              },
+              "confusion_map_x_ref": {
+                "intact": {
+                  "intact": 154,
+                  "moderate": 55,
+                  "severe": 22
+                },
+                "moderate": {
+                  "intact": 29,
+                  "moderate": 119,
+                  "severe": 117
+                },
+                "severe": {
+                  "intact": 5,
+                  "moderate": 37,
+                  "severe": 283
+                }
+              },
+              "area_proportion": {
+                "intact": {
+                  "p": 0.224425475527992,
+                  "se": 0.010728161640812027,
+                  "ci95": [
+                    0.20339866509167628,
+                    0.2454522859643077
+                  ]
+                },
+                "moderate": {
+                  "p": 0.24607062664264615,
+                  "se": 0.014083039661363018,
+                  "ci95": [
+                    0.21846837611352546,
+                    0.2736728771717668
+                  ]
+                },
+                "severe": {
+                  "p": 0.5295038978293619,
+                  "se": 0.01313372728225547,
+                  "ci95": [
+                    0.5037622653733701,
+                    0.5552455302853537
+                  ]
+                }
+              },
+              "area_ha": {
+                "intact": {
+                  "area": 426094.2078374456,
+                  "se": 20368.487691245715,
+                  "ci95": [
+                    386172.7055430566,
+                    466015.7101318346
+                  ]
+                },
+                "moderate": {
+                  "area": 467189.69174372795,
+                  "se": 26738.059101063827,
+                  "ci95": [
+                    414784.05888913944,
+                    519595.32459831645
+                  ]
+                },
+                "severe": {
+                  "area": 1005316.1004188266,
+                  "se": 24935.694618090234,
+                  "ci95": [
+                    956443.0370378805,
+                    1054189.1637997725
+                  ]
+                }
+              },
+              "overall_accuracy": {
+                "OA": 0.6910932221236425,
+                "se": 0.014791389740542827,
+                "ci95": [
+                  0.6621026309508834,
+                  0.7200838132964017
+                ]
+              },
+              "users_accuracy": {
+                "intact": {
+                  "U": 0.6666666666666666,
+                  "se": 0.03108349360801046
+                },
+                "moderate": {
+                  "U": 0.4490566037735849,
+                  "se": 0.03061273071364107
+                },
+                "severe": {
+                  "U": 0.8707692307692307,
+                  "se": 0.018636398866196714
+                }
+              },
+              "producers_accuracy": {
+                "intact": {
+                  "P": 0.8285961027066858,
+                  "se": 0.024248678735405312
+                },
+                "moderate": {
+                  "P": 0.5311605224604111,
+                  "se": 0.029024128196339035
+                },
+                "severe": {
+                  "P": 0.7071376559801069,
+                  "se": 0.014586062027645633
+                }
+              },
+              "area_total_ha": 1898600.0
+            },
+            "ppi_pp": {
+              "intact": {
+                "ppi": {
+                  "p": 0.2244254070387568,
+                  "ci95": [
+                    0.2033053227147364,
+                    0.2455454913627771
+                  ],
+                  "se_implied": 0.010775751233498616,
+                  "area": 426094.07780378364,
+                  "area_ci95": [
+                    385995.4857061985,
+                    466192.66990136856
+                  ]
+                },
+                "stratified": {
+                  "p": 0.224425475527992,
+                  "se": 0.010728161640812027,
+                  "ci95": [
+                    0.20339866509167628,
+                    0.2454522859643077
+                  ],
+                  "area": 426094.2078374456,
+                  "area_ci95": [
+                    386172.7055430566,
+                    466015.7101318346
+                  ]
+                },
+                "ppi_beats_stratified": false
+              },
+              "moderate": {
+                "ppi": {
+                  "p": 0.24607067855275852,
+                  "ci95": [
+                    0.21834209138551028,
+                    0.2737992657200068
+                  ],
+                  "se_implied": 0.014147498314238331,
+                  "area": 467189.79030026734,
+                  "area_ci95": [
+                    414544.2947045298,
+                    519835.2858960049
+                  ]
+                },
+                "stratified": {
+                  "p": 0.24607062664264612,
+                  "se": 0.014083039661363018,
+                  "ci95": [
+                    0.21846837611352543,
+                    0.2736728771717668
+                  ],
+                  "area": 467189.6917437279,
+                  "area_ci95": [
+                    414784.0588891394,
+                    519595.32459831645
+                  ]
+                },
+                "ppi_beats_stratified": false
+              },
+              "severe": {
+                "ppi": {
+                  "p": 0.5295038485556914,
+                  "ci95": [
+                    0.5025632580678203,
+                    0.5564444390435626
+                  ],
+                  "se_implied": 0.013745451804408173,
+                  "area": 1005316.0068678358,
+                  "area_ci95": [
+                    954166.6017675636,
+                    1056465.4119681078
+                  ]
+                },
+                "stratified": {
+                  "p": 0.5295038978293619,
+                  "se": 0.01313372728225547,
+                  "ci95": [
+                    0.5037622653733701,
+                    0.5552455302853537
+                  ],
+                  "area": 1005316.1004188266,
+                  "area_ci95": [
+                    956443.0370378805,
+                    1054189.1637997725
+                  ]
+                },
+                "ppi_beats_stratified": false
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "efg_area_estimates": {
+    "random": {
+      "A_nothicket_class": {
+        "adjudicate": "random",
+        "scenario": "A_nothicket_class",
+        "ref_classes": [
+          "intact",
+          "moderate",
+          "severe",
+          "nothicket"
+        ],
+        "mapped_cells": {
+          "10": {
+            "efg": "Arid",
+            "efg_id": 1,
+            "map_class": "intact",
+            "area_mapped_ha": 88485.67761196289,
+            "n": 39,
+            "users_accuracy": 0.6153846153846154,
+            "users_accuracy_se": 0.07892141169885801,
+            "users_accuracy_moe95": 0.15468312453881977,
+            "reference_area_by_class": {
+              "intact": {
+                "area_ha": 54452.72468428486,
+                "se_ha": 6983.414592266146,
+                "moe95_ha": 13687.241089953113
+              },
+              "moderate": {
+                "area_ha": 27226.36234214243,
+                "se_ha": 6625.048787045132,
+                "moe95_ha": 12984.857018429228
+              },
+              "severe": {
+                "area_ha": 4537.727057023738,
+                "se_ha": 3166.156920899358,
+                "moe95_ha": 6205.553534364974
+              },
+              "nothicket": {
+                "area_ha": 2268.863528511869,
+                "se_ha": 2268.863528511869,
+                "moe95_ha": 4446.890801719729
+              }
+            },
+            "low_n": false,
+            "estimable": true
+          },
+          "11": {
+            "efg": "Arid",
+            "efg_id": 1,
+            "map_class": "moderate",
+            "area_mapped_ha": 173115.21521289062,
+            "n": 73,
+            "users_accuracy": 0.4657534246575342,
+            "users_accuracy_se": 0.05878718351408097,
+            "users_accuracy_moe95": 0.11522076244014552,
+            "reference_area_by_class": {
+              "intact": {
+                "area_ha": 14228.647825717037,
+                "se_ha": 5603.4971862682305,
+                "moe95_ha": 10982.652672557262
+              },
+              "moderate": {
+                "area_ha": 80629.00434572987,
+                "se_ha": 10176.955925799823,
+                "moe95_ha": 19946.467086819135
+              },
+              "severe": {
+                "area_ha": 71143.23912858518,
+                "se_ha": 10037.856593209273,
+                "moe95_ha": 19673.8374046681
+              },
+              "nothicket": {
+                "area_ha": 7114.323912858518,
+                "se_ha": 4050.007048230572,
+                "moe95_ha": 7937.867951665295
+              }
+            },
+            "low_n": false,
+            "estimable": true
+          },
+          "12": {
+            "efg": "Arid",
+            "efg_id": 1,
+            "map_class": "severe",
+            "area_mapped_ha": 488485.6689663086,
+            "n": 203,
+            "users_accuracy": 0.7586206896551724,
+            "users_accuracy_se": 0.030108330718011642,
+            "users_accuracy_moe95": 0.059011243841923806,
+            "reference_area_by_class": {
+              "intact": {
+                "area_ha": 2406.333344661619,
+                "se_ha": 2406.333344661619,
+                "moe95_ha": 4716.326690334582
+              },
+              "moderate": {
+                "area_ha": 50533.00023789399,
+                "se_ha": 10467.0776447386,
+                "moe95_ha": 20515.09520707199
+              },
+              "severe": {
+                "area_ha": 370575.33507788926,
+                "se_ha": 14707.488072246775,
+                "moe95_ha": 28826.146924656106
+              },
+              "nothicket": {
+                "area_ha": 64971.00030586371,
+                "se_ha": 11671.275492386674,
+                "moe95_ha": 22875.279618722867
+              }
+            },
+            "low_n": false,
+            "estimable": true
+          },
+          "20": {
+            "efg": "Valley",
+            "efg_id": 2,
+            "map_class": "intact",
+            "area_mapped_ha": 284519.1395746582,
+            "n": 130,
+            "users_accuracy": 0.6153846153846154,
+            "users_accuracy_se": 0.0428343112607465,
+            "users_accuracy_moe95": 0.08395370737364162,
+            "reference_area_by_class": {
+              "intact": {
+                "area_ha": 175088.70127671273,
+                "se_ha": 12187.181384180687,
+                "moe95_ha": 23886.43658605115
+              },
+              "moderate": {
+                "area_ha": 76601.30680856181,
+                "se_ha": 11111.408237171267,
+                "moe95_ha": 21777.959962377372
+              },
+              "severe": {
+                "area_ha": 8754.435063835637,
+                "se_ha": 4326.020243995162,
+                "moe95_ha": 8478.843874621694
+              },
+              "nothicket": {
+                "area_ha": 24074.696425548,
+                "se_ha": 6971.770822915342,
+                "moe95_ha": 13664.419721381246
+              }
+            },
+            "low_n": false,
+            "estimable": true
+          },
+          "21": {
+            "efg": "Valley",
+            "efg_id": 2,
+            "map_class": "moderate",
+            "area_mapped_ha": 275405.7496375488,
+            "n": 137,
+            "users_accuracy": 0.44525547445255476,
+            "users_accuracy_se": 0.042616883988641885,
+            "users_accuracy_moe95": 0.08352755775105979,
+            "reference_area_by_class": {
+              "intact": {
+                "area_ha": 36184.69703267065,
+                "se_ha": 7977.975801221947,
+                "moe95_ha": 15636.545239927098
+              },
+              "moderate": {
+                "area_ha": 122625.9177218283,
+                "se_ha": 11736.93488210837,
+                "moe95_ha": 23003.96965782427
+              },
+              "severe": {
+                "area_ha": 86441.22068915766,
+                "se_ha": 10959.257619383674,
+                "moe95_ha": 21479.750231288173
+              },
+              "nothicket": {
+                "area_ha": 30153.914193892208,
+                "se_ha": 7374.091570104332,
+                "moe95_ha": 14452.953896104911
+              }
+            },
+            "low_n": false,
+            "estimable": true
+          },
+          "22": {
+            "efg": "Valley",
+            "efg_id": 2,
+            "map_class": "severe",
+            "area_mapped_ha": 305326.4642053711,
+            "n": 118,
+            "users_accuracy": 0.7288135593220338,
+            "users_accuracy_se": 0.04110070549339206,
+            "users_accuracy_moe95": 0.08055590250623598,
+            "reference_area_by_class": {
+              "intact": {
+                "area_ha": 7762.537225560282,
+                "se_ha": 4443.232691807205,
+                "moe95_ha": 8708.57605087308
+              },
+              "moderate": {
+                "area_ha": 41400.198536321506,
+                "se_ha": 9663.836808444375,
+                "moe95_ha": 18940.772097023477
+              },
+              "severe": {
+                "area_ha": 222526.0671327281,
+                "se_ha": 12549.133084643669,
+                "moe95_ha": 24595.848883101626
+              },
+              "nothicket": {
+                "area_ha": 33637.66131076122,
+                "se_ha": 8838.037418804981,
+                "moe95_ha": 17322.235034875106
+              }
+            },
+            "low_n": false,
+            "estimable": true
+          },
+          "30": {
+            "efg": "Mesic",
+            "efg_id": 3,
+            "map_class": "intact",
+            "area_mapped_ha": 156585.08387624513,
+            "n": 62,
+            "users_accuracy": 0.8064516129032258,
+            "users_accuracy_se": 0.050584681305417746,
+            "users_accuracy_moe95": 0.09914415352805535,
+            "reference_area_by_class": {
+              "intact": {
+                "area_ha": 126278.29344858478,
+                "se_ha": 7920.8065650619665,
+                "moe95_ha": 15524.49559602987
+              },
+              "moderate": {
+                "area_ha": 20204.526951773565,
+                "se_ha": 6721.027241546689,
+                "moe95_ha": 13172.971332544097
+              },
+              "severe": {
+                "area_ha": 5051.131737943391,
+                "se_ha": 3542.2923832210336,
+                "moe95_ha": 6942.765493823781
+              },
+              "nothicket": {
+                "area_ha": 5051.131737943391,
+                "se_ha": 3542.2923832210336,
+                "moe95_ha": 6942.765493823781
+              }
+            },
+            "low_n": false,
+            "estimable": true
+          },
+          "31": {
+            "efg": "Mesic",
+            "efg_id": 3,
+            "map_class": "moderate",
+            "area_mapped_ha": 104088.49130263671,
+            "n": 55,
+            "users_accuracy": 0.43636363636363634,
+            "users_accuracy_se": 0.06748805288278814,
+            "users_accuracy_moe95": 0.13227415303699933,
+            "reference_area_by_class": {
+              "intact": {
+                "area_ha": 9462.59011842152,
+                "se_ha": 4072.0504378481573,
+                "moe95_ha": 7981.072201412946
+              },
+              "moderate": {
+                "area_ha": 45420.43256842329,
+                "se_ha": 7024.72960552198,
+                "moe95_ha": 13768.217027955343
+              },
+              "severe": {
+                "area_ha": 32172.806402633167,
+                "se_ha": 6545.749833402762,
+                "moe95_ha": 12829.433925278472
+              },
+              "nothicket": {
+                "area_ha": 17032.662213158736,
+                "se_ha": 5240.145125512865,
+                "moe95_ha": 10270.495719768336
+              }
+            },
+            "low_n": false,
+            "estimable": true
+          },
+          "32": {
+            "efg": "Mesic",
+            "efg_id": 3,
+            "map_class": "severe",
+            "area_mapped_ha": 22588.513863012697,
+            "n": 4,
+            "users_accuracy": 0.5,
+            "users_accuracy_se": 0.28867513459481287,
+            "users_accuracy_moe95": 0.5657928670380858,
+            "reference_area_by_class": {
+              "intact": {
+                "area_ha": 5647.128465753174,
+                "se_ha": 5647.128465753174,
+                "moe95_ha": 11068.168408947153
+              },
+              "moderate": {
+                "area_ha": 0.0,
+                "se_ha": 0.0,
+                "moe95_ha": 0.0
+              },
+              "severe": {
+                "area_ha": 11294.256931506348,
+                "se_ha": 6520.742279701986,
+                "moe95_ha": 12780.420020683501
+              },
+              "nothicket": {
+                "area_ha": 5647.128465753174,
+                "se_ha": 5647.128465753174,
+                "moe95_ha": 11068.168408947153
+              }
+            },
+            "low_n": true,
+            "estimable": true
+          }
+        },
+        "reference_area_by_efg": {
+          "Arid": {
+            "area_total_ha": 750086.5617911621,
+            "n_labelled": 315,
+            "estimable": true,
+            "non_estimable_cells": [],
+            "composition": {
+              "intact": {
+                "area_ha": 71087.70585466351,
+                "se_ha": 9271.337565293483,
+                "moe95_ha": 18171.487716488497,
+                "ci95_ha": [
+                  52916.21813817501,
+                  89259.193571152
+                ]
+              },
+              "moderate": {
+                "area_ha": 158388.36692576628,
+                "se_ha": 16031.887529775988,
+                "moe95_ha": 31421.92216255775,
+                "ci95_ha": [
+                  126966.44476320854,
+                  189810.28908832403
+                ]
+              },
+              "severe": {
+                "area_ha": 446256.30126349814,
+                "se_ha": 18085.72144065243,
+                "moe95_ha": 35447.36265810262,
+                "ci95_ha": [
+                  410808.9386053955,
+                  481703.6639216008
+                ]
+              },
+              "nothicket": {
+                "area_ha": 74354.1877472341,
+                "se_ha": 12560.611864909864,
+                "moe95_ha": 24618.346879009816,
+                "ci95_ha": [
+                  49735.84086822429,
+                  98972.53462624391
+                ]
+              }
+            }
+          },
+          "Valley": {
+            "area_total_ha": 865251.3534175782,
+            "n_labelled": 385,
+            "estimable": true,
+            "non_estimable_cells": [],
+            "composition": {
+              "intact": {
+                "area_ha": 219035.93553494365,
+                "se_ha": 15228.847780753063,
+                "moe95_ha": 29847.993176318734,
+                "ci95_ha": [
+                  189187.94235862492,
+                  248883.9287112624
+                ]
+              },
+              "moderate": {
+                "area_ha": 240627.42306671164,
+                "se_ha": 18831.058793922715,
+                "moe95_ha": 36908.19702684479,
+                "ci95_ha": [
+                  203719.22603986686,
+                  277535.6200935564
+                ]
+              },
+              "severe": {
+                "area_ha": 317721.72288572136,
+                "se_ha": 17213.382000512665,
+                "moe95_ha": 33737.60877313485,
+                "ci95_ha": [
+                  283984.1141125865,
+                  351459.33165885624
+                ]
+              },
+              "nothicket": {
+                "area_ha": 87866.27193020143,
+                "se_ha": 13457.10668411804,
+                "moe95_ha": 26375.444436984588,
+                "ci95_ha": [
+                  61490.82749321684,
+                  114241.71636718602
+                ]
+              }
+            }
+          },
+          "Mesic": {
+            "area_total_ha": 283262.08904189453,
+            "n_labelled": 121,
+            "estimable": true,
+            "non_estimable_cells": [],
+            "composition": {
+              "intact": {
+                "area_ha": 141388.01203275946,
+                "se_ha": 10545.654617814293,
+                "moe95_ha": 20669.103244314523,
+                "ci95_ha": [
+                  120718.90878844494,
+                  162057.115277074
+                ]
+              },
+              "moderate": {
+                "area_ha": 65624.95952019686,
+                "se_ha": 9722.089961130256,
+                "moe95_ha": 19054.946178273716,
+                "ci95_ha": [
+                  46570.01334192314,
+                  84679.90569847058
+                ]
+              },
+              "severe": {
+                "area_ha": 48518.195072082905,
+                "se_ha": 9895.188532211556,
+                "moe95_ha": 19394.21314336841,
+                "ci95_ha": [
+                  29123.981928714493,
+                  67912.40821545132
+                ]
+              },
+              "nothicket": {
+                "area_ha": 27730.922416855297,
+                "se_ha": 8479.210822557827,
+                "moe95_ha": 16618.947829535588,
+                "ci95_ha": [
+                  11111.97458731971,
+                  44349.870246390885
+                ]
+              }
+            }
+          }
+        }
+      },
+      "B_nothicket_to_severe": {
+        "adjudicate": "random",
+        "scenario": "B_nothicket_to_severe",
+        "ref_classes": [
+          "intact",
+          "moderate",
+          "severe"
+        ],
+        "mapped_cells": {
+          "10": {
+            "efg": "Arid",
+            "efg_id": 1,
+            "map_class": "intact",
+            "area_mapped_ha": 88485.67761196289,
+            "n": 39,
+            "users_accuracy": 0.6153846153846154,
+            "users_accuracy_se": 0.07892141169885801,
+            "users_accuracy_moe95": 0.15468312453881977,
+            "reference_area_by_class": {
+              "intact": {
+                "area_ha": 54452.72468428486,
+                "se_ha": 6983.414592266146,
+                "moe95_ha": 13687.241089953113
+              },
+              "moderate": {
+                "area_ha": 27226.36234214243,
+                "se_ha": 6625.048787045132,
+                "moe95_ha": 12984.857018429228
+              },
+              "severe": {
+                "area_ha": 6806.590585535608,
+                "se_ha": 3824.97370059491,
+                "moe95_ha": 7496.810694978915
+              }
+            },
+            "low_n": false,
+            "estimable": true
+          },
+          "11": {
+            "efg": "Arid",
+            "efg_id": 1,
+            "map_class": "moderate",
+            "area_mapped_ha": 173115.21521289062,
+            "n": 73,
+            "users_accuracy": 0.4657534246575342,
+            "users_accuracy_se": 0.05878718351408097,
+            "users_accuracy_moe95": 0.11522076244014552,
+            "reference_area_by_class": {
+              "intact": {
+                "area_ha": 14228.647825717037,
+                "se_ha": 5603.4971862682305,
+                "moe95_ha": 10982.652672557262
+              },
+              "moderate": {
+                "area_ha": 80629.00434572987,
+                "se_ha": 10176.955925799823,
+                "moe95_ha": 19946.467086819135
+              },
+              "severe": {
+                "area_ha": 78257.5630414437,
+                "se_ha": 10153.905033402956,
+                "moe95_ha": 19901.28816790977
+              }
+            },
+            "low_n": false,
+            "estimable": true
+          },
+          "12": {
+            "efg": "Arid",
+            "efg_id": 1,
+            "map_class": "severe",
+            "area_mapped_ha": 488485.6689663086,
+            "n": 203,
+            "users_accuracy": 0.8916256157635468,
+            "users_accuracy_se": 0.0218715169309426,
+            "users_accuracy_moe95": 0.042867385471905516,
+            "reference_area_by_class": {
+              "intact": {
+                "area_ha": 2406.333344661619,
+                "se_ha": 2406.333344661619,
+                "moe95_ha": 4716.326690334582
+              },
+              "moderate": {
+                "area_ha": 50533.00023789399,
+                "se_ha": 10467.0776447386,
+                "moe95_ha": 20515.09520707199
+              },
+              "severe": {
+                "area_ha": 435546.335383753,
+                "se_ha": 10683.922579319442,
+                "moe95_ha": 20940.103469080386
+              }
+            },
+            "low_n": false,
+            "estimable": true
+          },
+          "20": {
+            "efg": "Valley",
+            "efg_id": 2,
+            "map_class": "intact",
+            "area_mapped_ha": 284519.1395746582,
+            "n": 130,
+            "users_accuracy": 0.6153846153846154,
+            "users_accuracy_se": 0.0428343112607465,
+            "users_accuracy_moe95": 0.08395370737364162,
+            "reference_area_by_class": {
+              "intact": {
+                "area_ha": 175088.70127671273,
+                "se_ha": 12187.181384180687,
+                "moe95_ha": 23886.43658605115
+              },
+              "moderate": {
+                "area_ha": 76601.30680856181,
+                "se_ha": 11111.408237171267,
+                "moe95_ha": 21777.959962377372
+              },
+              "severe": {
+                "area_ha": 32829.13148938364,
+                "se_ha": 8003.276640021222,
+                "moe95_ha": 15686.13397275233
+              }
+            },
+            "low_n": false,
+            "estimable": true
+          },
+          "21": {
+            "efg": "Valley",
+            "efg_id": 2,
+            "map_class": "moderate",
+            "area_mapped_ha": 275405.7496375488,
+            "n": 137,
+            "users_accuracy": 0.44525547445255476,
+            "users_accuracy_se": 0.042616883988641885,
+            "users_accuracy_moe95": 0.08352755775105979,
+            "reference_area_by_class": {
+              "intact": {
+                "area_ha": 36184.69703267065,
+                "se_ha": 7977.975801221947,
+                "moe95_ha": 15636.545239927098
+              },
+              "moderate": {
+                "area_ha": 122625.9177218283,
+                "se_ha": 11736.93488210837,
+                "moe95_ha": 23003.96965782427
+              },
+              "severe": {
+                "area_ha": 116595.13488304986,
+                "se_ha": 11668.378916138894,
+                "moe95_ha": 22869.602433598742
+              }
+            },
+            "low_n": false,
+            "estimable": true
+          },
+          "22": {
+            "efg": "Valley",
+            "efg_id": 2,
+            "map_class": "severe",
+            "area_mapped_ha": 305326.4642053711,
+            "n": 118,
+            "users_accuracy": 0.8389830508474576,
+            "users_accuracy_se": 0.03397969368949713,
+            "users_accuracy_moe95": 0.06659897583711732,
+            "reference_area_by_class": {
+              "intact": {
+                "area_ha": 7762.537225560282,
+                "se_ha": 4443.232691807205,
+                "moe95_ha": 8708.57605087308
+              },
+              "moderate": {
+                "area_ha": 41400.198536321506,
+                "se_ha": 9663.836808444375,
+                "moe95_ha": 18940.772097023477
+              },
+              "severe": {
+                "area_ha": 256163.7284434893,
+                "se_ha": 10374.89972899572,
+                "moe95_ha": 20334.42981204598
+              }
+            },
+            "low_n": false,
+            "estimable": true
+          },
+          "30": {
+            "efg": "Mesic",
+            "efg_id": 3,
+            "map_class": "intact",
+            "area_mapped_ha": 156585.08387624513,
+            "n": 62,
+            "users_accuracy": 0.8064516129032258,
+            "users_accuracy_se": 0.050584681305417746,
+            "users_accuracy_moe95": 0.09914415352805535,
+            "reference_area_by_class": {
+              "intact": {
+                "area_ha": 126278.29344858478,
+                "se_ha": 7920.8065650619665,
+                "moe95_ha": 15524.49559602987
+              },
+              "moderate": {
+                "area_ha": 20204.526951773565,
+                "se_ha": 6721.027241546689,
+                "moe95_ha": 13172.971332544097
+              },
+              "severe": {
+                "area_ha": 10102.263475886783,
+                "se_ha": 4925.35768256849,
+                "moe95_ha": 9653.523668811906
+              }
+            },
+            "low_n": false,
+            "estimable": true
+          },
+          "31": {
+            "efg": "Mesic",
+            "efg_id": 3,
+            "map_class": "moderate",
+            "area_mapped_ha": 104088.49130263671,
+            "n": 55,
+            "users_accuracy": 0.43636363636363634,
+            "users_accuracy_se": 0.06748805288278814,
+            "users_accuracy_moe95": 0.13227415303699933,
+            "reference_area_by_class": {
+              "intact": {
+                "area_ha": 9462.59011842152,
+                "se_ha": 4072.0504378481573,
+                "moe95_ha": 7981.072201412946
+              },
+              "moderate": {
+                "area_ha": 45420.43256842329,
+                "se_ha": 7024.72960552198,
+                "moe95_ha": 13768.217027955343
+              },
+              "severe": {
+                "area_ha": 49205.4686157919,
+                "se_ha": 7071.781233991346,
+                "moe95_ha": 13860.43652516926
+              }
+            },
+            "low_n": false,
+            "estimable": true
+          },
+          "32": {
+            "efg": "Mesic",
+            "efg_id": 3,
+            "map_class": "severe",
+            "area_mapped_ha": 22588.513863012697,
+            "n": 4,
+            "users_accuracy": 0.75,
+            "users_accuracy_se": 0.25,
+            "users_accuracy_moe95": 0.4899909961350135,
+            "reference_area_by_class": {
+              "intact": {
+                "area_ha": 5647.128465753174,
+                "se_ha": 5647.128465753174,
+                "moe95_ha": 11068.168408947153
+              },
+              "moderate": {
+                "area_ha": 0.0,
+                "se_ha": 0.0,
+                "moe95_ha": 0.0
+              },
+              "severe": {
+                "area_ha": 16941.385397259524,
+                "se_ha": 5647.128465753174,
+                "moe95_ha": 11068.168408947153
+              }
+            },
+            "low_n": true,
+            "estimable": true
+          }
+        },
+        "reference_area_by_efg": {
+          "Arid": {
+            "area_total_ha": 750086.5617911621,
+            "n_labelled": 315,
+            "estimable": true,
+            "non_estimable_cells": [],
+            "composition": {
+              "intact": {
+                "area_ha": 71087.70585466351,
+                "se_ha": 9271.337565293483,
+                "moe95_ha": 18171.487716488497,
+                "ci95_ha": [
+                  52916.21813817501,
+                  89259.193571152
+                ]
+              },
+              "moderate": {
+                "area_ha": 158388.36692576628,
+                "se_ha": 16031.887529775988,
+                "moe95_ha": 31421.92216255775,
+                "ci95_ha": [
+                  126966.44476320854,
+                  189810.28908832403
+                ]
+              },
+              "severe": {
+                "area_ha": 520610.48901073233,
+                "se_ha": 15227.5543971611,
+                "moe95_ha": 29845.45819106029,
+                "ci95_ha": [
+                  490765.03081967204,
+                  550455.9472017926
+                ]
+              }
+            }
+          },
+          "Valley": {
+            "area_total_ha": 865251.3534175782,
+            "n_labelled": 385,
+            "estimable": true,
+            "non_estimable_cells": [],
+            "composition": {
+              "intact": {
+                "area_ha": 219035.93553494365,
+                "se_ha": 15228.847780753063,
+                "moe95_ha": 29847.993176318734,
+                "ci95_ha": [
+                  189187.94235862492,
+                  248883.9287112624
+                ]
+              },
+              "moderate": {
+                "area_ha": 240627.42306671164,
+                "se_ha": 18831.058793922715,
+                "moe95_ha": 36908.19702684479,
+                "ci95_ha": [
+                  203719.22603986686,
+                  277535.6200935564
+                ]
+              },
+              "severe": {
+                "area_ha": 405587.9948159228,
+                "se_ha": 17545.428119428136,
+                "moe95_ha": 34388.407207415476,
+                "ci95_ha": [
+                  371199.5876085073,
+                  439976.4020233383
+                ]
+              }
+            }
+          },
+          "Mesic": {
+            "area_total_ha": 283262.08904189453,
+            "n_labelled": 121,
+            "estimable": true,
+            "non_estimable_cells": [],
+            "composition": {
+              "intact": {
+                "area_ha": 141388.01203275946,
+                "se_ha": 10545.654617814293,
+                "moe95_ha": 20669.103244314523,
+                "ci95_ha": [
+                  120718.90878844494,
+                  162057.115277074
+                ]
+              },
+              "moderate": {
+                "area_ha": 65624.95952019686,
+                "se_ha": 9722.089961130256,
+                "moe95_ha": 19054.946178273716,
+                "ci95_ha": [
+                  46570.01334192314,
+                  84679.90569847058
+                ]
+              },
+              "severe": {
+                "area_ha": 76249.11748893821,
+                "se_ha": 10303.363432946953,
+                "moe95_ha": 20194.221248203,
+                "ci95_ha": [
+                  56054.89624073521,
+                  96443.33873714121
+                ]
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "map_accuracy": {
+    "random": {
+      "A_nothicket_class": {
+        "n_used": 821,
+        "overall_accuracy": {
+          "OA": 0.6368468689403253,
+          "se": 0.01622002273401626,
+          "moe95": 0.03179066038709277,
+          "ci95": [
+            0.6050562085532325,
+            0.668637529327418
+          ]
+        },
+        "users_accuracy": {
+          "intact": {
+            "U": 0.6666666666666666,
+            "se": 0.03108349360801046,
+            "moe95": 0.06092252798538148,
+            "ci95": [
+              0.6057441386812852,
+              0.7275891946520481
+            ]
+          },
+          "moderate": {
+            "U": 0.4490566037735849,
+            "se": 0.03061273071364107,
+            "moe95": 0.05999984966715965,
+            "ci95": [
+              0.38905675410642526,
+              0.5090564534407446
+            ]
+          },
+          "severe": {
+            "U": 0.7446153846153846,
+            "se": 0.02422651042632075,
+            "moe95": 0.04748308790667278,
+            "ci95": [
+              0.6971322967087118,
+              0.7920984725220573
+            ]
+          }
+        },
+        "producers_accuracy": {
+          "intact": {
+            "P": 0.8285961027066858,
+            "se": 0.024248678735405312,
+            "moe95": 0.047526536994076676,
+            "ci95": [
+              0.7810695657126091,
+              0.8761226397007625
+            ]
+          },
+          "moderate": {
+            "P": 0.5311605224604111,
+            "se": 0.029024128196339035,
+            "moe95": 0.056886245947497985,
+            "ci95": [
+              0.47427427651291315,
+              0.5880467684079091
+            ]
+          },
+          "severe": {
+            "P": 0.7468814111322971,
+            "se": 0.017047397672737066,
+            "moe95": 0.03341228546869658,
+            "ci95": [
+              0.7134691256636005,
+              0.7802936966009937
+            ]
+          }
+        }
+      },
+      "B_nothicket_to_severe": {
+        "n_used": 821,
+        "overall_accuracy": {
+          "OA": 0.6910932221236425,
+          "se": 0.014791389740542827,
+          "moe95": 0.028990591172759195,
+          "ci95": [
+            0.6621026309508834,
+            0.7200838132964017
+          ]
+        },
+        "users_accuracy": {
+          "intact": {
+            "U": 0.6666666666666666,
+            "se": 0.03108349360801046,
+            "moe95": 0.06092252798538148,
+            "ci95": [
+              0.6057441386812852,
+              0.7275891946520481
+            ]
+          },
+          "moderate": {
+            "U": 0.4490566037735849,
+            "se": 0.03061273071364107,
+            "moe95": 0.05999984966715965,
+            "ci95": [
+              0.38905675410642526,
+              0.5090564534407446
+            ]
+          },
+          "severe": {
+            "U": 0.8707692307692307,
+            "se": 0.018636398866196714,
+            "moe95": 0.03652667057926866,
+            "ci95": [
+              0.8342425601899621,
+              0.9072959013484994
+            ]
+          }
+        },
+        "producers_accuracy": {
+          "intact": {
+            "P": 0.8285961027066858,
+            "se": 0.024248678735405312,
+            "moe95": 0.047526536994076676,
+            "ci95": [
+              0.7810695657126091,
+              0.8761226397007625
+            ]
+          },
+          "moderate": {
+            "P": 0.5311605224604111,
+            "se": 0.029024128196339035,
+            "moe95": 0.056886245947497985,
+            "ci95": [
+              0.47427427651291315,
+              0.5880467684079091
+            ]
+          },
+          "severe": {
+            "P": 0.7071376559801069,
+            "se": 0.014586062027645633,
+            "moe95": 0.028588156250452714,
+            "ci95": [
+              0.6785494997296542,
+              0.7357258122305597
+            ]
+          }
+        }
+      }
+    }
+  },
+  "label_disagreement": {
+    "labeller_order": [
+      "ARP",
+      "SVM",
+      "AP",
+      "MP"
+    ],
+    "submission_rows": 948,
+    "unique_labelled_ids": 846,
+    "label_counts": {
+      "ARP": {
+        "intact": 68,
+        "moderate": 43,
+        "nothicket": 31,
+        "severe": 89,
+        "transformed": 6
+      },
+      "SVM": {
+        "intact": 69,
+        "moderate": 95,
+        "nothicket": 4,
+        "severe": 66,
+        "transformed": 3
+      },
+      "AP": {
+        "intact": 36,
+        "moderate": 47,
+        "nothicket": 36,
+        "severe": 76,
+        "transformed": 7,
+        "unsure": 35
+      },
+      "MP": {
+        "intact": 37,
+        "moderate": 51,
+        "nothicket": 21,
+        "severe": 119,
+        "transformed": 9
+      }
+    },
+    "pairwise": [
+      {
+        "new_labeller": "ARP",
+        "other_labeller": "SVM",
+        "n_overlap": 12,
+        "n_new_unsure": 0,
+        "n_other_unsure": 0,
+        "n_determinate_pairs": 12,
+        "n_agree": 8,
+        "agreement_rate": 0.6666666666666666,
+        "n_disagree": 4,
+        "disagreements": [
+          {
+            "id": 150,
+            "stratum": "intact",
+            "ARP": "moderate",
+            "SVM": "intact"
+          },
+          {
+            "id": 211,
+            "stratum": "intact",
+            "ARP": "moderate",
+            "SVM": "intact"
+          },
+          {
+            "id": 291,
+            "stratum": "moderate",
+            "ARP": "moderate",
+            "SVM": "intact"
+          },
+          {
+            "id": 550,
+            "stratum": "severe",
+            "ARP": "nothicket",
+            "SVM": "severe"
+          }
+        ]
+      },
+      {
+        "new_labeller": "ARP",
+        "other_labeller": "AP",
+        "n_overlap": 22,
+        "n_new_unsure": 0,
+        "n_other_unsure": 4,
+        "n_determinate_pairs": 18,
+        "n_agree": 9,
+        "agreement_rate": 0.5,
+        "n_disagree": 9,
+        "disagreements": [
+          {
+            "id": 61,
+            "stratum": "intact",
+            "ARP": "moderate",
+            "AP": "intact"
+          },
+          {
+            "id": 100,
+            "stratum": "intact",
+            "ARP": "intact",
+            "AP": "moderate"
+          },
+          {
+            "id": 120,
+            "stratum": "intact",
+            "ARP": "intact",
+            "AP": "nothicket"
+          },
+          {
+            "id": 310,
+            "stratum": "moderate",
+            "ARP": "severe",
+            "AP": "moderate"
+          },
+          {
+            "id": 408,
+            "stratum": "moderate",
+            "ARP": "intact",
+            "AP": "moderate"
+          },
+          {
+            "id": 473,
+            "stratum": "moderate",
+            "ARP": "intact",
+            "AP": "moderate"
+          },
+          {
+            "id": 629,
+            "stratum": "severe",
+            "ARP": "nothicket",
+            "AP": "severe"
+          },
+          {
+            "id": 729,
+            "stratum": "severe",
+            "ARP": "moderate",
+            "AP": "nothicket"
+          },
+          {
+            "id": 788,
+            "stratum": "severe",
+            "ARP": "moderate",
+            "AP": "nothicket"
+          }
+        ]
+      },
+      {
+        "new_labeller": "ARP",
+        "other_labeller": "MP",
+        "n_overlap": 15,
+        "n_new_unsure": 0,
+        "n_other_unsure": 0,
+        "n_determinate_pairs": 15,
+        "n_agree": 12,
+        "agreement_rate": 0.8,
+        "n_disagree": 3,
+        "disagreements": [
+          {
+            "id": 68,
+            "stratum": "intact",
+            "ARP": "intact",
+            "MP": "severe"
+          },
+          {
+            "id": 373,
+            "stratum": "moderate",
+            "ARP": "moderate",
+            "MP": "severe"
+          },
+          {
+            "id": 810,
+            "stratum": "severe",
+            "ARP": "transformed",
+            "MP": "severe"
+          }
+        ]
+      },
+      {
+        "new_labeller": "SVM",
+        "other_labeller": "AP",
+        "n_overlap": 20,
+        "n_new_unsure": 0,
+        "n_other_unsure": 2,
+        "n_determinate_pairs": 18,
+        "n_agree": 11,
+        "agreement_rate": 0.6111111111111112,
+        "n_disagree": 7,
+        "disagreements": [
+          {
+            "id": 144,
+            "stratum": "intact",
+            "SVM": "intact",
+            "AP": "moderate"
+          },
+          {
+            "id": 247,
+            "stratum": "moderate",
+            "SVM": "moderate",
+            "AP": "severe"
+          },
+          {
+            "id": 297,
+            "stratum": "moderate",
+            "SVM": "moderate",
+            "AP": "nothicket"
+          },
+          {
+            "id": 525,
+            "stratum": "severe",
+            "SVM": "severe",
+            "AP": "transformed"
+          },
+          {
+            "id": 636,
+            "stratum": "severe",
+            "SVM": "moderate",
+            "AP": "nothicket"
+          },
+          {
+            "id": 676,
+            "stratum": "severe",
+            "SVM": "severe",
+            "AP": "nothicket"
+          },
+          {
+            "id": 829,
+            "stratum": "severe",
+            "SVM": "moderate",
+            "AP": "severe"
+          }
+        ]
+      },
+      {
+        "new_labeller": "SVM",
+        "other_labeller": "MP",
+        "n_overlap": 15,
+        "n_new_unsure": 0,
+        "n_other_unsure": 0,
+        "n_determinate_pairs": 15,
+        "n_agree": 7,
+        "agreement_rate": 0.4666666666666667,
+        "n_disagree": 8,
+        "disagreements": [
+          {
+            "id": 91,
+            "stratum": "intact",
+            "SVM": "nothicket",
+            "MP": "intact"
+          },
+          {
+            "id": 165,
+            "stratum": "intact",
+            "SVM": "intact",
+            "MP": "moderate"
+          },
+          {
+            "id": 181,
+            "stratum": "intact",
+            "SVM": "intact",
+            "MP": "severe"
+          },
+          {
+            "id": 406,
+            "stratum": "moderate",
+            "SVM": "moderate",
+            "MP": "severe"
+          },
+          {
+            "id": 685,
+            "stratum": "severe",
+            "SVM": "moderate",
+            "MP": "severe"
+          },
+          {
+            "id": 687,
+            "stratum": "severe",
+            "SVM": "severe",
+            "MP": "nothicket"
+          },
+          {
+            "id": 721,
+            "stratum": "severe",
+            "SVM": "severe",
+            "MP": "moderate"
+          },
+          {
+            "id": 740,
+            "stratum": "severe",
+            "SVM": "moderate",
+            "MP": "nothicket"
+          }
+        ]
+      },
+      {
+        "new_labeller": "AP",
+        "other_labeller": "MP",
+        "n_overlap": 18,
+        "n_new_unsure": 4,
+        "n_other_unsure": 0,
+        "n_determinate_pairs": 14,
+        "n_agree": 10,
+        "agreement_rate": 0.7142857142857143,
+        "n_disagree": 4,
+        "disagreements": [
+          {
+            "id": 67,
+            "stratum": "intact",
+            "AP": "intact",
+            "MP": "moderate"
+          },
+          {
+            "id": 274,
+            "stratum": "moderate",
+            "AP": "intact",
+            "MP": "moderate"
+          },
+          {
+            "id": 485,
+            "stratum": "moderate",
+            "AP": "moderate",
+            "MP": "severe"
+          },
+          {
+            "id": 612,
+            "stratum": "severe",
+            "AP": "nothicket",
+            "MP": "severe"
+          }
+        ]
+      }
+    ],
+    "aggregate": {
+      "n_pairwise_overlap_rows": 102,
+      "n_determinate_pairs": 92,
+      "n_agree": 57,
+      "n_disagree": 35,
+      "agreement_rate": 0.6195652173913043,
+      "disagreement_by_label_pair": {
+        "intact vs moderate": 11,
+        "intact vs nothicket": 2,
+        "intact vs severe": 2,
+        "moderate vs nothicket": 5,
+        "moderate vs severe": 8,
+        "nothicket vs severe": 5,
+        "severe vs transformed": 2
+      }
+    }
+  },
+  "method_notes": [
+    "Every determinate duplicate location is resolved by reproducible equal-probability random source-label selection, not by map accuracy.",
+    "unsure labels are ineligible; locations with no determinate label are excluded.",
+    "The Olofsson stratified estimator is used for area and accuracy estimates.",
+    "transformed is remapped to severe; no thicket is retained in scenario A and grouped with severe in scenario B."
+  ]
+}

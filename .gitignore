@@ -29,6 +29,10 @@ Thumbs.db
 # Large exported rasters (do not commit)
 *.tif
 
+# Large local input geodatabases (>100 MB; exceeds GitHub's file limit)
+# BioregionsSimple.gdb.zip is read by analysis/26_augment_vegtype_2022strat.py
+*.gdb.zip
+
 # Inspector dev-only artifacts (index.html is the built, committed output)
 inspector/node_modules/
 inspector/package-lock.json
