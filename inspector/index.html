@@ -2591,6 +2591,7 @@ const DS_ID = (typeof DATASET_ID === 'string' && !DATASET_ID.startsWith('__'))
 const STORAGE_SCOPE = DS_ID + (ASSIGNMENT_ID?'-assignment-'+ASSIGNMENT_ID:'');
 const KEY_LABELS = 'thicket-inspector-labels-' + STORAGE_SCOPE;
 const KEY_DRAFTS = 'thicket-inspector-note-drafts-' + STORAGE_SCOPE;
+const KEY_REVIEWS = 'thicket-inspector-review-drafts-' + STORAGE_SCOPE;
 const KEY_NAME   = 'thicket-inspector-name';
 const KEY_UI     = 'thicket-inspector-ui' + (ASSIGNMENT_ID?'-'+ASSIGNMENT_ID:'');
 const KEY_BACKUP = 'thicket-inspector-last-backup-' + STORAGE_SCOPE;
@@ -2603,6 +2604,7 @@ const COORD_EPS = 1e-5;
 // ------------------------------------------------------------------ state
 let labels = {};            // id -> {label, note, labeler, ts}
 let noteDrafts = {};        // id -> note text before a point has a label
+let reviewDrafts = {};      // id -> review metadata before a point has a label
 let curIdx = -1;            // index into POINTS
 let labeler = '';
 let activeSource = 'esri';
@@ -2670,6 +2672,26 @@ function sanitizeLabels(raw){
   }
   return clean;
 }
+function sanitizeReviewDrafts(raw){
+  const clean={};
+  if(!raw || typeof raw!=='object' || Array.isArray(raw)) return clean;
+  for(const [k,r] of Object.entries(raw)){
+    if(!r || typeof r!=='object' || Array.isArray(r)) continue;
+    const i=byId(Number(k)); if(i<0) continue;
+    const p=POINTS[i]; if(labels[p.id]) continue;
+    const draft={flagged:!!r.flagged,
+      confidence:['high','medium','low'].includes(r.confidence)?r.confidence:'',
+      reasons:Array.isArray(r.reasons)?r.reasons.map(String).slice(0,12):[],
+      ts:typeof r.ts==='string'?r.ts:''};
+    if(draft.flagged||draft.confidence||draft.reasons.length) clean[p.id]=draft;
+  }
+  return clean;
+}
+function reviewState(id){ return labels[id]||reviewDrafts[id]||{flagged:false,confidence:'',reasons:[]}; }
+function needsReview(p){
+  const meta=reviewState(p.id), rec=labels[p.id];
+  return !!(meta.flagged||meta.confidence==='low'||(rec&&(rec.label==='unsure'||rec.label===LEGACY_CLASS)));
+}
 function loadStore(){
   let raw={};
   try{ raw = JSON.parse(localStorage.getItem(KEY_LABELS)||'{}'); }catch(e){ raw={}; }
@@ -2682,6 +2704,8 @@ function loadStore(){
       });
     }
   }catch(e){ noteDrafts={}; }
+  try{ reviewDrafts=sanitizeReviewDrafts(JSON.parse(localStorage.getItem(KEY_REVIEWS)||'{}')); }
+  catch(e){ reviewDrafts={}; }
   labeler = localStorage.getItem(KEY_NAME) || '';
   try{ wbPointCache=JSON.parse(localStorage.getItem(KEY_WBCACHE)||'{}')||{}; }catch(e){ wbPointCache={}; }
   try{
@@ -2699,6 +2723,7 @@ function saveStore(){
   try{
     localStorage.setItem(KEY_LABELS, JSON.stringify(labels));
     localStorage.setItem(KEY_DRAFTS, JSON.stringify(noteDrafts));
+    localStorage.setItem(KEY_REVIEWS, JSON.stringify(reviewDrafts));
     const el=$('#saveStatus'); if(el) el.textContent='Saved locally · '+new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})+' · backup '+(lastBackup?new Date(lastBackup).toLocaleString():'never');
     return true;
   }catch(e){
@@ -2786,7 +2811,7 @@ async function flushSheetSync(){
 }
 
 function snapshotUndo(description){
-  undoStack.push({labels:JSON.stringify(labels),drafts:JSON.stringify(noteDrafts),description});
+  undoStack.push({labels:JSON.stringify(labels),drafts:JSON.stringify(noteDrafts),reviews:JSON.stringify(reviewDrafts),description});
   if(undoStack.length>30) undoStack.shift();
 }
 function undoLast(){
@@ -2794,6 +2819,7 @@ function undoLast(){
   const before=labels;
   labels=sanitizeLabels(JSON.parse(u.labels));
   try{ noteDrafts=JSON.parse(u.drafts)||{}; }catch(e){ noteDrafts={}; }
+  try{ reviewDrafts=sanitizeReviewDrafts(JSON.parse(u.reviews||'{}')); }catch(e){ reviewDrafts={}; }
   saveStore(); refreshPoints(); applyPointFilter(); updateCounts(); if(curIdx>=0) renderPoint();
   enqueueSyncChanges(before,labels);
   toast(`${u.description||'Change'} undone`);
@@ -2896,8 +2922,8 @@ function pointsGeoJSON(){
                  required:isRequiredPoint(p), disagreement:DISAGREEMENT_IDS.has(p.id),
                  labeled: !!labels[p.id],
                  label:labels[p.id] ? labels[p.id].label : '',
-                 flagged:!!(labels[p.id]&&labels[p.id].flagged),
-                 confidence:labels[p.id] ? labels[p.id].confidence||'' : '' }
+                  flagged:!!reviewState(p.id).flagged,
+                  confidence:reviewState(p.id).confidence||'' }
   }))};
 }
 function refreshPoints(){
@@ -3301,7 +3327,7 @@ function gotoIdx(idx, recordHistory=true){
 function gotoId(id){ const i=byId(id); if(i>=0) gotoIdx(i); }
 function historyBack(){ if(navHistoryPos>0){ navHistoryPos--; const i=byId(navHistory[navHistoryPos]); if(i>=0) gotoIdx(i,false); } else toast('No earlier point in history'); }
 function gotoQueue(test,empty){
-  for(let k=1;k<=POINTS.length;k++){ const i=(curIdx+k)%POINTS.length,r=labels[POINTS[i].id]; if(r&&test(r)){gotoIdx(i);return;} }
+  for(let k=1;k<=POINTS.length;k++){ const i=(curIdx+k)%POINTS.length,p=POINTS[i]; if(test(reviewState(p.id),p)){gotoIdx(i);return;} }
   toast(empty);
 }
 function recenter(){ const p=POINTS[curIdx]; if(p) map.easeTo({center:[p.lon,p.lat],duration:350}); }
@@ -3318,10 +3344,12 @@ function nextUnlabeled(){
 function nextForFilter(){
   if(pointFilter==='all'||pointFilter==='round2'||pointFilter==='unlabeled'){ nextUnlabeled(); return; }
   for(let k=1;k<=POINTS.length;k++){
-    const i=(curIdx+k)%POINTS.length, p=POINTS[i], rec=labels[p.id];
+    const i=(curIdx+k)%POINTS.length, p=POINTS[i], rec=labels[p.id], meta=reviewState(p.id);
     if(pointFilter==='disagreement'&&DISAGREEMENT_IDS.has(p.id)){gotoIdx(i);return;}
     if(pointFilter==='previous'&&p.src==='existing'){gotoIdx(i);return;}
-    if(pointFilter==='review'&&rec&&(rec.flagged||rec.confidence==='low'||rec.label==='unsure'||rec.label===LEGACY_CLASS)){ gotoIdx(i); return; }
+    if(pointFilter==='review'&&needsReview(p)){ gotoIdx(i); return; }
+    if(pointFilter==='flagged'&&meta.flagged){ gotoIdx(i); return; }
+    if(pointFilter==='low'&&meta.confidence==='low'){ gotoIdx(i); return; }
     if((pointFilter==='labeled'&&rec)||(rec&&rec.label===pointFilter)){ gotoIdx(i); return; }
   }
   toast(`No ${pointFilter==='labeled'?'labeled':pointFilter} points to review`);
@@ -3331,7 +3359,7 @@ function nextForFilter(){
 function renderPoint(){
   const p=POINTS[curIdx]; if(!p) return;
   $('#curId').textContent=p.id; $('#curOrdinal').textContent=curIdx+1; $('#totId').textContent=POINTS.length;
-  const rec=labels[p.id];
+  const rec=labels[p.id], meta=reviewState(p.id);
   const showPrediction=!blindMode || !!rec;
   if(showPrediction) $('#curStratum').innerHTML = ` · <span class="pill ${p.m}">${p.m}</span>`;
   else $('#curStratum').textContent=' · model hidden';
@@ -3357,8 +3385,8 @@ function renderPoint(){
     b.className='lblbtn';
     if(rec && isValidClass(rec.label) && rec.label===b.dataset.lbl) b.classList.add('sel-'+rec.label);
   });
-  $('#flagBtn').setAttribute('aria-pressed',String(!!(rec&&rec.flagged)));
-  document.querySelectorAll('[data-confidence]').forEach(b=>b.classList.toggle('active',!!rec&&rec.confidence===b.dataset.confidence));
+  $('#flagBtn').setAttribute('aria-pressed',String(!!meta.flagged));
+  document.querySelectorAll('[data-confidence]').forEach(b=>b.classList.toggle('active',meta.confidence===b.dataset.confidence));
   // imagery deep links
   $('#gmapsLink').href = `https://www.google.com/maps/@${p.lat},${p.lon},400m/data=!3m1!1e3`;
   $('#gearthLink').href = `https://earth.google.com/web/@${p.lat},${p.lon},0a,800d,35y,0h,0t,0r`;
@@ -3388,20 +3416,24 @@ function setLabel(cls){
     toast(`${CLASS_LABEL[cls]} already selected`); return;
   }
   const previous=labels[p.id] ? {...labels[p.id]} : null;
+  const previousReview=reviewDrafts[p.id] ? {...reviewDrafts[p.id],reasons:[...(reviewDrafts[p.id].reasons||[])]} : null;
   snapshotUndo('Label change');
   const previousDraft=noteDrafts[p.id];
+  const meta=previous||previousReview||{};
   labels[p.id]={ label:cls, note:$('#note').value.trim(),
                  labeler:labeler, ts:new Date().toISOString(),
-                 flagged:previous?!!previous.flagged:false,
-                 confidence:previous?previous.confidence||'':'', reasons:previous?previous.reasons||[]:[],
+                 flagged:!!meta.flagged,
+                 confidence:meta.confidence||'', reasons:[...(meta.reasons||[])],
                  stratum:p.s, lon:p.lon, lat:p.lat };
   delete noteDrafts[p.id];
+  delete reviewDrafts[p.id];
   const saved=saveStore(); renderPoint(); refreshPoints(); updateCounts();
   enqueueSheetSync(p,labels[p.id]);
   const undo=()=>{
     clearTimeout(pendingAdvance);
     if(previous) labels[p.id]=previous; else delete labels[p.id];
     if(previousDraft!=null) noteDrafts[p.id]=previousDraft; else delete noteDrafts[p.id];
+    if(previousReview) reviewDrafts[p.id]=previousReview; else delete reviewDrafts[p.id];
     saveStore(); refreshPoints(); updateCounts(); gotoId(p.id); toast('Change undone');
     enqueueSheetSync(p,labels[p.id]||null,labels[p.id]?'upsert':'clear');
   };
@@ -3412,28 +3444,40 @@ function clearLabel(){
   const p=POINTS[curIdx]; if(!p||!labels[p.id]) return;
   clearTimeout(pendingAdvance);
   const previous={...labels[p.id]};
+  const previousReview=reviewDrafts[p.id] ? {...reviewDrafts[p.id],reasons:[...(reviewDrafts[p.id].reasons||[])]} : null;
   snapshotUndo('Clear label');
   const note=$('#note').value.trim(); if(note) noteDrafts[p.id]=note;
+  const review={flagged:!!previous.flagged,confidence:previous.confidence||'',reasons:[...(previous.reasons||[])],ts:new Date().toISOString()};
+  if(review.flagged||review.confidence||review.reasons.length) reviewDrafts[p.id]=review;
+  else delete reviewDrafts[p.id];
   delete labels[p.id]; saveStore(); renderPoint(); refreshPoints(); updateCounts();
   enqueueSheetSync(p,null,'clear');
   toast(`Label cleared for point ${p.id}`, 'Undo', ()=>{
-    labels[p.id]=previous; delete noteDrafts[p.id]; saveStore(); refreshPoints(); updateCounts();
+    labels[p.id]=previous; delete noteDrafts[p.id];
+    if(previousReview) reviewDrafts[p.id]=previousReview; else delete reviewDrafts[p.id];
+    saveStore(); refreshPoints(); updateCounts();
     enqueueSheetSync(p,labels[p.id]);
     gotoId(p.id); toast('Label restored');
   }, 4200);
 }
 function updateReviewField(field,value){
-  const p=POINTS[curIdx]; if(!p){return;} if(!labels[p.id]){ toast('Label the point before adding review metadata'); return; }
-  snapshotUndo('Review metadata'); labels[p.id][field]=value; labels[p.id].ts=new Date().toISOString();
+  const p=POINTS[curIdx]; if(!p)return;
+  if(field==='confidence'&&!['','high','medium','low'].includes(value))return;
+  snapshotUndo('Review metadata');
+  const target=labels[p.id]||(reviewDrafts[p.id]={flagged:false,confidence:'',reasons:[]});
+  target[field]=field==='flagged'?!!value:value; target.ts=new Date().toISOString();
+  if(!labels[p.id]&&!target.flagged&&!target.confidence&&!(target.reasons||[]).length) delete reviewDrafts[p.id];
   saveStore(); refreshPoints(); updateCounts(); renderPoint();
-  enqueueSheetSync(p,labels[p.id]);
+  if(labels[p.id]) enqueueSheetSync(p,labels[p.id]);
 }
-function toggleFlag(){ const p=POINTS[curIdx],r=p&&labels[p.id]; if(!r){toast('Label the point before flagging it');return;} updateReviewField('flagged',!r.flagged); }
+function toggleFlag(){ const p=POINTS[curIdx]; if(p)updateReviewField('flagged',!reviewState(p.id).flagged); }
 function addReason(tag){
   const p=POINTS[curIdx]; if(!p)return;
   const note=$('#note'), token=`[${tag}]`; if(!note.value.includes(token)) note.value=(note.value.trim()+' '+token).trim();
   autoGrowNote(); saveNote();
-  if(labels[p.id]){ const rs=new Set(labels[p.id].reasons||[]); rs.add(tag); labels[p.id].reasons=Array.from(rs); saveStore(); enqueueSheetSync(p,labels[p.id]); }
+  const target=labels[p.id]||(reviewDrafts[p.id]={flagged:false,confidence:'',reasons:[]});
+  const rs=new Set(target.reasons||[]); rs.add(tag); target.reasons=Array.from(rs).slice(0,12); target.ts=new Date().toISOString();
+  saveStore(); if(labels[p.id])enqueueSheetSync(p,labels[p.id]);
 }
 function autoGrowNote(){ const n=$('#note'); if(!n)return; n.style.height='auto'; n.style.height=Math.min(180,Math.max(44,n.scrollHeight))+'px'; }
 function saveNote(){
@@ -3455,7 +3499,7 @@ function updateCounts(){
   REQUIRED_POINTS.forEach(p=>{const r=labels[p.id]; if(!r||!isValidClass(r.label)) return;
     c.all++; if(c[r.label]!=null) c[r.label]++; if(r.flagged)c.flagged++; if(r.confidence==='low')c.low++; });
   $('#c_all').textContent=c.all;
-  $('#c_review').textContent=new Set(Object.entries(labels).filter(([,r])=>r.flagged||r.confidence==='low'||r.label==='unsure'||r.label===LEGACY_CLASS).map(([id])=>id)).size;
+  $('#c_review').textContent=POINTS.filter(needsReview).length;
   $('#c_disagreements').textContent=POINTS.filter(p=>DISAGREEMENT_IDS.has(p.id)).length;
   const remaining=Math.max(0,REQUIRED_POINTS.length-c.all), pct=REQUIRED_POINTS.length?c.all/REQUIRED_POINTS.length*100:0;
   $('#c_remaining').textContent=remaining; $('#progressText').textContent=`${c.all} of ${REQUIRED_POINTS.length} Round 2 labeled`;
@@ -3475,7 +3519,7 @@ function download(){ openCompletion(); }
 function openCompletion(){
   saveNote(); const rows=exportRows(), requiredRows=rows.filter(r=>r.required), remaining=REQUIRED_POINTS.length-requiredRows.length;
   const counts={}; CLASSES.forEach(c=>counts[c]=requiredRows.filter(r=>r.label===c).length);
-  const flagged=requiredRows.filter(r=>r.flagged), low=requiredRows.filter(r=>r.confidence==='low'), unsure=requiredRows.filter(r=>r.label==='unsure'), legacy=requiredRows.filter(r=>r.label===LEGACY_CLASS);
+  const flagged=REQUIRED_POINTS.filter(p=>reviewState(p.id).flagged), low=REQUIRED_POINTS.filter(p=>reviewState(p.id).confidence==='low'), unsure=requiredRows.filter(r=>r.label==='unsure'), legacy=requiredRows.filter(r=>r.label===LEGACY_CLASS);
   const qaIncomplete=remaining||legacy.length;
   $('#completionState').textContent=remaining?`${remaining} point${remaining===1?' is':'s are'} incomplete. You can export a backup now, but final QA is not complete.`:legacy.length?`${legacy.length} label${legacy.length===1?' uses':'s use'} the old combined class. Review and replace ${legacy.length===1?'it':'them'} with Transformed or No thicket before final export.`:'All points are labeled. Review the items below before final export.';
   $('#completionState').className=qaIncomplete?'statusline error':'statusline ok';
@@ -3487,7 +3531,7 @@ function openCompletion(){
   const review=$('#reviewList'); review.textContent='';
   const ids=new Set([...unsure,...legacy,...flagged,...low].map(r=>r.id));
   if(!ids.size){const d=document.createElement('div');d.className='reviewitem';d.textContent='No unsure, flagged, or low-confidence points.';review.appendChild(d);}
-  ids.forEach(id=>{const r=labels[id],d=document.createElement('div');d.className='reviewitem';d.append(`ID ${id} · ${CLASS_LABEL[r.label]}${r.flagged?' · flagged':''}${r.confidence?` · ${r.confidence} confidence`:''}`);const b=document.createElement('button');b.className='btn';b.textContent='Review';b.onclick=()=>{closeDialog('#completionModal');gotoId(id);};d.appendChild(b);review.appendChild(d);});
+  ids.forEach(id=>{const r=labels[id],meta=reviewState(id),d=document.createElement('div');d.className='reviewitem';d.append(`ID ${id} · ${r?CLASS_LABEL[r.label]:'Unlabeled'}${meta.flagged?' · flagged':''}${meta.confidence?` · ${meta.confidence} confidence`:''}`);const b=document.createElement('button');b.className='btn';b.textContent='Review';b.onclick=()=>{closeDialog('#completionModal');gotoId(id);};d.appendChild(b);review.appendChild(d);});
   openDialog('#completionModal');
 }
 async function exportFinal(){
@@ -3495,7 +3539,7 @@ async function exportFinal(){
   const requiredRows=rows.filter(r=>r.required),legacyCount=requiredRows.filter(r=>r.label===LEGACY_CLASS).length;
   const exported=new Date().toISOString(), completion={complete:requiredRows.length===REQUIRED_POINTS.length&&!legacyCount,
     total:REQUIRED_POINTS.length,labeled:requiredRows.length,explorationLabels:rows.length-requiredRows.length,
-    flagged:requiredRows.filter(r=>r.flagged).length,unsure:requiredRows.filter(r=>r.label==='unsure').length,legacyCombined:legacyCount,lowConfidence:requiredRows.filter(r=>r.confidence==='low').length};
+    flagged:REQUIRED_POINTS.filter(p=>reviewState(p.id).flagged).length,unsure:requiredRows.filter(r=>r.label==='unsure').length,legacyCombined:legacyCount,lowConfidence:REQUIRED_POINTS.filter(p=>reviewState(p.id).confidence==='low').length};
   const canonical=JSON.stringify(rows), checksum=checksumText(canonical);
   const assignment=ASSIGNMENT_RECORD?{campaign:CAMPAIGN,code:ASSIGNMENT_CODE,id:ASSIGNMENT_ID,assigned:REQUIRED_POINTS.length}:null;
   const payload={tool:'thicket_inspector',version:5,dataset:DS_ID,round:2,assignment,labeler,exported,n:rows.length,completion,checksum:{algorithm:'fnv1a-32',value:checksum},labels:rows};
@@ -3630,7 +3674,7 @@ function closeImport(){
 }
 function applyImport(){
   if(!pendingImport) return;
-  const before=JSON.stringify(labels), beforeLabels=JSON.parse(before), strategy=$('#importStrategy').value;
+  const before=JSON.stringify(labels), beforeLabels=JSON.parse(before), beforeReviews=JSON.stringify(reviewDrafts), strategy=$('#importStrategy').value;
   snapshotUndo('Import');
   let applied=0,kept=0;
   pendingImport.records.forEach(({id,rec,unchanged})=>{
@@ -3640,14 +3684,19 @@ function applyImport(){
     if(cur && strategy==='replace') use=true;
     else if(cur && strategy==='newer') use=!!rec.ts && (!cur.ts || rec.ts>cur.ts);
     else if(cur && strategy==='manual'){ const s=document.querySelector(`[data-conflict="${id}"]`); use=!!s&&s.value==='import'; }
-    if(use){ labels[id]={...rec,ts:rec.ts||new Date().toISOString()}; applied++; }
+    if(use){
+      const draft=reviewDrafts[id]||{};
+      labels[id]={...rec,flagged:!!(rec.flagged||draft.flagged),confidence:rec.confidence||draft.confidence||'',
+        reasons:Array.from(new Set([...(rec.reasons||[]),...(draft.reasons||[])])),ts:rec.ts||new Date().toISOString()};
+      delete reviewDrafts[id]; applied++;
+    }
     else kept++;
   });
   closeImport(); saveStore(); refreshPoints(); applyPointFilter(); updateCounts();
   enqueueSyncChanges(beforeLabels,labels);
   if(curIdx>=0) renderPoint();
   toast(`Applied ${applied} label${applied===1?'':'s'} · kept ${kept}`, 'Undo', ()=>{
-    const current=labels;labels=sanitizeLabels(JSON.parse(before)); saveStore(); refreshPoints(); applyPointFilter(); updateCounts();
+    const current=labels;labels=sanitizeLabels(JSON.parse(before));reviewDrafts=sanitizeReviewDrafts(JSON.parse(beforeReviews));saveStore();refreshPoints();applyPointFilter();updateCounts();
     enqueueSyncChanges(current,labels);
     if(curIdx>=0) renderPoint(); toast('Import undone');
   },5000);
