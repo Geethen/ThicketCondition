@@ -14,6 +14,11 @@ shared as a link and run entirely in the browser.
   one determinate pairwise conflict across ARP, SVM, AP, and MP. Selecting one
   shows each prior label without pre-filling a new decision. Exploration labels
   are exported but do not count against Round 2 completion.
+- **Area estimates** opens an interactive, error-adjusted composition chart at
+  landscape, ecosystem-functional-group, or vegetation-type level. A second
+  dropdown switches between reporting no-thicket separately and combining it
+  with severe. The panel shows 95% margins of error and clearly dates the static
+  analysis snapshot; it does not imply that estimates recalculate live from Sheets.
 - Labelers step through points and record the condition class they observe:
   **Intact**, **Moderate**, **Severe**, **Transformed**, **No thicket**, or **Unsure**.
   Older imports using the former combined class remain visible in a legacy review queue
@@ -68,7 +73,7 @@ shared as a link and run entirely in the browser.
 | `index.html` | **The deployable app** — self-contained, points embedded, JS inlined. This is the only file you host. |
 | `thicket_inspector.html` | HTML template (with a `__POINTS__` placeholder). |
 | `app.js` | App logic (source of truth; inlined into `index.html` at build). |
-| `build.py` | Regenerates `index.html` from the template + `app.js` + the sample CSV. |
+| `build.py` | Regenerates `index.html` from the template + `app.js` + the sample CSV + compact area-estimation snapshot. |
 | `create_assignments.py` | Creates balanced point assignments and shareable links. |
 | `assignment_manifest.json` | Campaign assignments embedded into the built app. |
 | `sync_config.json` | Default Google Sheets sync switch, Apps Script endpoint, and optional Sheet link. |
@@ -85,8 +90,9 @@ Edit `app.js` or `thicket_inspector.html`, then:
 python inspector/build.py        # or the geo env's python on this machine
 ```
 
-This re-reads `analysis/results/sample_points_vegtype2022.csv`, so a new sample draw is
-picked up automatically. The build stamps a short **dataset id** (a hash of the
+This re-reads `analysis/results/sample_points_vegtype2022.csv` and
+`analysis/results/area_estimation_vegtype2022.json`, so a new sample draw or estimate
+is picked up automatically. The build stamps a short **dataset id** (a hash of the
 point ids + coordinates + strata) into the page; browser labels are namespaced
 by it, so a new draw never shows stale labels, and importing a file exported for
 a different draw prompts before overwriting.
@@ -109,7 +115,7 @@ node inspector/verify_round2_sync.mjs     # Round 2 scope, disagreement queue, s
 Live at **https://geethen.github.io/ThicketCondition/**.
 
 Deployment is automated: **every push to `main` that touches `inspector/**` (or the
-sample CSV)** triggers `.github/workflows/bake-gee-and-deploy.yml`, which runs
+sample CSV / area-estimation artifact)** triggers `.github/workflows/bake-gee-and-deploy.yml`, which runs
 `build.py`, optionally bakes the EE layers, and publishes to Pages. You don't copy
 anything into `docs/` anymore — just edit `app.js`/the template and push. (Pages
 Source is set to **GitHub Actions**; the old `main/docs/` copy is no longer served.)

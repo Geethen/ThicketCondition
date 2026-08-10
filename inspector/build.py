@@ -19,6 +19,7 @@ APP = os.path.join(HERE, 'app.js')
 OUT = os.path.join(HERE, 'index.html')
 ASSIGNMENTS = os.path.join(HERE, 'assignment_manifest.json')
 SYNC_CONFIG = os.path.join(HERE, 'sync_config.json')
+AREA_ESTIMATION = os.path.join(ROOT, 'analysis', 'results', 'area_estimation_vegtype2022.json')
 
 # Round 1 submissions are used only to identify and describe determinate
 # disagreements. They are not imported as Round 2 labels.
@@ -132,6 +133,68 @@ def load_sync_config(path):
     return config
 
 
+def load_area_estimation(path):
+    """Load only the fields needed by the in-app area chart.
+
+    The analysis artifact contains full error matrices and per-stratum details;
+    omitting those keeps the single-file inspector compact without changing the
+    displayed estimates or their 95% margins of error.
+    """
+    if not path or not os.path.exists(path):
+        raise FileNotFoundError(f'area-estimation artifact not found: {path}')
+    with open(path, encoding='utf-8') as fh:
+        raw = json.load(fh)
+
+    def metric(value):
+        return {
+            'area_ha': float(value['area_ha']),
+            'moe95_ha': float(value['moe95_ha']),
+        }
+
+    scenarios = {}
+    for key, scenario in raw.get('scenarios', {}).items():
+        groups = {}
+        for level in ('by_efg', 'by_vegtype'):
+            groups[level] = {}
+            for name, group in scenario.get(level, {}).items():
+                groups[level][name] = {
+                    'area_ha': float(group['area_ha']),
+                    'n': int(group['n']),
+                    'estimable': bool(group['estimable']),
+                    'composition': {
+                        cls: metric(value)
+                        for cls, value in group.get('composition', {}).items()
+                    },
+                }
+        scenarios[key] = {
+            'nothicket_mode': scenario['nothicket_mode'],
+            'ref_classes': scenario['ref_classes'],
+            'n_used': int(scenario['n_used']),
+            'area_total_ha': float(scenario['area_total_ha']),
+            'area_covered_ha': float(scenario['area_covered_ha']),
+            'area_uncovered_ha': float(scenario['area_uncovered_ha']),
+            'strata_total': int(scenario['strata_total']),
+            'strata_covered': int(scenario['strata_covered']),
+            'strata_without_variance': int(scenario['strata_without_variance']),
+            'reference_area': {
+                cls: metric(value)
+                for cls, value in scenario.get('reference_area', {}).items()
+            },
+            **groups,
+        }
+    if not scenarios:
+        raise ValueError('area-estimation artifact has no scenarios')
+    return {
+        'artifact': str(raw.get('artifact', '')),
+        'generated_utc': str(raw.get('generated_utc', '')),
+        'stratification_year': int(raw['stratification_year']),
+        'assessment_year': int(raw['assessment_year']),
+        'n_reference_labels': int(raw['n_reference_labels']),
+        'n_reference_labels_on_new_points': int(raw['n_reference_labels_on_new_points']),
+        'scenarios': scenarios,
+    }
+
+
 def load_assignments(path, ds_id, pts):
     if not path or not os.path.exists(path):
         return {'version': 1, 'dataset': ds_id, 'campaign': '', 'overlap_fraction': 0,
@@ -159,6 +222,8 @@ def main(argv=None):
                         help='assignment manifest to embed (default: assignment_manifest.json)')
     parser.add_argument('--sync-config', default=SYNC_CONFIG,
                         help='Google Sheets sync config to embed (default: sync_config.json)')
+    parser.add_argument('--area-estimates', default=AREA_ESTIMATION,
+                        help='area-estimation JSON to embed in compact form')
     parser.add_argument('--out', default=OUT, help='output HTML path')
     args = parser.parse_args(argv)
     pts = load_points()
@@ -167,6 +232,7 @@ def main(argv=None):
     assignments = load_assignments(args.assignments, ds_id, pts)
     disagreements = load_disagreements(DISAGREEMENT_FILES, pts)
     sync_config = load_sync_config(args.sync_config)
+    area_estimation = load_area_estimation(args.area_estimates)
 
     tpl = open(TPL, encoding='utf-8').read()
     app = open(APP, encoding='utf-8').read()
@@ -176,6 +242,7 @@ def main(argv=None):
     tpl = tpl.replace('__ASSIGNMENTS__', json.dumps(assignments, separators=(',', ':')))
     tpl = tpl.replace('__DISAGREEMENTS__', json.dumps(disagreements, separators=(',', ':')))
     tpl = tpl.replace('__SYNC_CONFIG__', json.dumps(sync_config, separators=(',', ':')))
+    tpl = tpl.replace('__AREA_ESTIMATION__', json.dumps(area_estimation, separators=(',', ':')))
     # inline app.js in place of the external <script src="app.js"></script>
     marker = '<script src="app.js"></script>'
     assert marker in tpl, 'app.js script tag not found in template'

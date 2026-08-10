@@ -45,6 +45,34 @@ const scope = await page.evaluate(() => ({required:window.REQUIRED_POINTS.length
   first:window.REQUIRED_POINTS[0].id,second:window.REQUIRED_POINTS[1].id,third:window.REQUIRED_POINTS[2].id}));
 console.log('Round 2 scope:', scope);
 
+// Area-estimation snapshot is embedded and can be explored at all three levels.
+await page.click('#areaEstimatesBtn');
+const areaLandscapeState = await page.evaluate(() => ({
+  open:!document.querySelector('#areaModal').classList.contains('hidden'),
+  labels:AREA_ESTIMATION.n_reference_labels,
+  rows:document.querySelectorAll('#areaChart .area-row').length,
+  segments:document.querySelectorAll('#areaChart .area-segment').length,
+  meta:document.querySelector('#areaMeta').textContent
+}));
+const areaLandscapeOK = areaLandscapeState.open && areaLandscapeState.labels === 821
+  && areaLandscapeState.rows === 1 && areaLandscapeState.segments === 4
+  && areaLandscapeState.meta.includes('0 Round 2') && areaLandscapeState.meta.includes('99.3% area coverage');
+await page.selectOption('#areaLevel','efg');
+const areaEfgOK = await page.evaluate(() => document.querySelectorAll('#areaChart .area-row').length === 3
+  && document.querySelectorAll('#areaChart .area-row-label b').length === 3);
+await page.selectOption('#areaLevel','vegtype');
+const areaVegtypeOK = await page.evaluate(() => document.querySelectorAll('#areaChart .area-row').length === 18
+  && [...document.querySelectorAll('#areaChart .area-row-label span')].some(x=>x.textContent.includes('AT49')));
+await page.selectOption('#areaScenario','B_nothicket_to_severe');
+await page.selectOption('#areaLevel','landscape');
+await page.click('#areaChart .area-segment');
+const areaScenarioOK = await page.evaluate(() => document.querySelectorAll('#areaLegend .area-swatch').length === 3
+  && document.querySelectorAll('#areaChart .area-segment').length === 3
+  && document.querySelector('#areaDetail').textContent.includes('95% margin')
+  && document.querySelector('#areaSnapshot').textContent.includes('do not recalculate live'));
+await page.click('#closeAreaEstimates');
+console.log('area estimates landscape / EFG / vegetation type / scenario:', areaLandscapeOK, areaEfgOK, areaVegtypeOK, areaScenarioOK, areaLandscapeState);
+
 // Blind mode is the safe default: map strata and current model prediction hidden.
 const blindOK = await page.evaluate(() => {
   const src = window.map.getSource('pts');
@@ -222,6 +250,7 @@ console.log('basemap tile requests:', tileOK);
 console.log('JS errors:', errors.length ? errors : 'none');
 const pass = nPts === 2098 && scope.required === 1252 && scope.disagreements > 0
   && cModerate === '1' && cSevere === '1'
+  && areaLandscapeOK && areaEfgOK && areaVegtypeOK && areaScenarioOK
   && simplifiedUiOK && blindOK && preFlagOK && reviewFilterOK && draftOK && flagMergedOK && autoAdvancedTo === String(scope.second)
   && repeatKept === '1' && afterClear === '0' && afterUndo === '1'
   && unflagOK

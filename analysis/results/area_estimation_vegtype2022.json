@@ -1,0 +1,2469 @@
+{
+  "artifact": "design-based area and accuracy; strata = vegetation type x 2022 condition class; map assessed = 2025 condition surface",
+  "generated_utc": "2026-08-10T12:11:12.959345+00:00",
+  "stratification_year": 2022,
+  "assessment_year": 2025,
+  "design_file": "sample_design_vegtype2022.json",
+  "points_file": "sample_points_vegtype2022.csv",
+  "adjudication": "random duplicate selection (script 25 rule, seed 0)",
+  "n_reference_labels": 821,
+  "n_reference_labels_on_new_points": 0,
+  "scenarios": {
+    "A_nothicket_class": {
+      "nothicket_mode": "class",
+      "ref_classes": [
+        "intact",
+        "moderate",
+        "severe",
+        "nothicket"
+      ],
+      "map_classes": [
+        "intact",
+        "moderate",
+        "severe"
+      ],
+      "n_used": 781,
+      "dropped": {
+        "outside_vegtypes": 21,
+        "no_2025_class": 19
+      },
+      "area_total_ha": 1917975.795546265,
+      "area_covered_ha": 1905203.554376533,
+      "area_uncovered_ha": 12772.241169732064,
+      "strata_total": 54,
+      "strata_covered": 50,
+      "strata_without_variance": 11,
+      "error_matrix_area_ha": {
+        "intact": {
+          "intact": 329264.4450082773,
+          "moderate": 126609.53911049312,
+          "severe": 38261.706564328,
+          "nothicket": 32153.426407409148
+        },
+        "moderate": {
+          "intact": 72814.37102482794,
+          "moderate": 247630.83193101845,
+          "severe": 147914.44018279557,
+          "nothicket": 50392.15193254517
+        },
+        "severe": {
+          "intact": 15847.363647287117,
+          "moderate": 105661.07616137953,
+          "severe": 638457.2416476952,
+          "nothicket": 100196.96075847649
+        }
+      },
+      "error_matrix_se_ha": {
+        "intact": {
+          "intact": 17785.763482530754,
+          "moderate": 16136.766216653165,
+          "severe": 8738.414185163916,
+          "nothicket": 8550.98995006263
+        },
+        "moderate": {
+          "intact": 13101.671749031424,
+          "moderate": 19828.042142065657,
+          "severe": 17051.196519566496,
+          "nothicket": 10663.131488227971
+        },
+        "severe": {
+          "intact": 6174.633196038167,
+          "moderate": 16460.93953923787,
+          "severe": 24851.179698598673,
+          "nothicket": 15421.710628274406
+        }
+      },
+      "reference_area": {
+        "intact": {
+          "area_ha": 417926.1796803924,
+          "se_ha": 20913.54557360827,
+          "moe95_ha": 40989.796113309276,
+          "ci95_ha": [
+            376936.3835670831,
+            458915.97579370165
+          ]
+        },
+        "moderate": {
+          "area_ha": 479901.44720289105,
+          "se_ha": 28545.989795145862,
+          "moe95_ha": 55949.111901533804,
+          "ci95_ha": [
+            423952.33530135726,
+            535850.5591044249
+          ]
+        },
+        "severe": {
+          "area_ha": 824633.3883948188,
+          "se_ha": 27478.06547677836,
+          "moe95_ha": 53856.018699319015,
+          "ci95_ha": [
+            770777.3696954998,
+            878489.4070941377
+          ]
+        },
+        "nothicket": {
+          "area_ha": 182742.53909843086,
+          "se_ha": 20472.0909872785,
+          "moe95_ha": 40124.5610232929,
+          "ci95_ha": [
+            142617.97807513794,
+            222867.10012172378
+          ]
+        }
+      },
+      "map_class_area": {
+        "intact": {
+          "area_ha": 526289.1170905074,
+          "se_ha": 13862.26002961421,
+          "moe95_ha": 27169.530402372995
+        },
+        "moderate": {
+          "area_ha": 518751.7950711872,
+          "se_ha": 22373.48797364976,
+          "moe95_ha": 43851.23063689357
+        },
+        "severe": {
+          "area_ha": 860162.6422148383,
+          "se_ha": 19274.15335799849,
+          "moe95_ha": 37776.64641417878
+        }
+      },
+      "users_accuracy": {
+        "intact": {
+          "value": 0.62563415110796,
+          "se": 0.03253891321219506,
+          "moe95": 0.06377509799197685
+        },
+        "moderate": {
+          "value": 0.47735898802439153,
+          "se": 0.03416666657062569,
+          "moe95": 0.066965435950215
+        },
+        "severe": {
+          "value": 0.7422517676467878,
+          "se": 0.024530474097342714,
+          "moe95": 0.048078845754484414
+        }
+      },
+      "producers_accuracy": {
+        "intact": {
+          "value": 0.7878531209987399,
+          "se": 0.030073120198526357,
+          "moe95": 0.0589422324918557
+        },
+        "moderate": {
+          "value": 0.5160035115008227,
+          "se": 0.03351093732132457,
+          "moe95": 0.06568023023797531
+        },
+        "severe": {
+          "value": 0.7742316169012721,
+          "se": 0.020297485517431102,
+          "moe95": 0.0397823405908883
+        }
+      },
+      "overall_accuracy": {
+        "value": 0.6379121620863804,
+        "se": 0.017358359500904662,
+        "moe95": 0.0340217594524718
+      },
+      "by_vegtype": {
+        "AT15": {
+          "area_ha": 1362.7027594973301,
+          "n": 2,
+          "composition": {
+            "intact": {
+              "area_ha": 681.3513797486651,
+              "se_ha": 681.3513797486651,
+              "moe95_ha": 1335.424165124057
+            },
+            "moderate": {
+              "area_ha": 681.3513797486651,
+              "se_ha": 681.3513797486651,
+              "moe95_ha": 1335.424165124057
+            },
+            "severe": {
+              "area_ha": 0.0,
+              "se_ha": 0.0,
+              "moe95_ha": 0.0
+            },
+            "nothicket": {
+              "area_ha": 0.0,
+              "se_ha": 0.0,
+              "moe95_ha": 0.0
+            }
+          },
+          "fraction": {
+            "intact": 0.5,
+            "moderate": 0.5,
+            "severe": 0.0,
+            "nothicket": 0.0
+          },
+          "strata": 1,
+          "weak_strata": [],
+          "estimable": true
+        },
+        "AT17": {
+          "area_ha": 62784.17211813079,
+          "n": 28,
+          "composition": {
+            "intact": {
+              "area_ha": 35276.15163623062,
+              "se_ha": 2204.7594772644143,
+              "moe95_ha": 4321.249170011608
+            },
+            "moderate": {
+              "area_ha": 10427.568656089084,
+              "se_ha": 3475.8562186963613,
+              "moe95_ha": 6812.553004084446
+            },
+            "severe": {
+              "area_ha": 10704.664886111033,
+              "se_ha": 3185.6748453918112,
+              "moe95_ha": 6243.807963423155
+            },
+            "nothicket": {
+              "area_ha": 6375.786939700049,
+              "se_ha": 3548.6861346897617,
+              "moe95_ha": 6955.297016428588
+            }
+          },
+          "fraction": {
+            "intact": 0.5618637698982032,
+            "moderate": 0.16608594657375145,
+            "severe": 0.17049941927990708,
+            "nothicket": 0.10155086424813829
+          },
+          "strata": 3,
+          "weak_strata": [
+            "AT17_severe"
+          ],
+          "estimable": false
+        },
+        "AT18": {
+          "area_ha": 109182.94951448787,
+          "n": 41,
+          "composition": {
+            "intact": {
+              "area_ha": 31441.46469456281,
+              "se_ha": 6088.613457120511,
+              "moe95_ha": 11933.463091742111
+            },
+            "moderate": {
+              "area_ha": 43491.64677646445,
+              "se_ha": 7469.264495399726,
+              "moe95_ha": 14639.489401987203
+            },
+            "severe": {
+              "area_ha": 29013.79284125444,
+              "se_ha": 6407.127920608697,
+              "moe95_ha": 12557.739968734053
+            },
+            "nothicket": {
+              "area_ha": 5236.045202206173,
+              "se_ha": 3702.444259568354,
+              "moe95_ha": 7256.6574035210415
+            }
+          },
+          "fraction": {
+            "intact": 0.2879704645677366,
+            "moderate": 0.398337350015383,
+            "severe": 0.2657355655830171,
+            "nothicket": 0.04795661983386319
+          },
+          "strata": 3,
+          "weak_strata": [],
+          "estimable": true
+        },
+        "AT19": {
+          "area_ha": 106570.8535247164,
+          "n": 45,
+          "composition": {
+            "intact": {
+              "area_ha": 25482.200090188675,
+              "se_ha": 6276.07280760021,
+              "moe95_ha": 12300.87666724759
+            },
+            "moderate": {
+              "area_ha": 34125.52193169312,
+              "se_ha": 7637.323815509998,
+              "moe95_ha": 14968.879616669625
+            },
+            "severe": {
+              "area_ha": 29488.482094214643,
+              "se_ha": 5519.382487649476,
+              "moe95_ha": 10817.790892694064
+            },
+            "nothicket": {
+              "area_ha": 17474.649408619967,
+              "se_ha": 5985.2428026626885,
+              "moe95_ha": 11730.860331946444
+            }
+          },
+          "fraction": {
+            "intact": 0.23911040633899705,
+            "moderate": 0.3202144001199969,
+            "severe": 0.2767030676673293,
+            "nothicket": 0.16397212587367677
+          },
+          "strata": 3,
+          "weak_strata": [],
+          "estimable": true
+        },
+        "AT21": {
+          "area_ha": 33185.611760661304,
+          "n": 12,
+          "composition": {
+            "intact": {
+              "area_ha": 19619.76063735557,
+              "se_ha": 3547.1659831553648,
+              "moe95_ha": 6952.317574170127
+            },
+            "moderate": {
+              "area_ha": 6782.925561652866,
+              "se_ha": 4900.245140140099,
+              "moe95_ha": 9604.303990092023
+            },
+            "severe": {
+              "area_ha": 2681.4054429991497,
+              "se_ha": 2681.4054429991497,
+              "moe95_ha": 5255.458096228002
+            },
+            "nothicket": {
+              "area_ha": 4101.520118653716,
+              "se_ha": 4101.520118653716,
+              "moe95_ha": 8038.831714427733
+            }
+          },
+          "fraction": {
+            "intact": 0.5912128659509335,
+            "moderate": 0.2043935670245333,
+            "severe": 0.08080024145216229,
+            "nothicket": 0.12359332557237099
+          },
+          "strata": 3,
+          "weak_strata": [
+            "AT21_severe"
+          ],
+          "estimable": false
+        },
+        "AT22": {
+          "area_ha": 12510.555572233228,
+          "n": 3,
+          "composition": {
+            "intact": {
+              "area_ha": 4912.296217799959,
+              "se_ha": 0.0,
+              "moe95_ha": 0.0
+            },
+            "moderate": {
+              "area_ha": 0.0,
+              "se_ha": 0.0,
+              "moe95_ha": 0.0
+            },
+            "severe": {
+              "area_ha": 7598.25935443327,
+              "se_ha": 0.0,
+              "moe95_ha": 0.0
+            },
+            "nothicket": {
+              "area_ha": 0.0,
+              "se_ha": 0.0,
+              "moe95_ha": 0.0
+            }
+          },
+          "fraction": {
+            "intact": 0.3926521239954076,
+            "moderate": 0.0,
+            "severe": 0.6073478760045925,
+            "nothicket": 0.0
+          },
+          "strata": 3,
+          "weak_strata": [
+            "AT22_intact",
+            "AT22_moderate",
+            "AT22_severe"
+          ],
+          "estimable": false
+        },
+        "AT27": {
+          "area_ha": 123455.84892788841,
+          "n": 41,
+          "composition": {
+            "intact": {
+              "area_ha": 13515.253632212758,
+              "se_ha": 0.0,
+              "moe95_ha": 0.0
+            },
+            "moderate": {
+              "area_ha": 20410.885211030545,
+              "se_ha": 7362.722039879848,
+              "moe95_ha": 14430.670026343782
+            },
+            "severe": {
+              "area_ha": 73757.62752341884,
+              "se_ha": 9048.233789632735,
+              "moe95_ha": 17734.21235137853
+            },
+            "nothicket": {
+              "area_ha": 15772.082561226272,
+              "se_ha": 6841.980333999838,
+              "moe95_ha": 13410.035037571013
+            }
+          },
+          "fraction": {
+            "intact": 0.10947438901908269,
+            "moderate": 0.16532943062869962,
+            "severe": 0.5974413376437214,
+            "nothicket": 0.12775484270849635
+          },
+          "strata": 3,
+          "weak_strata": [],
+          "estimable": true
+        },
+        "AT28": {
+          "area_ha": 84223.19309706232,
+          "n": 39,
+          "composition": {
+            "intact": {
+              "area_ha": 26005.202128173518,
+              "se_ha": 6223.165659618824,
+              "moe95_ha": 12197.180562679345
+            },
+            "moderate": {
+              "area_ha": 29885.341378763205,
+              "se_ha": 6727.672725248181,
+              "moe95_ha": 13185.99624125887
+            },
+            "severe": {
+              "area_ha": 16689.051396347833,
+              "se_ha": 5195.956281357766,
+              "moe95_ha": 10183.887176705888
+            },
+            "nothicket": {
+              "area_ha": 11643.598193777758,
+              "se_ha": 4735.908434498468,
+              "moe95_ha": 9282.209965696466
+            }
+          },
+          "fraction": {
+            "intact": 0.3087653313999154,
+            "moderate": 0.3548350552836686,
+            "severe": 0.19815267959639898,
+            "nothicket": 0.13824693372001687
+          },
+          "strata": 2,
+          "weak_strata": [],
+          "estimable": true
+        },
+        "AT29": {
+          "area_ha": 77493.45972598097,
+          "n": 34,
+          "composition": {
+            "intact": {
+              "area_ha": 8386.624846033716,
+              "se_ha": 3320.4760428289546,
+              "moe95_ha": 6508.013455472829
+            },
+            "moderate": {
+              "area_ha": 19556.00504638548,
+              "se_ha": 6092.618392507374,
+              "moe95_ha": 11941.312620860772
+            },
+            "severe": {
+              "area_ha": 38948.113474158235,
+              "se_ha": 6902.041136587333,
+              "moe95_ha": 13527.752047525073
+            },
+            "nothicket": {
+              "area_ha": 10602.71635940354,
+              "se_ha": 4864.859909227947,
+              "moe95_ha": 9534.950211919573
+            }
+          },
+          "fraction": {
+            "intact": 0.10822364720440995,
+            "moderate": 0.2523568455394308,
+            "severe": 0.502598717516031,
+            "nothicket": 0.13682078974012826
+          },
+          "strata": 3,
+          "weak_strata": [],
+          "estimable": true
+        },
+        "AT30": {
+          "area_ha": 63179.843238714486,
+          "n": 23,
+          "composition": {
+            "intact": {
+              "area_ha": 11027.26424664334,
+              "se_ha": 4278.836283180528,
+              "moe95_ha": 8386.365010777063
+            },
+            "moderate": {
+              "area_ha": 28215.23724721823,
+              "se_ha": 7701.39540095528,
+              "moe95_ha": 15094.457616574757
+            },
+            "severe": {
+              "area_ha": 23937.34174485292,
+              "se_ha": 7432.680391639656,
+              "moe95_ha": 14567.78587621079
+            },
+            "nothicket": {
+              "area_ha": 0.0,
+              "se_ha": 0.0,
+              "moe95_ha": 0.0
+            }
+          },
+          "fraction": {
+            "intact": 0.1745376955903272,
+            "moderate": 0.44658605974395454,
+            "severe": 0.37887624466571834,
+            "nothicket": 0.0
+          },
+          "strata": 3,
+          "weak_strata": [],
+          "estimable": true
+        },
+        "AT31": {
+          "area_ha": 22077.385463771898,
+          "n": 5,
+          "composition": {
+            "intact": {
+              "area_ha": 13294.600119275005,
+              "se_ha": 6212.701680373043,
+              "moe95_ha": 12176.671540222638
+            },
+            "moderate": {
+              "area_ha": 8782.785344496893,
+              "se_ha": 6212.701680373043,
+              "moe95_ha": 12176.671540222638
+            },
+            "severe": {
+              "area_ha": 0.0,
+              "se_ha": 0.0,
+              "moe95_ha": 0.0
+            },
+            "nothicket": {
+              "area_ha": 0.0,
+              "se_ha": 0.0,
+              "moe95_ha": 0.0
+            }
+          },
+          "fraction": {
+            "intact": 0.6021818181818182,
+            "moderate": 0.39781818181818185,
+            "severe": 0.0,
+            "nothicket": 0.0
+          },
+          "strata": 2,
+          "weak_strata": [],
+          "estimable": true
+        },
+        "AT32": {
+          "area_ha": 349442.749217854,
+          "n": 157,
+          "composition": {
+            "intact": {
+              "area_ha": 64513.6262993819,
+              "se_ha": 8371.355028923583,
+              "moe95_ha": 16407.554358488484
+            },
+            "moderate": {
+              "area_ha": 105525.23911431142,
+              "se_ha": 11320.667242104755,
+              "moe95_ha": 22188.100075487702
+            },
+            "severe": {
+              "area_ha": 146765.87490401717,
+              "se_ha": 10871.373999781074,
+              "moe95_ha": 21307.50150203606
+            },
+            "nothicket": {
+              "area_ha": 32638.008900143526,
+              "se_ha": 8216.370163729362,
+              "moe95_ha": 16103.789604559015
+            }
+          },
+          "fraction": {
+            "intact": 0.18461858614545754,
+            "moderate": 0.3019814815173731,
+            "severe": 0.4199997717294702,
+            "nothicket": 0.09340016060769922
+          },
+          "strata": 3,
+          "weak_strata": [],
+          "estimable": true
+        },
+        "AT33": {
+          "area_ha": 48675.016953671024,
+          "n": 21,
+          "composition": {
+            "intact": {
+              "area_ha": 11565.713021303396,
+              "se_ha": 4071.6823147155333,
+              "moe95_ha": 7980.350693331127
+            },
+            "moderate": {
+              "area_ha": 12934.100160093027,
+              "se_ha": 4993.857873906777,
+              "moe95_ha": 9787.78157676905
+            },
+            "severe": {
+              "area_ha": 21247.16132433737,
+              "se_ha": 5285.628594350391,
+              "moe95_ha": 10359.641680581837
+            },
+            "nothicket": {
+              "area_ha": 2928.042447937233,
+              "se_ha": 2928.042447937233,
+              "moe95_ha": 5738.857743161473
+            }
+          },
+          "fraction": {
+            "intact": 0.23761086785674188,
+            "moderate": 0.26572358818906483,
+            "severe": 0.436510609632873,
+            "nothicket": 0.06015493432132031
+          },
+          "strata": 3,
+          "weak_strata": [],
+          "estimable": true
+        },
+        "AT34": {
+          "area_ha": 16322.903524969708,
+          "n": 10,
+          "composition": {
+            "intact": {
+              "area_ha": 1619.4464667263824,
+              "se_ha": 0.0,
+              "moe95_ha": 0.0
+            },
+            "moderate": {
+              "area_ha": 2600.0492238200122,
+              "se_ha": 1061.465650746414,
+              "moe95_ha": 2080.4344462893428
+            },
+            "severe": {
+              "area_ha": 9510.89741312082,
+              "se_ha": 2801.3960113265916,
+              "moe95_ha": 5490.635288634281
+            },
+            "nothicket": {
+              "area_ha": 2592.510421302493,
+              "se_ha": 2592.510421302493,
+              "moe95_ha": 5081.227055297648
+            }
+          },
+          "fraction": {
+            "intact": 0.09921313718782074,
+            "moderate": 0.159288402326377,
+            "severe": 0.5826719124187478,
+            "nothicket": 0.1588265480670544
+          },
+          "strata": 3,
+          "weak_strata": [
+            "AT34_intact"
+          ],
+          "estimable": false
+        },
+        "AT37": {
+          "area_ha": 12095.331252561287,
+          "n": 6,
+          "composition": {
+            "intact": {
+              "area_ha": 8070.4242851193985,
+              "se_ha": 3038.384731346219,
+              "moe95_ha": 5955.124644614997
+            },
+            "moderate": {
+              "area_ha": 0.0,
+              "se_ha": 0.0,
+              "moe95_ha": 0.0
+            },
+            "severe": {
+              "area_ha": 0.0,
+              "se_ha": 0.0,
+              "moe95_ha": 0.0
+            },
+            "nothicket": {
+              "area_ha": 4024.906967441889,
+              "se_ha": 3038.384731346219,
+              "moe95_ha": 5955.124644614997
+            }
+          },
+          "fraction": {
+            "intact": 0.6672346640701071,
+            "moderate": 0.0,
+            "severe": 0.0,
+            "nothicket": 0.3327653359298929
+          },
+          "strata": 3,
+          "weak_strata": [],
+          "estimable": true
+        },
+        "AT49": {
+          "area_ha": 556335.0161255548,
+          "n": 220,
+          "composition": {
+            "intact": {
+              "area_ha": 39317.73212406211,
+              "se_ha": 7422.680751657264,
+              "moe95_ha": 14548.186941986934
+            },
+            "moderate": {
+              "area_ha": 106876.905484363,
+              "se_ha": 13288.117957518702,
+              "moe95_ha": 26044.2326190566
+            },
+            "severe": {
+              "area_ha": 353096.08741646324,
+              "se_ha": 15247.114859598712,
+              "moe95_ha": 29883.79599295896
+            },
+            "nothicket": {
+              "area_ha": 57044.29110066647,
+              "se_ha": 11152.319876600042,
+              "moe95_ha": 21858.145302206263
+            }
+          },
+          "fraction": {
+            "intact": 0.07067276188703679,
+            "moderate": 0.1921088955152929,
+            "severe": 0.6346824794087306,
+            "nothicket": 0.10253586318893974
+          },
+          "strata": 3,
+          "weak_strata": [],
+          "estimable": true
+        },
+        "AT50": {
+          "area_ha": 53019.59586279483,
+          "n": 24,
+          "composition": {
+            "intact": {
+              "area_ha": 29853.20260877772,
+              "se_ha": 4104.546993316353,
+              "moe95_ha": 8044.764279752218
+            },
+            "moderate": {
+              "area_ha": 8464.396870373563,
+              "se_ha": 4104.546993316353,
+              "moe95_ha": 8044.764279752218
+            },
+            "severe": {
+              "area_ha": 12070.910169198387,
+              "se_ha": 3529.972578097175,
+              "moe95_ha": 6918.619119484466
+            },
+            "nothicket": {
+              "area_ha": 2631.0862144451557,
+              "se_ha": 2631.086214445156,
+              "moe95_ha": 5156.834220532335
+            }
+          },
+          "fraction": {
+            "intact": 0.5630597918179617,
+            "moderate": 0.15964657467925442,
+            "severe": 0.22766884531590414,
+            "nothicket": 0.04962478818687968
+          },
+          "strata": 3,
+          "weak_strata": [
+            "AT50_severe"
+          ],
+          "estimable": false
+        },
+        "AT51": {
+          "area_ha": 173286.36573598234,
+          "n": 70,
+          "composition": {
+            "intact": {
+              "area_ha": 73343.86524679676,
+              "se_ha": 8277.413899317113,
+              "moe95_ha": 16223.433127792794
+            },
+            "moderate": {
+              "area_ha": 41141.487816387504,
+              "se_ha": 9058.259317080556,
+              "moe95_ha": 17753.862024102276
+            },
+            "severe": {
+              "area_ha": 49123.7184098915,
+              "se_ha": 7451.957183051562,
+              "moe95_ha": 14605.567693115618
+            },
+            "nothicket": {
+              "area_ha": 9677.294262906575,
+              "se_ha": 4890.740413625466,
+              "moe95_ha": 9585.675068440441
+            }
+          },
+          "fraction": {
+            "intact": 0.42325237150245776,
+            "moderate": 0.23741907011351562,
+            "severe": 0.28348288222938434,
+            "nothicket": 0.05584567615464231
+          },
+          "strata": 3,
+          "weak_strata": [],
+          "estimable": true
+        }
+      },
+      "by_efg": {
+        "AridThicket": {
+          "area_ha": 793008.4280053261,
+          "n": 307,
+          "composition": {
+            "intact": {
+              "area_ha": 76107.31440397026,
+              "se_ha": 9510.387271501517,
+              "moe95_ha": 18640.016531171124
+            },
+            "moderate": {
+              "area_ha": 169118.47948245346,
+              "se_ha": 17762.26623994767,
+              "moe95_ha": 34813.402114109114
+            },
+            "severe": {
+              "area_ha": 472038.21800907236,
+              "se_ha": 19938.095538323778,
+              "moe95_ha": 39077.94917543334
+            },
+            "nothicket": {
+              "area_ha": 75744.41610982998,
+              "se_ha": 13407.4742624318,
+              "moe95_ha": 26278.166678014055
+            }
+          },
+          "fraction": {
+            "intact": 0.095972894759019,
+            "moderate": 0.21326189421194602,
+            "severe": 0.5952499385112487,
+            "nothicket": 0.09551527251778623
+          },
+          "strata": 13,
+          "weak_strata": [],
+          "estimable": true
+        },
+        "MesicThicket": {
+          "area_ha": 255289.95830242115,
+          "n": 108,
+          "composition": {
+            "intact": {
+              "area_ha": 124048.91712981243,
+              "se_ha": 10564.852572627466,
+              "moe95_ha": 20706.730544325168
+            },
+            "moderate": {
+              "area_ha": 64343.01781137561,
+              "se_ha": 11696.175758521134,
+              "moe95_ha": 22924.08324355187
+            },
+            "severe": {
+              "area_ha": 42146.03189465641,
+              "se_ha": 7536.386896265799,
+              "moe95_ha": 14771.046890240566
+            },
+            "nothicket": {
+              "area_ha": 24751.99146657668,
+              "se_ha": 7665.969210351527,
+              "moe95_ha": 15025.02355888195
+            }
+          },
+          "fraction": {
+            "intact": 0.48591381327604677,
+            "moderate": 0.2520389687053562,
+            "severe": 0.1650908330860764,
+            "nothicket": 0.09695638493252061
+          },
+          "strata": 13,
+          "weak_strata": [
+            "AT17_severe",
+            "AT21_severe",
+            "AT50_severe"
+          ],
+          "estimable": false
+        },
+        "ValleyThicket": {
+          "area_ha": 856905.1680687858,
+          "n": 366,
+          "composition": {
+            "intact": {
+              "area_ha": 217769.94814660962,
+              "se_ha": 15339.909143280442,
+              "moe95_ha": 30065.66944694634
+            },
+            "moderate": {
+              "area_ha": 246439.949909062,
+              "se_ha": 19041.399739293567,
+              "moe95_ha": 37320.45770424577
+            },
+            "severe": {
+              "area_ha": 310449.13849109004,
+              "se_ha": 17341.260081106713,
+              "moe95_ha": 33988.245205511295
+            },
+            "nothicket": {
+              "area_ha": 82246.13152202415,
+              "se_ha": 13437.970805132034,
+              "moe95_ha": 26337.9388033595
+            }
+          },
+          "fraction": {
+            "intact": 0.25413541225034214,
+            "moderate": 0.2875930255671882,
+            "severe": 0.36229112632235816,
+            "nothicket": 0.09598043586011148
+          },
+          "strata": 24,
+          "weak_strata": [
+            "AT22_intact",
+            "AT22_moderate",
+            "AT22_severe",
+            "AT34_intact"
+          ],
+          "estimable": false
+        }
+      },
+      "per_stratum": {
+        "AT15_intact": {
+          "area_ha": 1362.7027594973301,
+          "n": 2,
+          "low_n": true,
+          "no_variance": false,
+          "covered": true
+        },
+        "AT15_moderate": {
+          "area_ha": 86.14228158250978,
+          "n": 0,
+          "low_n": true,
+          "no_variance": true,
+          "covered": false
+        },
+        "AT15_severe": {
+          "area_ha": 10.706950253193307,
+          "n": 0,
+          "low_n": true,
+          "no_variance": true,
+          "covered": false
+        },
+        "AT17_intact": {
+          "area_ha": 37480.911113495036,
+          "n": 17,
+          "low_n": false,
+          "no_variance": false,
+          "covered": true
+        },
+        "AT17_moderate": {
+          "area_ha": 20855.13731217817,
+          "n": 10,
+          "low_n": false,
+          "no_variance": false,
+          "covered": true
+        },
+        "AT17_severe": {
+          "area_ha": 4448.123692457582,
+          "n": 1,
+          "low_n": true,
+          "no_variance": true,
+          "covered": true
+        },
+        "AT18_intact": {
+          "area_ha": 55022.563215484915,
+          "n": 21,
+          "low_n": false,
+          "no_variance": false,
+          "covered": true
+        },
+        "AT18_moderate": {
+          "area_ha": 22769.30856709169,
+          "n": 8,
+          "low_n": true,
+          "no_variance": false,
+          "covered": true
+        },
+        "AT18_severe": {
+          "area_ha": 31391.077731911268,
+          "n": 12,
+          "low_n": false,
+          "no_variance": false,
+          "covered": true
+        },
+        "AT19_intact": {
+          "area_ha": 35823.04145790366,
+          "n": 13,
+          "low_n": false,
+          "no_variance": false,
+          "covered": true
+        },
+        "AT19_moderate": {
+          "area_ha": 37583.65232193303,
+          "n": 21,
+          "low_n": false,
+          "no_variance": false,
+          "covered": true
+        },
+        "AT19_severe": {
+          "area_ha": 33164.15974487972,
+          "n": 11,
+          "low_n": false,
+          "no_variance": false,
+          "covered": true
+        },
+        "AT21_intact": {
+          "area_ha": 24132.64898699235,
+          "n": 9,
+          "low_n": true,
+          "no_variance": false,
+          "covered": true
+        },
+        "AT21_moderate": {
+          "area_ha": 8203.040237307432,
+          "n": 2,
+          "low_n": true,
+          "no_variance": false,
+          "covered": true
+        },
+        "AT21_severe": {
+          "area_ha": 849.9225363615235,
+          "n": 1,
+          "low_n": true,
+          "no_variance": true,
+          "covered": true
+        },
+        "AT22_intact": {
+          "area_ha": 4912.296217799959,
+          "n": 1,
+          "low_n": true,
+          "no_variance": true,
+          "covered": true
+        },
+        "AT22_moderate": {
+          "area_ha": 5479.652067516621,
+          "n": 1,
+          "low_n": true,
+          "no_variance": true,
+          "covered": true
+        },
+        "AT22_severe": {
+          "area_ha": 2118.607286916649,
+          "n": 1,
+          "low_n": true,
+          "no_variance": true,
+          "covered": true
+        },
+        "AT27_intact": {
+          "area_ha": 13515.253632212758,
+          "n": 5,
+          "low_n": true,
+          "no_variance": false,
+          "covered": true
+        },
+        "AT27_moderate": {
+          "area_ha": 39429.822523336305,
+          "n": 17,
+          "low_n": false,
+          "no_variance": false,
+          "covered": true
+        },
+        "AT27_severe": {
+          "area_ha": 70510.77277233935,
+          "n": 19,
+          "low_n": false,
+          "no_variance": false,
+          "covered": true
+        },
+        "AT28_intact": {
+          "area_ha": 38814.11427393166,
+          "n": 12,
+          "low_n": false,
+          "no_variance": false,
+          "covered": true
+        },
+        "AT28_moderate": {
+          "area_ha": 45409.07882313066,
+          "n": 27,
+          "low_n": false,
+          "no_variance": false,
+          "covered": true
+        },
+        "AT28_severe": {
+          "area_ha": 11575.536734792007,
+          "n": 0,
+          "low_n": true,
+          "no_variance": true,
+          "covered": false
+        },
+        "AT29_intact": {
+          "area_ha": 5439.972873102951,
+          "n": 6,
+          "low_n": true,
+          "no_variance": false,
+          "covered": true
+        },
+        "AT29_moderate": {
+          "area_ha": 19039.905055860327,
+          "n": 8,
+          "low_n": true,
+          "no_variance": false,
+          "covered": true
+        },
+        "AT29_severe": {
+          "area_ha": 53013.581797017694,
+          "n": 20,
+          "low_n": false,
+          "no_variance": false,
+          "covered": true
+        },
+        "AT30_intact": {
+          "area_ha": 21389.477511826528,
+          "n": 10,
+          "low_n": false,
+          "no_variance": false,
+          "covered": true
+        },
+        "AT30_moderate": {
+          "area_ha": 22243.25917721456,
+          "n": 9,
+          "low_n": true,
+          "no_variance": false,
+          "covered": true
+        },
+        "AT30_severe": {
+          "area_ha": 19547.1065496734,
+          "n": 4,
+          "low_n": true,
+          "no_variance": false,
+          "covered": true
+        },
+        "AT31_intact": {
+          "area_ha": 13535.444324334334,
+          "n": 3,
+          "low_n": true,
+          "no_variance": false,
+          "covered": true
+        },
+        "AT31_moderate": {
+          "area_ha": 8541.941139437564,
+          "n": 2,
+          "low_n": true,
+          "no_variance": false,
+          "covered": true
+        },
+        "AT31_severe": {
+          "area_ha": 1099.8552031042727,
+          "n": 0,
+          "low_n": true,
+          "no_variance": true,
+          "covered": false
+        },
+        "AT32_intact": {
+          "area_ha": 81313.69137331308,
+          "n": 43,
+          "low_n": false,
+          "no_variance": false,
+          "covered": true
+        },
+        "AT32_moderate": {
+          "area_ha": 155854.7473037377,
+          "n": 75,
+          "low_n": false,
+          "no_variance": false,
+          "covered": true
+        },
+        "AT32_severe": {
+          "area_ha": 112274.31054080321,
+          "n": 39,
+          "low_n": false,
+          "no_variance": false,
+          "covered": true
+        },
+        "AT33_intact": {
+          "area_ha": 10197.32588251377,
+          "n": 6,
+          "low_n": true,
+          "no_variance": false,
+          "covered": true
+        },
+        "AT33_moderate": {
+          "area_ha": 9197.266591784926,
+          "n": 5,
+          "low_n": true,
+          "no_variance": false,
+          "covered": true
+        },
+        "AT33_severe": {
+          "area_ha": 29280.42447937233,
+          "n": 10,
+          "low_n": false,
+          "no_variance": false,
+          "covered": true
+        },
+        "AT34_intact": {
+          "area_ha": 1619.4464667263824,
+          "n": 1,
+          "low_n": true,
+          "no_variance": true,
+          "covered": true
+        },
+        "AT34_moderate": {
+          "area_ha": 4333.415373033354,
+          "n": 5,
+          "low_n": true,
+          "no_variance": false,
+          "covered": true
+        },
+        "AT34_severe": {
+          "area_ha": 10370.041685209972,
+          "n": 4,
+          "low_n": true,
+          "no_variance": false,
+          "covered": true
+        },
+        "AT37_intact": {
+          "area_ha": 4045.5173176775097,
+          "n": 2,
+          "low_n": true,
+          "no_variance": false,
+          "covered": true
+        },
+        "AT37_moderate": {
+          "area_ha": 2520.3514002415927,
+          "n": 2,
+          "low_n": true,
+          "no_variance": false,
+          "covered": true
+        },
+        "AT37_severe": {
+          "area_ha": 5529.462534642185,
+          "n": 2,
+          "low_n": true,
+          "no_variance": false,
+          "covered": true
+        },
+        "AT49_intact": {
+          "area_ha": 43199.46027226257,
+          "n": 15,
+          "low_n": false,
+          "no_variance": false,
+          "covered": true
+        },
+        "AT49_moderate": {
+          "area_ha": 102551.39643989889,
+          "n": 39,
+          "low_n": false,
+          "no_variance": false,
+          "covered": true
+        },
+        "AT49_severe": {
+          "area_ha": 410584.15941339335,
+          "n": 166,
+          "low_n": false,
+          "no_variance": false,
+          "covered": true
+        },
+        "AT50_intact": {
+          "area_ha": 33055.42705026097,
+          "n": 17,
+          "low_n": false,
+          "no_variance": false,
+          "covered": true
+        },
+        "AT50_moderate": {
+          "area_ha": 15786.517286670936,
+          "n": 6,
+          "low_n": true,
+          "no_variance": false,
+          "covered": true
+        },
+        "AT50_severe": {
+          "area_ha": 4177.651525862919,
+          "n": 1,
+          "low_n": true,
+          "no_variance": true,
+          "covered": true
+        },
+        "AT51_intact": {
+          "area_ha": 92427.80906092576,
+          "n": 38,
+          "low_n": false,
+          "no_variance": false,
+          "covered": true
+        },
+        "AT51_moderate": {
+          "area_ha": 22928.154728358917,
+          "n": 13,
+          "low_n": false,
+          "no_variance": false,
+          "covered": true
+        },
+        "AT51_severe": {
+          "area_ha": 57930.40194669767,
+          "n": 19,
+          "low_n": false,
+          "no_variance": false,
+          "covered": true
+        }
+      }
+    },
+    "B_nothicket_to_severe": {
+      "nothicket_mode": "severe",
+      "ref_classes": [
+        "intact",
+        "moderate",
+        "severe"
+      ],
+      "map_classes": [
+        "intact",
+        "moderate",
+        "severe"
+      ],
+      "n_used": 781,
+      "dropped": {
+        "outside_vegtypes": 21,
+        "no_2025_class": 19
+      },
+      "area_total_ha": 1917975.795546265,
+      "area_covered_ha": 1905203.554376533,
+      "area_uncovered_ha": 12772.241169732064,
+      "strata_total": 54,
+      "strata_covered": 50,
+      "strata_without_variance": 11,
+      "error_matrix_area_ha": {
+        "intact": {
+          "intact": 329264.4450082773,
+          "moderate": 126609.53911049312,
+          "severe": 70415.13297173714
+        },
+        "moderate": {
+          "intact": 72814.37102482794,
+          "moderate": 247630.83193101845,
+          "severe": 198306.59211534075
+        },
+        "severe": {
+          "intact": 15847.363647287117,
+          "moderate": 105661.07616137953,
+          "severe": 738654.2024061717
+        }
+      },
+      "error_matrix_se_ha": {
+        "intact": {
+          "intact": 17785.763482530754,
+          "moderate": 16136.766216653165,
+          "severe": 12056.230659515553
+        },
+        "moderate": {
+          "intact": 13101.671749031424,
+          "moderate": 19828.042142065657,
+          "severe": 19115.516093310333
+        },
+        "severe": {
+          "intact": 6174.633196038167,
+          "moderate": 16460.93953923787,
+          "severe": 22442.160864550315
+        }
+      },
+      "reference_area": {
+        "intact": {
+          "area_ha": 417926.1796803924,
+          "se_ha": 20913.54557360827,
+          "moe95_ha": 40989.796113309276,
+          "ci95_ha": [
+            376936.3835670831,
+            458915.97579370165
+          ]
+        },
+        "moderate": {
+          "area_ha": 479901.44720289105,
+          "se_ha": 28545.989795145862,
+          "moe95_ha": 55949.111901533804,
+          "ci95_ha": [
+            423952.33530135726,
+            535850.5591044249
+          ]
+        },
+        "severe": {
+          "area_ha": 1007375.9274932495,
+          "se_ha": 26223.77625961676,
+          "moe95_ha": 51397.65700748534,
+          "ci95_ha": [
+            955978.2704857641,
+            1058773.584500735
+          ]
+        }
+      },
+      "map_class_area": {
+        "intact": {
+          "area_ha": 526289.1170905074,
+          "se_ha": 13862.26002961421,
+          "moe95_ha": 27169.530402372995
+        },
+        "moderate": {
+          "area_ha": 518751.7950711872,
+          "se_ha": 22373.48797364976,
+          "moe95_ha": 43851.23063689357
+        },
+        "severe": {
+          "area_ha": 860162.6422148383,
+          "se_ha": 19274.15335799849,
+          "moe95_ha": 37776.64641417878
+        }
+      },
+      "users_accuracy": {
+        "intact": {
+          "value": 0.62563415110796,
+          "se": 0.03253891321219506,
+          "moe95": 0.06377509799197685
+        },
+        "moderate": {
+          "value": 0.47735898802439153,
+          "se": 0.03416666657062569,
+          "moe95": 0.066965435950215
+        },
+        "severe": {
+          "value": 0.8587378318409717,
+          "se": 0.019628218693386688,
+          "moe95": 0.03847060171971375
+        }
+      },
+      "producers_accuracy": {
+        "intact": {
+          "value": 0.7878531209987399,
+          "se": 0.030073120198526357,
+          "moe95": 0.0589422324918557
+        },
+        "moderate": {
+          "value": 0.5160035115008227,
+          "se": 0.03351093732132457,
+          "moe95": 0.06568023023797531
+        },
+        "severe": {
+          "value": 0.7332458342976649,
+          "se": 0.01874419191549029,
+          "moe95": 0.03673794107366782
+        }
+      },
+      "overall_accuracy": {
+        "value": 0.6905033723685098,
+        "se": 0.016274152690712623,
+        "moe95": 0.03189675315270235
+      },
+      "by_vegtype": {
+        "AT15": {
+          "area_ha": 1362.7027594973301,
+          "n": 2,
+          "composition": {
+            "intact": {
+              "area_ha": 681.3513797486651,
+              "se_ha": 681.3513797486651,
+              "moe95_ha": 1335.424165124057
+            },
+            "moderate": {
+              "area_ha": 681.3513797486651,
+              "se_ha": 681.3513797486651,
+              "moe95_ha": 1335.424165124057
+            },
+            "severe": {
+              "area_ha": 0.0,
+              "se_ha": 0.0,
+              "moe95_ha": 0.0
+            }
+          },
+          "fraction": {
+            "intact": 0.5,
+            "moderate": 0.5,
+            "severe": 0.0
+          },
+          "strata": 1,
+          "weak_strata": [],
+          "estimable": true
+        },
+        "AT17": {
+          "area_ha": 62784.17211813079,
+          "n": 28,
+          "composition": {
+            "intact": {
+              "area_ha": 35276.15163623062,
+              "se_ha": 2204.7594772644143,
+              "moe95_ha": 4321.249170011608
+            },
+            "moderate": {
+              "area_ha": 10427.568656089084,
+              "se_ha": 3475.8562186963613,
+              "moe95_ha": 6812.553004084446
+            },
+            "severe": {
+              "area_ha": 17080.45182581108,
+              "se_ha": 4116.131777001001,
+              "moe95_ha": 8067.470038542815
+            }
+          },
+          "fraction": {
+            "intact": 0.5618637698982032,
+            "moderate": 0.16608594657375145,
+            "severe": 0.27205028352804533
+          },
+          "strata": 3,
+          "weak_strata": [
+            "AT17_severe"
+          ],
+          "estimable": false
+        },
+        "AT18": {
+          "area_ha": 109182.94951448787,
+          "n": 41,
+          "composition": {
+            "intact": {
+              "area_ha": 31441.46469456281,
+              "se_ha": 6088.613457120511,
+              "moe95_ha": 11933.463091742111
+            },
+            "moderate": {
+              "area_ha": 43491.64677646445,
+              "se_ha": 7469.264495399726,
+              "moe95_ha": 14639.489401987203
+            },
+            "severe": {
+              "area_ha": 34249.838043460615,
+              "se_ha": 6590.359688628226,
+              "moe95_ha": 12916.867634875927
+            }
+          },
+          "fraction": {
+            "intact": 0.2879704645677366,
+            "moderate": 0.398337350015383,
+            "severe": 0.3136921854168803
+          },
+          "strata": 3,
+          "weak_strata": [],
+          "estimable": true
+        },
+        "AT19": {
+          "area_ha": 106570.8535247164,
+          "n": 45,
+          "composition": {
+            "intact": {
+              "area_ha": 25482.200090188675,
+              "se_ha": 6276.07280760021,
+              "moe95_ha": 12300.87666724759
+            },
+            "moderate": {
+              "area_ha": 34125.52193169312,
+              "se_ha": 7637.323815509998,
+              "moe95_ha": 14968.879616669625
+            },
+            "severe": {
+              "area_ha": 46963.131502834614,
+              "se_ha": 6851.172489253238,
+              "moe95_ha": 13428.051330807977
+            }
+          },
+          "fraction": {
+            "intact": 0.23911040633899705,
+            "moderate": 0.3202144001199969,
+            "severe": 0.44067519354100615
+          },
+          "strata": 3,
+          "weak_strata": [],
+          "estimable": true
+        },
+        "AT21": {
+          "area_ha": 33185.611760661304,
+          "n": 12,
+          "composition": {
+            "intact": {
+              "area_ha": 19619.76063735557,
+              "se_ha": 3547.1659831553648,
+              "moe95_ha": 6952.317574170127
+            },
+            "moderate": {
+              "area_ha": 6782.925561652866,
+              "se_ha": 4900.245140140099,
+              "moe95_ha": 9604.303990092023
+            },
+            "severe": {
+              "area_ha": 6782.925561652866,
+              "se_ha": 4900.245140140099,
+              "moe95_ha": 9604.303990092023
+            }
+          },
+          "fraction": {
+            "intact": 0.5912128659509335,
+            "moderate": 0.2043935670245333,
+            "severe": 0.2043935670245333
+          },
+          "strata": 3,
+          "weak_strata": [
+            "AT21_severe"
+          ],
+          "estimable": false
+        },
+        "AT22": {
+          "area_ha": 12510.555572233228,
+          "n": 3,
+          "composition": {
+            "intact": {
+              "area_ha": 4912.296217799959,
+              "se_ha": 0.0,
+              "moe95_ha": 0.0
+            },
+            "moderate": {
+              "area_ha": 0.0,
+              "se_ha": 0.0,
+              "moe95_ha": 0.0
+            },
+            "severe": {
+              "area_ha": 7598.25935443327,
+              "se_ha": 0.0,
+              "moe95_ha": 0.0
+            }
+          },
+          "fraction": {
+            "intact": 0.3926521239954076,
+            "moderate": 0.0,
+            "severe": 0.6073478760045925
+          },
+          "strata": 3,
+          "weak_strata": [
+            "AT22_intact",
+            "AT22_moderate",
+            "AT22_severe"
+          ],
+          "estimable": false
+        },
+        "AT27": {
+          "area_ha": 123455.84892788841,
+          "n": 41,
+          "composition": {
+            "intact": {
+              "area_ha": 13515.253632212758,
+              "se_ha": 0.0,
+              "moe95_ha": 0.0
+            },
+            "moderate": {
+              "area_ha": 20410.885211030545,
+              "se_ha": 7362.722039879848,
+              "moe95_ha": 14430.670026343782
+            },
+            "severe": {
+              "area_ha": 89529.7100846451,
+              "se_ha": 7362.722039879849,
+              "moe95_ha": 14430.670026343783
+            }
+          },
+          "fraction": {
+            "intact": 0.10947438901908269,
+            "moderate": 0.16532943062869962,
+            "severe": 0.7251961803522177
+          },
+          "strata": 3,
+          "weak_strata": [],
+          "estimable": true
+        },
+        "AT28": {
+          "area_ha": 84223.19309706232,
+          "n": 39,
+          "composition": {
+            "intact": {
+              "area_ha": 26005.202128173518,
+              "se_ha": 6223.165659618824,
+              "moe95_ha": 12197.180562679345
+            },
+            "moderate": {
+              "area_ha": 29885.341378763205,
+              "se_ha": 6727.672725248181,
+              "moe95_ha": 13185.99624125887
+            },
+            "severe": {
+              "area_ha": 28332.64959012559,
+              "se_ha": 6230.689263454731,
+              "moe95_ha": 12211.92655523167
+            }
+          },
+          "fraction": {
+            "intact": 0.3087653313999154,
+            "moderate": 0.3548350552836686,
+            "severe": 0.3363996133164159
+          },
+          "strata": 2,
+          "weak_strata": [],
+          "estimable": true
+        },
+        "AT29": {
+          "area_ha": 77493.45972598097,
+          "n": 34,
+          "composition": {
+            "intact": {
+              "area_ha": 8386.624846033716,
+              "se_ha": 3320.4760428289546,
+              "moe95_ha": 6508.013455472829
+            },
+            "moderate": {
+              "area_ha": 19556.00504638548,
+              "se_ha": 6092.618392507374,
+              "moe95_ha": 11941.312620860772
+            },
+            "severe": {
+              "area_ha": 49550.82983356178,
+              "se_ha": 5983.706283144008,
+              "moe95_ha": 11727.848809028286
+            }
+          },
+          "fraction": {
+            "intact": 0.10822364720440995,
+            "moderate": 0.2523568455394308,
+            "severe": 0.6394195072561594
+          },
+          "strata": 3,
+          "weak_strata": [],
+          "estimable": true
+        },
+        "AT30": {
+          "area_ha": 63179.843238714486,
+          "n": 23,
+          "composition": {
+            "intact": {
+              "area_ha": 11027.26424664334,
+              "se_ha": 4278.836283180528,
+              "moe95_ha": 8386.365010777063
+            },
+            "moderate": {
+              "area_ha": 28215.23724721823,
+              "se_ha": 7701.39540095528,
+              "moe95_ha": 15094.457616574757
+            },
+            "severe": {
+              "area_ha": 23937.34174485292,
+              "se_ha": 7432.680391639656,
+              "moe95_ha": 14567.78587621079
+            }
+          },
+          "fraction": {
+            "intact": 0.1745376955903272,
+            "moderate": 0.44658605974395454,
+            "severe": 0.37887624466571834
+          },
+          "strata": 3,
+          "weak_strata": [],
+          "estimable": true
+        },
+        "AT31": {
+          "area_ha": 22077.385463771898,
+          "n": 5,
+          "composition": {
+            "intact": {
+              "area_ha": 13294.600119275005,
+              "se_ha": 6212.701680373043,
+              "moe95_ha": 12176.671540222638
+            },
+            "moderate": {
+              "area_ha": 8782.785344496893,
+              "se_ha": 6212.701680373043,
+              "moe95_ha": 12176.671540222638
+            },
+            "severe": {
+              "area_ha": 0.0,
+              "se_ha": 0.0,
+              "moe95_ha": 0.0
+            }
+          },
+          "fraction": {
+            "intact": 0.6021818181818182,
+            "moderate": 0.39781818181818185,
+            "severe": 0.0
+          },
+          "strata": 2,
+          "weak_strata": [],
+          "estimable": true
+        },
+        "AT32": {
+          "area_ha": 349442.749217854,
+          "n": 157,
+          "composition": {
+            "intact": {
+              "area_ha": 64513.6262993819,
+              "se_ha": 8371.355028923583,
+              "moe95_ha": 16407.554358488484
+            },
+            "moderate": {
+              "area_ha": 105525.23911431142,
+              "se_ha": 11320.667242104755,
+              "moe95_ha": 22188.100075487702
+            },
+            "severe": {
+              "area_ha": 179403.8838041607,
+              "se_ha": 11047.779440916165,
+              "moe95_ha": 21653.249813337738
+            }
+          },
+          "fraction": {
+            "intact": 0.18461858614545754,
+            "moderate": 0.3019814815173731,
+            "severe": 0.5133999323371694
+          },
+          "strata": 3,
+          "weak_strata": [],
+          "estimable": true
+        },
+        "AT33": {
+          "area_ha": 48675.016953671024,
+          "n": 21,
+          "composition": {
+            "intact": {
+              "area_ha": 11565.713021303396,
+              "se_ha": 4071.6823147155333,
+              "moe95_ha": 7980.350693331127
+            },
+            "moderate": {
+              "area_ha": 12934.100160093027,
+              "se_ha": 4993.857873906777,
+              "moe95_ha": 9787.78157676905
+            },
+            "severe": {
+              "area_ha": 24175.203772274603,
+              "se_ha": 5007.999478678129,
+              "moe95_ha": 9815.498612804498
+            }
+          },
+          "fraction": {
+            "intact": 0.23761086785674188,
+            "moderate": 0.26572358818906483,
+            "severe": 0.4966655439541934
+          },
+          "strata": 3,
+          "weak_strata": [],
+          "estimable": true
+        },
+        "AT34": {
+          "area_ha": 16322.903524969708,
+          "n": 10,
+          "composition": {
+            "intact": {
+              "area_ha": 1619.4464667263824,
+              "se_ha": 0.0,
+              "moe95_ha": 0.0
+            },
+            "moderate": {
+              "area_ha": 2600.0492238200122,
+              "se_ha": 1061.465650746414,
+              "moe95_ha": 2080.4344462893428
+            },
+            "severe": {
+              "area_ha": 12103.407834423313,
+              "se_ha": 1061.465650746414,
+              "moe95_ha": 2080.4344462893428
+            }
+          },
+          "fraction": {
+            "intact": 0.09921313718782074,
+            "moderate": 0.159288402326377,
+            "severe": 0.7414984604858023
+          },
+          "strata": 3,
+          "weak_strata": [
+            "AT34_intact"
+          ],
+          "estimable": false
+        },
+        "AT37": {
+          "area_ha": 12095.331252561287,
+          "n": 6,
+          "composition": {
+            "intact": {
+              "area_ha": 8070.4242851193985,
+              "se_ha": 3038.384731346219,
+              "moe95_ha": 5955.124644614997
+            },
+            "moderate": {
+              "area_ha": 0.0,
+              "se_ha": 0.0,
+              "moe95_ha": 0.0
+            },
+            "severe": {
+              "area_ha": 4024.906967441889,
+              "se_ha": 3038.384731346219,
+              "moe95_ha": 5955.124644614997
+            }
+          },
+          "fraction": {
+            "intact": 0.6672346640701071,
+            "moderate": 0.0,
+            "severe": 0.3327653359298929
+          },
+          "strata": 3,
+          "weak_strata": [],
+          "estimable": true
+        },
+        "AT49": {
+          "area_ha": 556335.0161255548,
+          "n": 220,
+          "composition": {
+            "intact": {
+              "area_ha": 39317.73212406211,
+              "se_ha": 7422.680751657264,
+              "moe95_ha": 14548.186941986934
+            },
+            "moderate": {
+              "area_ha": 106876.905484363,
+              "se_ha": 13288.117957518702,
+              "moe95_ha": 26044.2326190566
+            },
+            "severe": {
+              "area_ha": 410140.3785171297,
+              "se_ha": 11849.113304134868,
+              "moe95_ha": 23223.83532483874
+            }
+          },
+          "fraction": {
+            "intact": 0.07067276188703679,
+            "moderate": 0.1921088955152929,
+            "severe": 0.7372183425976703
+          },
+          "strata": 3,
+          "weak_strata": [],
+          "estimable": true
+        },
+        "AT50": {
+          "area_ha": 53019.59586279483,
+          "n": 24,
+          "composition": {
+            "intact": {
+              "area_ha": 29853.20260877772,
+              "se_ha": 4104.546993316353,
+              "moe95_ha": 8044.764279752218
+            },
+            "moderate": {
+              "area_ha": 8464.396870373563,
+              "se_ha": 4104.546993316353,
+              "moe95_ha": 8044.764279752218
+            },
+            "severe": {
+              "area_ha": 14701.996383643542,
+              "se_ha": 3328.090063166763,
+              "moe95_ha": 6522.936661112489
+            }
+          },
+          "fraction": {
+            "intact": 0.5630597918179617,
+            "moderate": 0.15964657467925442,
+            "severe": 0.2772936335027838
+          },
+          "strata": 3,
+          "weak_strata": [
+            "AT50_severe"
+          ],
+          "estimable": false
+        },
+        "AT51": {
+          "area_ha": 173286.36573598234,
+          "n": 70,
+          "composition": {
+            "intact": {
+              "area_ha": 73343.86524679676,
+              "se_ha": 8277.413899317113,
+              "moe95_ha": 16223.433127792794
+            },
+            "moderate": {
+              "area_ha": 41141.487816387504,
+              "se_ha": 9058.259317080556,
+              "moe95_ha": 17753.862024102276
+            },
+            "severe": {
+              "area_ha": 58801.012672798075,
+              "se_ha": 7956.745536407272,
+              "moe95_ha": 15594.934685508088
+            }
+          },
+          "fraction": {
+            "intact": 0.42325237150245776,
+            "moderate": 0.23741907011351562,
+            "severe": 0.33932855838402665
+          },
+          "strata": 3,
+          "weak_strata": [],
+          "estimable": true
+        }
+      },
+      "by_efg": {
+        "AridThicket": {
+          "area_ha": 793008.4280053261,
+          "n": 307,
+          "composition": {
+            "intact": {
+              "area_ha": 76107.31440397026,
+              "se_ha": 9510.387271501517,
+              "moe95_ha": 18640.016531171124
+            },
+            "moderate": {
+              "area_ha": 169118.47948245346,
+              "se_ha": 17762.26623994767,
+              "moe95_ha": 34813.402114109114
+            },
+            "severe": {
+              "area_ha": 547782.6341189023,
+              "se_ha": 16581.192915875003,
+              "moe95_ha": 32498.540935825687
+            }
+          },
+          "fraction": {
+            "intact": 0.095972894759019,
+            "moderate": 0.21326189421194602,
+            "severe": 0.6907652110290349
+          },
+          "strata": 13,
+          "weak_strata": [],
+          "estimable": true
+        },
+        "MesicThicket": {
+          "area_ha": 255289.95830242115,
+          "n": 108,
+          "composition": {
+            "intact": {
+              "area_ha": 124048.91712981243,
+              "se_ha": 10564.852572627466,
+              "moe95_ha": 20706.730544325168
+            },
+            "moderate": {
+              "area_ha": 64343.01781137561,
+              "se_ha": 11696.175758521134,
+              "moe95_ha": 22924.08324355187
+            },
+            "severe": {
+              "area_ha": 66898.02336123308,
+              "se_ha": 9531.663831954183,
+              "moe95_ha": 18681.71782337324
+            }
+          },
+          "fraction": {
+            "intact": 0.48591381327604677,
+            "moderate": 0.2520389687053562,
+            "severe": 0.26204721801859693
+          },
+          "strata": 13,
+          "weak_strata": [
+            "AT17_severe",
+            "AT21_severe",
+            "AT50_severe"
+          ],
+          "estimable": false
+        },
+        "ValleyThicket": {
+          "area_ha": 856905.1680687858,
+          "n": 366,
+          "composition": {
+            "intact": {
+              "area_ha": 217769.94814660962,
+              "se_ha": 15339.909143280442,
+              "moe95_ha": 30065.66944694634
+            },
+            "moderate": {
+              "area_ha": 246439.949909062,
+              "se_ha": 19041.399739293567,
+              "moe95_ha": 37320.45770424577
+            },
+            "severe": {
+              "area_ha": 392695.2700131142,
+              "se_ha": 17941.512405468853,
+              "moe95_ha": 35164.718142897545
+            }
+          },
+          "fraction": {
+            "intact": 0.25413541225034214,
+            "moderate": 0.2875930255671882,
+            "severe": 0.45827156218246967
+          },
+          "strata": 24,
+          "weak_strata": [
+            "AT22_intact",
+            "AT22_moderate",
+            "AT22_severe",
+            "AT34_intact"
+          ],
+          "estimable": false
+        }
+      },
+      "per_stratum": {
+        "AT15_intact": {
+          "area_ha": 1362.7027594973301,
+          "n": 2,
+          "low_n": true,
+          "no_variance": false,
+          "covered": true
+        },
+        "AT15_moderate": {
+          "area_ha": 86.14228158250978,
+          "n": 0,
+          "low_n": true,
+          "no_variance": true,
+          "covered": false
+        },
+        "AT15_severe": {
+          "area_ha": 10.706950253193307,
+          "n": 0,
+          "low_n": true,
+          "no_variance": true,
+          "covered": false
+        },
+        "AT17_intact": {
+          "area_ha": 37480.911113495036,
+          "n": 17,
+          "low_n": false,
+          "no_variance": false,
+          "covered": true
+        },
+        "AT17_moderate": {
+          "area_ha": 20855.13731217817,
+          "n": 10,
+          "low_n": false,
+          "no_variance": false,
+          "covered": true
+        },
+        "AT17_severe": {
+          "area_ha": 4448.123692457582,
+          "n": 1,
+          "low_n": true,
+          "no_variance": true,
+          "covered": true
+        },
+        "AT18_intact": {
+          "area_ha": 55022.563215484915,
+          "n": 21,
+          "low_n": false,
+          "no_variance": false,
+          "covered": true
+        },
+        "AT18_moderate": {
+          "area_ha": 22769.30856709169,
+          "n": 8,
+          "low_n": true,
+          "no_variance": false,
+          "covered": true
+        },
+        "AT18_severe": {
+          "area_ha": 31391.077731911268,
+          "n": 12,
+          "low_n": false,
+          "no_variance": false,
+          "covered": true
+        },
+        "AT19_intact": {
+          "area_ha": 35823.04145790366,
+          "n": 13,
+          "low_n": false,
+          "no_variance": false,
+          "covered": true
+        },
+        "AT19_moderate": {
+          "area_ha": 37583.65232193303,
+          "n": 21,
+          "low_n": false,
+          "no_variance": false,
+          "covered": true
+        },
+        "AT19_severe": {
+          "area_ha": 33164.15974487972,
+          "n": 11,
+          "low_n": false,
+          "no_variance": false,
+          "covered": true
+        },
+        "AT21_intact": {
+          "area_ha": 24132.64898699235,
+          "n": 9,
+          "low_n": true,
+          "no_variance": false,
+          "covered": true
+        },
+        "AT21_moderate": {
+          "area_ha": 8203.040237307432,
+          "n": 2,
+          "low_n": true,
+          "no_variance": false,
+          "covered": true
+        },
+        "AT21_severe": {
+          "area_ha": 849.9225363615235,
+          "n": 1,
+          "low_n": true,
+          "no_variance": true,
+          "covered": true
+        },
+        "AT22_intact": {
+          "area_ha": 4912.296217799959,
+          "n": 1,
+          "low_n": true,
+          "no_variance": true,
+          "covered": true
+        },
+        "AT22_moderate": {
+          "area_ha": 5479.652067516621,
+          "n": 1,
+          "low_n": true,
+          "no_variance": true,
+          "covered": true
+        },
+        "AT22_severe": {
+          "area_ha": 2118.607286916649,
+          "n": 1,
+          "low_n": true,
+          "no_variance": true,
+          "covered": true
+        },
+        "AT27_intact": {
+          "area_ha": 13515.253632212758,
+          "n": 5,
+          "low_n": true,
+          "no_variance": false,
+          "covered": true
+        },
+        "AT27_moderate": {
+          "area_ha": 39429.822523336305,
+          "n": 17,
+          "low_n": false,
+          "no_variance": false,
+          "covered": true
+        },
+        "AT27_severe": {
+          "area_ha": 70510.77277233935,
+          "n": 19,
+          "low_n": false,
+          "no_variance": false,
+          "covered": true
+        },
+        "AT28_intact": {
+          "area_ha": 38814.11427393166,
+          "n": 12,
+          "low_n": false,
+          "no_variance": false,
+          "covered": true
+        },
+        "AT28_moderate": {
+          "area_ha": 45409.07882313066,
+          "n": 27,
+          "low_n": false,
+          "no_variance": false,
+          "covered": true
+        },
+        "AT28_severe": {
+          "area_ha": 11575.536734792007,
+          "n": 0,
+          "low_n": true,
+          "no_variance": true,
+          "covered": false
+        },
+        "AT29_intact": {
+          "area_ha": 5439.972873102951,
+          "n": 6,
+          "low_n": true,
+          "no_variance": false,
+          "covered": true
+        },
+        "AT29_moderate": {
+          "area_ha": 19039.905055860327,
+          "n": 8,
+          "low_n": true,
+          "no_variance": false,
+          "covered": true
+        },
+        "AT29_severe": {
+          "area_ha": 53013.581797017694,
+          "n": 20,
+          "low_n": false,
+          "no_variance": false,
+          "covered": true
+        },
+        "AT30_intact": {
+          "area_ha": 21389.477511826528,
+          "n": 10,
+          "low_n": false,
+          "no_variance": false,
+          "covered": true
+        },
+        "AT30_moderate": {
+          "area_ha": 22243.25917721456,
+          "n": 9,
+          "low_n": true,
+          "no_variance": false,
+          "covered": true
+        },
+        "AT30_severe": {
+          "area_ha": 19547.1065496734,
+          "n": 4,
+          "low_n": true,
+          "no_variance": false,
+          "covered": true
+        },
+        "AT31_intact": {
+          "area_ha": 13535.444324334334,
+          "n": 3,
+          "low_n": true,
+          "no_variance": false,
+          "covered": true
+        },
+        "AT31_moderate": {
+          "area_ha": 8541.941139437564,
+          "n": 2,
+          "low_n": true,
+          "no_variance": false,
+          "covered": true
+        },
+        "AT31_severe": {
+          "area_ha": 1099.8552031042727,
+          "n": 0,
+          "low_n": true,
+          "no_variance": true,
+          "covered": false
+        },
+        "AT32_intact": {
+          "area_ha": 81313.69137331308,
+          "n": 43,
+          "low_n": false,
+          "no_variance": false,
+          "covered": true
+        },
+        "AT32_moderate": {
+          "area_ha": 155854.7473037377,
+          "n": 75,
+          "low_n": false,
+          "no_variance": false,
+          "covered": true
+        },
+        "AT32_severe": {
+          "area_ha": 112274.31054080321,
+          "n": 39,
+          "low_n": false,
+          "no_variance": false,
+          "covered": true
+        },
+        "AT33_intact": {
+          "area_ha": 10197.32588251377,
+          "n": 6,
+          "low_n": true,
+          "no_variance": false,
+          "covered": true
+        },
+        "AT33_moderate": {
+          "area_ha": 9197.266591784926,
+          "n": 5,
+          "low_n": true,
+          "no_variance": false,
+          "covered": true
+        },
+        "AT33_severe": {
+          "area_ha": 29280.42447937233,
+          "n": 10,
+          "low_n": false,
+          "no_variance": false,
+          "covered": true
+        },
+        "AT34_intact": {
+          "area_ha": 1619.4464667263824,
+          "n": 1,
+          "low_n": true,
+          "no_variance": true,
+          "covered": true
+        },
+        "AT34_moderate": {
+          "area_ha": 4333.415373033354,
+          "n": 5,
+          "low_n": true,
+          "no_variance": false,
+          "covered": true
+        },
+        "AT34_severe": {
+          "area_ha": 10370.041685209972,
+          "n": 4,
+          "low_n": true,
+          "no_variance": false,
+          "covered": true
+        },
+        "AT37_intact": {
+          "area_ha": 4045.5173176775097,
+          "n": 2,
+          "low_n": true,
+          "no_variance": false,
+          "covered": true
+        },
+        "AT37_moderate": {
+          "area_ha": 2520.3514002415927,
+          "n": 2,
+          "low_n": true,
+          "no_variance": false,
+          "covered": true
+        },
+        "AT37_severe": {
+          "area_ha": 5529.462534642185,
+          "n": 2,
+          "low_n": true,
+          "no_variance": false,
+          "covered": true
+        },
+        "AT49_intact": {
+          "area_ha": 43199.46027226257,
+          "n": 15,
+          "low_n": false,
+          "no_variance": false,
+          "covered": true
+        },
+        "AT49_moderate": {
+          "area_ha": 102551.39643989889,
+          "n": 39,
+          "low_n": false,
+          "no_variance": false,
+          "covered": true
+        },
+        "AT49_severe": {
+          "area_ha": 410584.15941339335,
+          "n": 166,
+          "low_n": false,
+          "no_variance": false,
+          "covered": true
+        },
+        "AT50_intact": {
+          "area_ha": 33055.42705026097,
+          "n": 17,
+          "low_n": false,
+          "no_variance": false,
+          "covered": true
+        },
+        "AT50_moderate": {
+          "area_ha": 15786.517286670936,
+          "n": 6,
+          "low_n": true,
+          "no_variance": false,
+          "covered": true
+        },
+        "AT50_severe": {
+          "area_ha": 4177.651525862919,
+          "n": 1,
+          "low_n": true,
+          "no_variance": true,
+          "covered": true
+        },
+        "AT51_intact": {
+          "area_ha": 92427.80906092576,
+          "n": 38,
+          "low_n": false,
+          "no_variance": false,
+          "covered": true
+        },
+        "AT51_moderate": {
+          "area_ha": 22928.154728358917,
+          "n": 13,
+          "low_n": false,
+          "no_variance": false,
+          "covered": true
+        },
+        "AT51_severe": {
+          "area_ha": 57930.40194669767,
+          "n": 19,
+          "low_n": false,
+          "no_variance": false,
+          "covered": true
+        }
+      }
+    }
+  }
+}

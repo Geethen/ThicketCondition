@@ -962,6 +962,80 @@ function updateCounts(){
   $('#progressPct').textContent=(pct<10?pct.toFixed(1):Math.round(pct))+'%'; $('#progressFill').style.width=pct+'%';
 }
 
+// ----------------------------------------------------------- area estimates
+const AREA_CLASS_LABELS={intact:'Intact',moderate:'Moderate',severe:'Severe',nothicket:'No thicket'};
+const AREA_VEG_NAMES=new Map(POINTS.filter(p=>p.mc).map(p=>[p.mc,p.veg||p.mc]));
+function formatArea(value){ return `${Math.round(Number(value)||0).toLocaleString('en-ZA')} ha`; }
+function compactArea(value){
+  const n=Number(value)||0;
+  if(n>=1e6)return `${(n/1e6).toFixed(1).replace(/\.0$/,'')} Mha`;
+  if(n>=1e3)return `${Math.round(n/1e3).toLocaleString('en-ZA')}k ha`;
+  return formatArea(n);
+}
+function areaGroupTitle(level,key){
+  if(level==='landscape')return 'All solid thicket';
+  if(level==='vegtype')return AREA_VEG_NAMES.get(key)||key;
+  return key.replace(/([a-z])([A-Z])/g,'$1 $2').replace(/Thicket$/,' thicket');
+}
+function areaGroups(scenario,level){
+  if(level==='landscape')return [{key:'landscape',title:'All solid thicket',area_ha:scenario.area_covered_ha,
+    n:scenario.n_used,estimable:scenario.strata_without_variance===0,composition:scenario.reference_area}];
+  const source=level==='efg'?scenario.by_efg:scenario.by_vegtype;
+  return Object.entries(source).map(([key,value])=>({key,title:areaGroupTitle(level,key),...value}))
+    .sort((a,b)=>a.key.localeCompare(b.key,undefined,{numeric:true}));
+}
+function setAreaDetail(group,cls,metric){
+  const fraction=group.area_ha?metric.area_ha/group.area_ha*100:0;
+  $('#areaDetail').textContent=`${group.title} · ${AREA_CLASS_LABELS[cls]||cls}: ${formatArea(metric.area_ha)} ± ${formatArea(metric.moe95_ha)} (95% margin; ${fraction.toFixed(1)}% of this area; n=${group.n}).`;
+}
+function renderAreaEstimates(){
+  const scenarioKey=$('#areaScenario').value,level=$('#areaLevel').value;
+  const scenario=AREA_ESTIMATION.scenarios[scenarioKey]||Object.values(AREA_ESTIMATION.scenarios)[0];
+  const groups=areaGroups(scenario,level),maxArea=Math.max(...groups.map(g=>g.area_ha),1);
+  const coverage=scenario.area_total_ha?scenario.area_covered_ha/scenario.area_total_ha*100:0;
+  $('#areaMeta').textContent=`${AREA_ESTIMATION.assessment_year} assessment · ${AREA_ESTIMATION.stratification_year} stratification · ${scenario.n_used.toLocaleString('en-ZA')} of ${AREA_ESTIMATION.n_reference_labels.toLocaleString('en-ZA')} reference labels usable (${AREA_ESTIMATION.n_reference_labels_on_new_points.toLocaleString('en-ZA')} Round 2) · ${coverage.toFixed(1)}% area coverage`;
+
+  const legend=$('#areaLegend');legend.textContent='';
+  scenario.ref_classes.forEach(cls=>{
+    const item=document.createElement('span'),swatch=document.createElement('i');
+    swatch.className=`area-swatch ${cls}`;swatch.setAttribute('aria-hidden','true');
+    item.append(swatch,AREA_CLASS_LABELS[cls]||cls);legend.appendChild(item);
+  });
+
+  const chart=$('#areaChart');chart.textContent='';
+  chart.setAttribute('aria-label',`Estimated condition area at ${level==='landscape'?'landscape':level==='efg'?'ecosystem functional group':'vegetation type'} level`);
+  groups.forEach(group=>{
+    const row=document.createElement('div');row.className='area-row';row.setAttribute('role','listitem');
+    const label=document.createElement('div');label.className='area-row-label';
+    const name=document.createElement('b');name.textContent=group.title;label.appendChild(name);
+    const sub=document.createElement('span');sub.textContent=`${level==='vegtype'?group.key+' · ':''}n=${group.n}${group.estimable?'':' · ⚠ limited variance'}`;label.appendChild(sub);
+    const track=document.createElement('div');track.className='area-track';
+    const bar=document.createElement('div');bar.className='area-bar';bar.style.width=`${Math.max(0,Math.min(100,group.area_ha/maxArea*100))}%`;
+    const summary=[];
+    scenario.ref_classes.forEach(cls=>{
+      const metric=group.composition[cls];if(!metric||metric.area_ha<=0)return;
+      const fraction=group.area_ha?metric.area_ha/group.area_ha:0;
+      const segment=document.createElement('button');segment.type='button';segment.className=`area-segment ${cls}`;
+      segment.style.width=`${fraction*100}%`;
+      const description=`${group.title}, ${AREA_CLASS_LABELS[cls]||cls}: ${formatArea(metric.area_ha)}, plus or minus ${formatArea(metric.moe95_ha)} at 95 percent`;
+      segment.setAttribute('aria-label',description);segment.title=description;
+      if(metric.area_ha/maxArea>=.09)segment.textContent=AREA_CLASS_LABELS[cls]||cls;
+      const show=()=>setAreaDetail(group,cls,metric);segment.onmouseenter=show;segment.onfocus=show;segment.onclick=show;
+      bar.appendChild(segment);summary.push(`${AREA_CLASS_LABELS[cls]||cls} ${formatArea(metric.area_ha)}`);
+    });
+    track.setAttribute('aria-label',`${group.title}: ${summary.join(', ')}`);track.appendChild(bar);
+    const total=document.createElement('div');total.className='area-row-total';total.textContent=compactArea(group.area_ha);total.title=formatArea(group.area_ha);
+    row.append(label,track,total);chart.appendChild(row);
+  });
+  $('#areaDetail').textContent='Select or hover a coloured segment to see its estimate and 95% margin of error.';
+  const weak=level==='landscape'?scenario.strata_without_variance:groups.filter(g=>!g.estimable).length;
+  const unit=level==='landscape'?`${weak} of ${scenario.strata_total} strata`:`${weak} of ${groups.length} ${level==='efg'?'EFGs':'vegetation types'}`;
+  $('#areaCaveat').textContent=weak?`⚠ ${unit} include fewer than two usable labels for at least one variance estimate; uncertainty there is incomplete.`:'';
+  const generated=new Date(AREA_ESTIMATION.generated_utc),date=Number.isNaN(generated.valueOf())?AREA_ESTIMATION.generated_utc:generated.toLocaleDateString('en-ZA',{day:'numeric',month:'short',year:'numeric'});
+  $('#areaSnapshot').textContent=`Static analysis snapshot generated ${date}; ${formatArea(scenario.area_uncovered_ha)} is outside the covered strata. Estimates do not recalculate live from Google Sheets.`;
+}
+function openAreaEstimates(){ renderAreaEstimates();openDialog('#areaModal'); }
+
 // ------------------------------------------------------------------ import / export
 function exportRows(){
   return POINTS.filter(p=>labels[p.id]).map(p=>{ const r=labels[p.id]; return {id:p.id,source:p.src,stratum:p.s,
@@ -1237,6 +1311,9 @@ function wire(){
   $('#clearLabelBtn').onclick=clearLabel;
   $('#downloadBtn').onclick=download;
   $('#uploadBtn').onclick=()=>$('#uploadInput').click();
+  $('#areaEstimatesBtn').onclick=openAreaEstimates;
+  $('#closeAreaEstimates').onclick=()=>closeDialog('#areaModal');
+  $('#areaLevel').onchange=renderAreaEstimates;$('#areaScenario').onchange=renderAreaEstimates;
   $('#uploadInput').onchange=e=>{ if(e.target.files[0]) handleUpload(e.target.files[0]); e.target.value=''; };
   $('#helpBtn').onclick=()=>openDialog('#helpModal');
   $('#closeHelp').onclick=()=>closeDialog('#helpModal');
@@ -1295,6 +1372,7 @@ function wire(){
       if(e.key==='Escape') closeImport(); else trapFocus(e,'#importPreview'); return;
     }
     if(!$('#completionModal').classList.contains('hidden')){if(e.key==='Escape')closeDialog('#completionModal');else trapFocus(e,'#completionModal');return;}
+    if(!$('#areaModal').classList.contains('hidden')){if(e.key==='Escape')closeDialog('#areaModal');else trapFocus(e,'#areaModal');return;}
     if(!$('#helpModal').classList.contains('hidden')){if(e.key==='Escape')closeDialog('#helpModal');else trapFocus(e,'#helpModal');return;}
     if(!$('#syncModal').classList.contains('hidden')){if(e.key==='Escape')closeDialog('#syncModal');else trapFocus(e,'#syncModal');return;}
     if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'){undoLast();e.preventDefault();return;}
