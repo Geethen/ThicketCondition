@@ -52,11 +52,15 @@ const areaLandscapeState = await page.evaluate(() => ({
   labels:AREA_ESTIMATION.n_reference_labels,
   rows:document.querySelectorAll('#areaChart .area-row').length,
   segments:document.querySelectorAll('#areaChart .area-segment').length,
-  meta:document.querySelector('#areaMeta').textContent
+  meta:document.querySelector('#areaMeta').textContent,
+  dated:/\b20\d{2}\b/.test(document.querySelector('#areaModal').textContent)
 }));
 const areaLandscapeOK = areaLandscapeState.open && areaLandscapeState.labels === 821
   && areaLandscapeState.rows === 1 && areaLandscapeState.segments === 4
-  && areaLandscapeState.meta.includes('0 Round 2') && areaLandscapeState.meta.includes('99.3% area coverage');
+  && !areaLandscapeState.dated
+  && areaLandscapeState.meta.includes('Round 1 reference data only')
+  && areaLandscapeState.meta.includes('no Round 2 labels included')
+  && areaLandscapeState.meta.includes('99.3% area coverage');
 await page.selectOption('#areaLevel','efg');
 const areaEfgOK = await page.evaluate(() => document.querySelectorAll('#areaChart .area-row').length === 3
   && document.querySelectorAll('#areaChart .area-row-label b').length === 3);
@@ -71,7 +75,8 @@ await page.click('#areaChart .area-segment');
 const areaScenarioOK = await page.evaluate(() => document.querySelectorAll('#areaLegend .area-swatch').length === 3
   && document.querySelectorAll('#areaChart .area-segment').length === 3
   && document.querySelector('#areaDetail').textContent.includes('95% CI')
-  && document.querySelector('#areaSnapshot').textContent.includes('do not recalculate live'));
+  && document.querySelector('#areaSnapshot').textContent.includes('excludes Round 2 labels')
+  && !document.querySelector('#areaSnapshot').textContent.includes('generated'));
 await page.click('#closeAreaEstimates');
 console.log('area estimates landscape / EFG / vegetation type / CI / scenario:', areaLandscapeOK, areaEfgOK, areaVegtypeOK, areaCiOK, areaScenarioOK, areaLandscapeState);
 

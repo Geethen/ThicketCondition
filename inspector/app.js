@@ -996,7 +996,8 @@ function renderAreaEstimates(){
   const scenario=AREA_ESTIMATION.scenarios[scenarioKey]||Object.values(AREA_ESTIMATION.scenarios)[0];
   const groups=areaGroups(scenario,level),maxArea=Math.max(...groups.map(g=>g.area_ha),1);
   const coverage=scenario.area_total_ha?scenario.area_covered_ha/scenario.area_total_ha*100:0;
-  $('#areaMeta').textContent=`${AREA_ESTIMATION.assessment_year} assessment · ${AREA_ESTIMATION.stratification_year} stratification · ${scenario.n_used.toLocaleString('en-ZA')} of ${AREA_ESTIMATION.n_reference_labels.toLocaleString('en-ZA')} reference labels usable (${AREA_ESTIMATION.n_reference_labels_on_new_points.toLocaleString('en-ZA')} Round 2) · ${coverage.toFixed(1)}% area coverage`;
+  const roundText=AREA_ESTIMATION.n_reference_labels_on_new_points===0?'Round 1 reference data only · no Round 2 labels included':`${AREA_ESTIMATION.n_reference_labels_on_new_points.toLocaleString('en-ZA')} Round 2 labels included`;
+  $('#areaMeta').textContent=`${roundText} · ${scenario.n_used.toLocaleString('en-ZA')} of ${AREA_ESTIMATION.n_reference_labels.toLocaleString('en-ZA')} labels usable · ${coverage.toFixed(1)}% area coverage`;
 
   const legend=$('#areaLegend');legend.textContent='';
   scenario.ref_classes.forEach(cls=>{
@@ -1035,8 +1036,7 @@ function renderAreaEstimates(){
   const weak=level==='landscape'?scenario.strata_without_variance:groups.filter(g=>!g.estimable).length;
   const unit=level==='landscape'?`${weak} of ${scenario.strata_total} strata`:`${weak} of ${groups.length} ${level==='efg'?'EFGs':'vegetation types'}`;
   $('#areaCaveat').textContent=(weak?`⚠ ${unit} include fewer than two usable labels for at least one variance estimate; uncertainty there is incomplete. `:'')+'Confidence intervals use estimate ± 1.96 SE; negative lower bounds are displayed as 0 ha.';
-  const generated=new Date(AREA_ESTIMATION.generated_utc),date=Number.isNaN(generated.valueOf())?AREA_ESTIMATION.generated_utc:generated.toLocaleDateString('en-ZA',{day:'numeric',month:'short',year:'numeric'});
-  $('#areaSnapshot').textContent=`Static analysis snapshot generated ${date}; ${formatArea(scenario.area_uncovered_ha)} is outside the covered strata. Estimates do not recalculate live from Google Sheets.`;
+  $('#areaSnapshot').textContent=`Static Round 1 analysis snapshot; ${formatArea(scenario.area_uncovered_ha)} is outside the covered strata. It excludes Round 2 labels and does not recalculate live from Google Sheets.`;
 }
 function openAreaEstimates(){ renderAreaEstimates();openDialog('#areaModal'); }
 
