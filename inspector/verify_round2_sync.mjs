@@ -33,6 +33,12 @@ await page.goto(url,{waitUntil:'load'});
 await page.fill('#labelerName','SYNC_TEST');await page.click('#startBtn');
 await page.uncheck('#autoAdvance');
 const first=await page.evaluate(()=>window.REQUIRED_POINTS[0]);
+await page.getByText('Notes and review options').click();
+await page.click('#flagBtn');
+await page.waitForTimeout(100);
+const preLabelReviewOK=received.length===0
+  && await page.textContent('#c_review')==='1'
+  && await page.getAttribute('#flagBtn','aria-pressed')==='true';
 await page.click('.lblbtn[data-lbl="moderate"]');
 await page.waitForFunction(()=>document.querySelector('#syncStatus').textContent.includes('sent'));
 
@@ -40,7 +46,7 @@ const upsert=received.find(x=>x.action==='upsert');
 const upsertOK=!!upsert && upsert.dataset===await page.evaluate(()=>DATASET_ID)
   && upsert.labeler==='SYNC_TEST' && upsert.point.id===first.id
   && upsert.point.source==='new' && upsert.point.required===true
-  && upsert.record.label==='moderate';
+  && upsert.record.label==='moderate' && upsert.record.flagged===true;
 
 await page.evaluate(id=>{gotoId(id);clearLabel();},first.id);
 await page.waitForFunction(()=>document.querySelector('#syncStatus').textContent.includes('sent'));
@@ -57,9 +63,9 @@ const disagreementOK=await page.evaluate(()=>{
     && document.querySelector('#mSampleSource').textContent.includes('disagreement exploration');
 });
 
-console.log('sheet upsert / clear / outbox drained:',upsertOK,!!clear,queueEmpty);
+console.log('pre-label review / sheet upsert / clear / outbox drained:',preLabelReviewOK,upsertOK,!!clear,queueEmpty);
 console.log('disagreement queue and prior-label context:',disagreementOK);
 await browser.close();server.close();
-const ok=upsertOK&&!!clear&&queueEmpty&&disagreementOK;
+const ok=preLabelReviewOK&&upsertOK&&!!clear&&queueEmpty&&disagreementOK;
 console.log(ok?'\n✅ ROUND 2 + SYNC PASSED':'\n❌ ROUND 2 + SYNC FAILED');
 process.exit(ok?0:1);

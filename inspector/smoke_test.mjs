@@ -56,6 +56,23 @@ console.log('blind labeling default:', blindOK);
 
 // Notes typed before choosing a class persist as a local draft.
 await page.getByText('Notes and review options').click();
+await page.click('#flagBtn');
+const preFlagOK = await page.evaluate(() => {
+  const key = Object.keys(localStorage).find(k => k.startsWith('thicket-inspector-review-drafts-'));
+  const current=document.querySelector('#curId').textContent;
+  return document.querySelector('#c_review').textContent === '1'
+    && document.querySelector('#c_all').textContent === '0'
+    && document.querySelector('#flagBtn').getAttribute('aria-pressed') === 'true'
+    && key && JSON.parse(localStorage.getItem(key))[current].flagged === true;
+});
+console.log('unlabeled review flag saved and counted:', !!preFlagOK);
+await page.click('.chip.review');
+await page.click('#nextUnlabeled');
+const reviewFilterOK = await page.evaluate(() => document.querySelector('#pointFilter').value === 'review'
+  && document.querySelector('#curId').textContent === String(window.REQUIRED_POINTS[0].id)
+  && document.querySelector('#nextUnlabeled').textContent.includes('review item'));
+await page.click('.chip.review'); // toggle the review filter back to All
+console.log('unlabeled flag appears in To review filter:', reviewFilterOK);
 await page.fill('#note', 'edge effect draft');
 await page.waitForTimeout(500);
 const draftOK = await page.evaluate(() => {
@@ -72,6 +89,13 @@ await page.waitForTimeout(650);
 const cModerate = await page.evaluate(() => Object.values(window.labels).filter(r => r.label === 'moderate').length.toString());
 const cAll = await page.textContent('#c_all');
 const autoAdvancedTo = await page.textContent('#curId');
+const flagMergedOK = await page.evaluate(() => {
+  const id=window.REQUIRED_POINTS[0].id;
+  const key=Object.keys(localStorage).find(k=>k.startsWith('thicket-inspector-review-drafts-'));
+  const drafts=key?JSON.parse(localStorage.getItem(key)):{};
+  return window.labels[id].flagged === true && !drafts[id]
+    && document.querySelector('#c_review').textContent === '1';
+});
 console.log('after key "2": moderate =', cModerate, ' all =', cAll, ' current =', autoAdvancedTo);
 
 // Clicking the already-selected class must not erase it. Clearing is explicit and undoable.
@@ -84,7 +108,10 @@ const afterClear = await page.textContent('#c_all');
 await page.click('#toast button');
 await page.waitForTimeout(100);
 const afterUndo = await page.textContent('#c_all');
-console.log('repeat/clear/undo counts:', repeatKept, afterClear, afterUndo);
+await page.click('#flagBtn');
+const unflagOK = await page.evaluate(() => document.querySelector('#c_review').textContent === '0'
+  && window.labels[window.REQUIRED_POINTS[0].id].flagged === false);
+console.log('repeat/clear/undo counts and unflag:', repeatKept, afterClear, afterUndo, unflagOK);
 
 // Keep the remainder deterministic for this smoke test.
 await page.uncheck('#autoAdvance');
@@ -187,8 +214,9 @@ console.log('basemap tile requests:', tileOK);
 console.log('JS errors:', errors.length ? errors : 'none');
 const pass = nPts === 2098 && scope.required === 1252 && scope.disagreements > 0
   && cModerate === '1' && cSevere === '1'
-  && simplifiedUiOK && blindOK && draftOK && autoAdvancedTo === String(scope.second)
+  && simplifiedUiOK && blindOK && preFlagOK && reviewFilterOK && draftOK && flagMergedOK && autoAdvancedTo === String(scope.second)
   && repeatKept === '1' && afterClear === '0' && afterUndo === '1'
+  && unflagOK
   && progressOK && mismatchBlocked && previewOK && fillOK && importUndoOK
   && selectFilterOK && chipFilterOK && filteredNavOK && filterResetOK && disagreementOK && syncDefaultOK
   && payload.length === 2 && payload.every(r => r.labeler === 'TEST')
