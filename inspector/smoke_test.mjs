@@ -193,7 +193,15 @@ const disagreementOK = await page.evaluate(() =>
   && Object.hasOwn(window.DISAGREEMENT_MANIFEST,document.querySelector('#curId').textContent));
 const syncDefaultOK = await page.evaluate(() => document.querySelector('#sheetSync').checked
   && document.querySelector('#syncStatus').textContent.includes('needs a Web App URL'));
-console.log('disagreement exploration / default sync option:', disagreementOK, syncDefaultOK);
+const syncGearOK = await page.evaluate(() => {
+  const button=document.querySelector('#syncConfigure');
+  return button.textContent.trim()==='⚙' && button.getAttribute('aria-label')==='Google Sheets settings'
+    && button.getAttribute('title')==='Google Sheets settings';
+});
+await page.click('#syncConfigure');
+const syncGearDialogOK = await page.evaluate(() => !document.querySelector('#syncModal').classList.contains('hidden'));
+await page.click('#cancelSyncConfig');
+console.log('disagreement exploration / default sync option / settings gear:', disagreementOK, syncDefaultOK, syncGearOK, syncGearDialogOK);
 
 // verify the in-memory export payload
 const payload = await page.evaluate(() => {
@@ -218,7 +226,7 @@ const pass = nPts === 2098 && scope.required === 1252 && scope.disagreements > 0
   && repeatKept === '1' && afterClear === '0' && afterUndo === '1'
   && unflagOK
   && progressOK && mismatchBlocked && previewOK && fillOK && importUndoOK
-  && selectFilterOK && chipFilterOK && filteredNavOK && filterResetOK && disagreementOK && syncDefaultOK
+  && selectFilterOK && chipFilterOK && filteredNavOK && filterResetOK && disagreementOK && syncDefaultOK && syncGearOK && syncGearDialogOK
   && payload.length === 2 && payload.every(r => r.labeler === 'TEST')
   // Ignore the optional gee_layers.json fetch: over file:// it logs a scheme
   // error, over http a 404 — neither is an app fault.

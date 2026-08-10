@@ -148,6 +148,7 @@
   .assignment-badge{font-size:11px;color:#b9d2ff;margin-top:6px;padding:5px 7px;border-radius:7px;background:#14233c;border:1px solid #38577d}
   .assignment-badge.error{color:#ffaaa4;background:#2b1718;border-color:#a94442}
   .syncrow{display:flex;gap:7px;align-items:center;justify-content:space-between;margin-top:7px}
+  .syncrow>span{display:flex;gap:5px;align-items:center}.iconbtn{display:inline-grid;place-items:center;width:32px;height:32px;padding:0;font-size:17px;line-height:1}
   .syncrow label{display:flex;gap:5px;align-items:center;font-size:11px}.sync-error{color:#ffaaa4!important}
   .disagreement-panel{margin:8px 0;padding:9px;border:1px solid #9a6ed0;border-radius:8px;background:#241a32}
   .disagreement-panel h3{font-size:12px;margin:0 0 5px;color:#d9baff}.prior-label{display:flex;justify-content:space-between;padding:3px 0;border-top:1px solid #ffffff12;font-size:12px}
@@ -263,7 +264,7 @@
       <div class="progressbar"><span id="progressFill"></span></div>
       <div class="settingsrow"><label><input type="checkbox" id="autoAdvance" checked> auto-advance after labeling</label><button class="btn" id="switchLabeller">Switch labeller</button></div>
       <div class="save-status" id="saveStatus" role="status" aria-live="polite">Saved locally</div>
-      <div class="syncrow"><label><input type="checkbox" id="sheetSync" checked> sync to Google Sheet</label><span><a class="btn hidden" id="openSheetLink" target="_blank" rel="noopener">Open sheet ↗</a><button class="btn" id="syncConfigure">Configure</button></span></div>
+      <div class="syncrow"><label><input type="checkbox" id="sheetSync" checked> sync to Google Sheet</label><span><a class="btn hidden" id="openSheetLink" target="_blank" rel="noopener">Open sheet ↗</a><button class="btn iconbtn" id="syncConfigure" type="button" aria-label="Google Sheets settings" title="Google Sheets settings">⚙</button></span></div>
       <div class="save-status" id="syncStatus" role="status" aria-live="polite"></div>
     </div>
 
