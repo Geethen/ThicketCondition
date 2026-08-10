@@ -195,9 +195,9 @@
   .modalbox.large{width:min(760px,100%);max-height:90vh;overflow:auto}.summarygrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}
   .summarygrid div{background:#0c0e13;border:1px solid var(--line);border-radius:8px;padding:10px;color:var(--muted);font-size:11px}.summarygrid b{display:block;color:var(--ink);font-size:20px}
   .reviewlist{max-height:220px;overflow:auto;border:1px solid var(--line);border-radius:8px}.reviewitem{display:flex;align-items:center;gap:8px;padding:8px;border-bottom:1px solid var(--line);font-size:12px}.reviewitem:last-child{border:0}.reviewitem button{margin-left:auto}
-  .modalbox.area-modalbox{width:min(900px,100%)}.area-controls{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0 4px}.area-controls label{font-size:11px;color:var(--muted)}
-  .area-meta{font-size:12px;color:var(--muted);margin:8px 0}.area-legend{display:flex;gap:12px;flex-wrap:wrap;margin:10px 0;font-size:11px;color:var(--muted)}.area-legend span{display:flex;align-items:center;gap:5px}.area-swatch{width:11px;height:11px;border-radius:3px}.area-swatch.intact{background:var(--intact)}.area-swatch.moderate{background:var(--moderate)}.area-swatch.severe{background:var(--severe)}.area-swatch.nothicket{background:var(--nothicket)}
-  .area-chart{display:grid;gap:8px;margin:10px 0 12px}.area-row{display:grid;grid-template-columns:minmax(150px,220px) minmax(180px,1fr) 82px;gap:9px;align-items:center}.area-row-label{min-width:0;font-size:11px;color:var(--muted)}.area-row-label b{display:block;color:var(--ink);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.area-row-total{text-align:right;font-size:11px;color:var(--muted);font-variant-numeric:tabular-nums}.area-track{height:31px;background:#0c0e13;border:1px solid var(--line);border-radius:6px;overflow:hidden}.area-bar{height:100%;display:flex;min-width:2px;overflow:hidden;border-radius:5px}.area-segment{height:100%;min-width:2px;border:0;padding:0;color:#fff;font:600 10px system-ui;cursor:pointer;overflow:hidden;white-space:nowrap}.area-segment:hover,.area-segment:focus-visible{filter:brightness(1.2);outline:2px solid #fff;outline-offset:-3px}.area-segment.intact{background:var(--intact)}.area-segment.moderate{background:var(--moderate);color:#171717}.area-segment.severe{background:var(--severe)}.area-segment.nothicket{background:var(--nothicket)}
+  .modalbox.area-modalbox{width:min(900px,100%);--area-intact:#228833;--area-moderate:#ccbb44;--area-severe:#ee6677;--area-nothicket:#4477aa}.area-controls{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0 4px}.area-controls label{font-size:11px;color:var(--muted)}
+  .area-meta{font-size:12px;color:var(--muted);margin:8px 0}.area-legend{display:flex;gap:12px;flex-wrap:wrap;margin:10px 0;font-size:11px;color:var(--muted)}.area-legend span{display:flex;align-items:center;gap:5px}.area-swatch{width:11px;height:11px;border-radius:3px}.area-swatch.intact{background:var(--area-intact)}.area-swatch.moderate{background:var(--area-moderate)}.area-swatch.severe{background:var(--area-severe)}.area-swatch.nothicket{background:var(--area-nothicket)}
+  .area-chart{display:grid;gap:8px;margin:10px 0 12px}.area-row{display:grid;grid-template-columns:minmax(150px,220px) minmax(180px,1fr) 82px;gap:9px;align-items:center}.area-row-label{min-width:0;font-size:11px;color:var(--muted)}.area-row-label b{display:block;color:var(--ink);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.area-row-total{text-align:right;font-size:11px;color:var(--muted);font-variant-numeric:tabular-nums}.area-track{height:31px;background:#0c0e13;border:1px solid var(--line);border-radius:6px;overflow:hidden}.area-bar{height:100%;display:flex;min-width:2px;overflow:hidden;border-radius:5px}.area-segment{height:100%;min-width:2px;border:0;padding:0;color:#fff;font:600 10px system-ui;cursor:pointer;overflow:hidden;white-space:nowrap}.area-segment:hover,.area-segment:focus-visible{filter:brightness(1.2);outline:2px solid #fff;outline-offset:-3px}.area-segment.intact{background:var(--area-intact)}.area-segment.moderate{background:var(--area-moderate);color:#171717}.area-segment.severe{background:var(--area-severe);color:#171717}.area-segment.nothicket{background:var(--area-nothicket)}
   .area-detail{min-height:34px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:#0c0e13;font-size:12px}.area-caveat{font-size:11px;color:#ffcf8c;margin:8px 0}.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
   .goto{display:flex;gap:5px}.goto input{width:100px;background:#0c0e13;color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:7px}
   .panel-handle{position:absolute;right:380px;top:50%;z-index:8;width:24px;height:48px;border-radius:8px 0 0 8px;padding:0;background:var(--panel2);color:var(--ink);border:1px solid var(--line)}
@@ -3553,9 +3553,12 @@ function areaGroups(scenario,level){
   return Object.entries(source).map(([key,value])=>({key,title:areaGroupTitle(level,key),...value}))
     .sort((a,b)=>a.key.localeCompare(b.key,undefined,{numeric:true}));
 }
+function areaConfidenceInterval(metric){
+  return [Math.max(0,metric.area_ha-metric.moe95_ha),metric.area_ha+metric.moe95_ha];
+}
 function setAreaDetail(group,cls,metric){
-  const fraction=group.area_ha?metric.area_ha/group.area_ha*100:0;
-  $('#areaDetail').textContent=`${group.title} · ${AREA_CLASS_LABELS[cls]||cls}: ${formatArea(metric.area_ha)} ± ${formatArea(metric.moe95_ha)} (95% margin; ${fraction.toFixed(1)}% of this area; n=${group.n}).`;
+  const fraction=group.area_ha?metric.area_ha/group.area_ha*100:0,[lower,upper]=areaConfidenceInterval(metric);
+  $('#areaDetail').textContent=`${group.title} · ${AREA_CLASS_LABELS[cls]||cls}: ${formatArea(metric.area_ha)} (95% CI ${formatArea(lower)}–${formatArea(upper)}; margin ± ${formatArea(metric.moe95_ha)}; ${fraction.toFixed(1)}% of this area; n=${group.n}).`;
 }
 function renderAreaEstimates(){
   const scenarioKey=$('#areaScenario').value,level=$('#areaLevel').value;
@@ -3586,7 +3589,8 @@ function renderAreaEstimates(){
       const fraction=group.area_ha?metric.area_ha/group.area_ha:0;
       const segment=document.createElement('button');segment.type='button';segment.className=`area-segment ${cls}`;
       segment.style.width=`${fraction*100}%`;
-      const description=`${group.title}, ${AREA_CLASS_LABELS[cls]||cls}: ${formatArea(metric.area_ha)}, plus or minus ${formatArea(metric.moe95_ha)} at 95 percent`;
+      const [lower,upper]=areaConfidenceInterval(metric);
+      const description=`${group.title}, ${AREA_CLASS_LABELS[cls]||cls}: ${formatArea(metric.area_ha)}; 95 percent confidence interval ${formatArea(lower)} to ${formatArea(upper)}; margin plus or minus ${formatArea(metric.moe95_ha)}`;
       segment.setAttribute('aria-label',description);segment.title=description;
       if(metric.area_ha/maxArea>=.09)segment.textContent=AREA_CLASS_LABELS[cls]||cls;
       const show=()=>setAreaDetail(group,cls,metric);segment.onmouseenter=show;segment.onfocus=show;segment.onclick=show;
@@ -3596,10 +3600,10 @@ function renderAreaEstimates(){
     const total=document.createElement('div');total.className='area-row-total';total.textContent=compactArea(group.area_ha);total.title=formatArea(group.area_ha);
     row.append(label,track,total);chart.appendChild(row);
   });
-  $('#areaDetail').textContent='Select or hover a coloured segment to see its estimate and 95% margin of error.';
+  $('#areaDetail').textContent='Select or hover a coloured segment to see its estimate, 95% confidence interval, and margin of error.';
   const weak=level==='landscape'?scenario.strata_without_variance:groups.filter(g=>!g.estimable).length;
   const unit=level==='landscape'?`${weak} of ${scenario.strata_total} strata`:`${weak} of ${groups.length} ${level==='efg'?'EFGs':'vegetation types'}`;
-  $('#areaCaveat').textContent=weak?`⚠ ${unit} include fewer than two usable labels for at least one variance estimate; uncertainty there is incomplete.`:'';
+  $('#areaCaveat').textContent=(weak?`⚠ ${unit} include fewer than two usable labels for at least one variance estimate; uncertainty there is incomplete. `:'')+'Confidence intervals use estimate ± 1.96 SE; negative lower bounds are displayed as 0 ha.';
   const generated=new Date(AREA_ESTIMATION.generated_utc),date=Number.isNaN(generated.valueOf())?AREA_ESTIMATION.generated_utc:generated.toLocaleDateString('en-ZA',{day:'numeric',month:'short',year:'numeric'});
   $('#areaSnapshot').textContent=`Static analysis snapshot generated ${date}; ${formatArea(scenario.area_uncovered_ha)} is outside the covered strata. Estimates do not recalculate live from Google Sheets.`;
 }
