@@ -63,15 +63,17 @@ const areaEfgOK = await page.evaluate(() => document.querySelectorAll('#areaChar
 await page.selectOption('#areaLevel','vegtype');
 const areaVegtypeOK = await page.evaluate(() => document.querySelectorAll('#areaChart .area-row').length === 18
   && [...document.querySelectorAll('#areaChart .area-row-label span')].some(x=>x.textContent.includes('AT49')));
+await page.click('#areaChart .area-row:first-child .area-segment');
+const areaCiOK = await page.evaluate(() => document.querySelector('#areaDetail').textContent.includes('95% CI 0 ha'));
 await page.selectOption('#areaScenario','B_nothicket_to_severe');
 await page.selectOption('#areaLevel','landscape');
 await page.click('#areaChart .area-segment');
 const areaScenarioOK = await page.evaluate(() => document.querySelectorAll('#areaLegend .area-swatch').length === 3
   && document.querySelectorAll('#areaChart .area-segment').length === 3
-  && document.querySelector('#areaDetail').textContent.includes('95% margin')
+  && document.querySelector('#areaDetail').textContent.includes('95% CI')
   && document.querySelector('#areaSnapshot').textContent.includes('do not recalculate live'));
 await page.click('#closeAreaEstimates');
-console.log('area estimates landscape / EFG / vegetation type / scenario:', areaLandscapeOK, areaEfgOK, areaVegtypeOK, areaScenarioOK, areaLandscapeState);
+console.log('area estimates landscape / EFG / vegetation type / CI / scenario:', areaLandscapeOK, areaEfgOK, areaVegtypeOK, areaCiOK, areaScenarioOK, areaLandscapeState);
 
 // Blind mode is the safe default: map strata and current model prediction hidden.
 const blindOK = await page.evaluate(() => {
@@ -250,7 +252,7 @@ console.log('basemap tile requests:', tileOK);
 console.log('JS errors:', errors.length ? errors : 'none');
 const pass = nPts === 2098 && scope.required === 1252 && scope.disagreements > 0
   && cModerate === '1' && cSevere === '1'
-  && areaLandscapeOK && areaEfgOK && areaVegtypeOK && areaScenarioOK
+  && areaLandscapeOK && areaEfgOK && areaVegtypeOK && areaCiOK && areaScenarioOK
   && simplifiedUiOK && blindOK && preFlagOK && reviewFilterOK && draftOK && flagMergedOK && autoAdvancedTo === String(scope.second)
   && repeatKept === '1' && afterClear === '0' && afterUndo === '1'
   && unflagOK

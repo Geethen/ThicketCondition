@@ -17,8 +17,10 @@ shared as a link and run entirely in the browser.
 - **Area estimates** opens an interactive, error-adjusted composition chart at
   landscape, ecosystem-functional-group, or vegetation-type level. A second
   dropdown switches between reporting no-thicket separately and combining it
-  with severe. The panel shows 95% margins of error and clearly dates the static
-  analysis snapshot; it does not imply that estimates recalculate live from Sheets.
+  with severe. A colour-vision-deficiency-friendly palette distinguishes the
+  labelled classes. The panel shows explicit 95% confidence intervals and
+  margins of error, and clearly dates the static analysis snapshot; it does not
+  imply that estimates recalculate live from Sheets.
 - Labelers step through points and record the condition class they observe:
   **Intact**, **Moderate**, **Severe**, **Transformed**, **No thicket**, or **Unsure**.
   Older imports using the former combined class remain visible in a legacy review queue

@@ -984,9 +984,12 @@ function areaGroups(scenario,level){
   return Object.entries(source).map(([key,value])=>({key,title:areaGroupTitle(level,key),...value}))
     .sort((a,b)=>a.key.localeCompare(b.key,undefined,{numeric:true}));
 }
+function areaConfidenceInterval(metric){
+  return [Math.max(0,metric.area_ha-metric.moe95_ha),metric.area_ha+metric.moe95_ha];
+}
 function setAreaDetail(group,cls,metric){
-  const fraction=group.area_ha?metric.area_ha/group.area_ha*100:0;
-  $('#areaDetail').textContent=`${group.title} · ${AREA_CLASS_LABELS[cls]||cls}: ${formatArea(metric.area_ha)} ± ${formatArea(metric.moe95_ha)} (95% margin; ${fraction.toFixed(1)}% of this area; n=${group.n}).`;
+  const fraction=group.area_ha?metric.area_ha/group.area_ha*100:0,[lower,upper]=areaConfidenceInterval(metric);
+  $('#areaDetail').textContent=`${group.title} · ${AREA_CLASS_LABELS[cls]||cls}: ${formatArea(metric.area_ha)} (95% CI ${formatArea(lower)}–${formatArea(upper)}; margin ± ${formatArea(metric.moe95_ha)}; ${fraction.toFixed(1)}% of this area; n=${group.n}).`;
 }
 function renderAreaEstimates(){
   const scenarioKey=$('#areaScenario').value,level=$('#areaLevel').value;
@@ -1017,7 +1020,8 @@ function renderAreaEstimates(){
       const fraction=group.area_ha?metric.area_ha/group.area_ha:0;
       const segment=document.createElement('button');segment.type='button';segment.className=`area-segment ${cls}`;
       segment.style.width=`${fraction*100}%`;
-      const description=`${group.title}, ${AREA_CLASS_LABELS[cls]||cls}: ${formatArea(metric.area_ha)}, plus or minus ${formatArea(metric.moe95_ha)} at 95 percent`;
+      const [lower,upper]=areaConfidenceInterval(metric);
+      const description=`${group.title}, ${AREA_CLASS_LABELS[cls]||cls}: ${formatArea(metric.area_ha)}; 95 percent confidence interval ${formatArea(lower)} to ${formatArea(upper)}; margin plus or minus ${formatArea(metric.moe95_ha)}`;
       segment.setAttribute('aria-label',description);segment.title=description;
       if(metric.area_ha/maxArea>=.09)segment.textContent=AREA_CLASS_LABELS[cls]||cls;
       const show=()=>setAreaDetail(group,cls,metric);segment.onmouseenter=show;segment.onfocus=show;segment.onclick=show;
@@ -1027,10 +1031,10 @@ function renderAreaEstimates(){
     const total=document.createElement('div');total.className='area-row-total';total.textContent=compactArea(group.area_ha);total.title=formatArea(group.area_ha);
     row.append(label,track,total);chart.appendChild(row);
   });
-  $('#areaDetail').textContent='Select or hover a coloured segment to see its estimate and 95% margin of error.';
+  $('#areaDetail').textContent='Select or hover a coloured segment to see its estimate, 95% confidence interval, and margin of error.';
   const weak=level==='landscape'?scenario.strata_without_variance:groups.filter(g=>!g.estimable).length;
   const unit=level==='landscape'?`${weak} of ${scenario.strata_total} strata`:`${weak} of ${groups.length} ${level==='efg'?'EFGs':'vegetation types'}`;
-  $('#areaCaveat').textContent=weak?`⚠ ${unit} include fewer than two usable labels for at least one variance estimate; uncertainty there is incomplete.`:'';
+  $('#areaCaveat').textContent=(weak?`⚠ ${unit} include fewer than two usable labels for at least one variance estimate; uncertainty there is incomplete. `:'')+'Confidence intervals use estimate ± 1.96 SE; negative lower bounds are displayed as 0 ha.';
   const generated=new Date(AREA_ESTIMATION.generated_utc),date=Number.isNaN(generated.valueOf())?AREA_ESTIMATION.generated_utc:generated.toLocaleDateString('en-ZA',{day:'numeric',month:'short',year:'numeric'});
   $('#areaSnapshot').textContent=`Static analysis snapshot generated ${date}; ${formatArea(scenario.area_uncovered_ha)} is outside the covered strata. Estimates do not recalculate live from Google Sheets.`;
 }
