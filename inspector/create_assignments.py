@@ -2,7 +2,7 @@
 """Create deterministic, stratum-balanced inspector assignments.
 
 Example:
-    py -3 inspector/create_assignments.py --campaign thicket-2026-r1 \
+    py -3 inspector/create_assignments.py --campaign thicket-2026-r2 \
         --labelers GS AB CD EF --overlap 0.12
 """
 import argparse
@@ -37,7 +37,7 @@ def overlap_quotas(points, fraction):
     return quotas
 
 
-def create_manifest(points, labelers, campaign, seed, overlap):
+def create_manifest(points, labelers, campaign, seed, overlap, ds_id=None, scope=None):
     if not labelers:
         raise ValueError('provide at least one labeler code')
     if len({c.lower() for c in labelers}) != len(labelers):
@@ -49,7 +49,7 @@ def create_manifest(points, labelers, campaign, seed, overlap):
     if overlap and len(labelers) < 2:
         raise ValueError('QA overlap requires at least two labelers')
 
-    ds_id = dataset_id(points)
+    ds_id = ds_id or dataset_id(points)
     assigned = {code: set() for code in labelers}
     primary_counts = Counter()
     overlap_counts = Counter()
@@ -101,6 +101,7 @@ def create_manifest(points, labelers, campaign, seed, overlap):
         'version': 1,
         'dataset': ds_id,
         'campaign': campaign,
+        'scope': scope or {},
         'seed': seed,
         'overlap_fraction': overlap,
         'labelers': records,
@@ -117,19 +118,28 @@ def assignment_url(base_url, code):
 
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--campaign', required=True, help='stable campaign name, e.g. thicket-2026-r1')
+    parser.add_argument('--campaign', required=True, help='stable campaign name, e.g. thicket-2026-r2')
     parser.add_argument('--labelers', nargs='+', required=True, metavar='CODE')
     parser.add_argument('--overlap', type=float, default=0.12,
                         help='fraction deliberately assigned twice for QA (default: 0.12)')
+    parser.add_argument('--source', default='new',
+                        help='sample source to assign (default: new; use all for every point)')
     parser.add_argument('--seed', help='deterministic seed (defaults to campaign name)')
     parser.add_argument('--output', default=ASSIGNMENTS)
     parser.add_argument('--base-url', help='deployed inspector URL; generates shareable links')
     parser.add_argument('--links-output', help='CSV path for the link register')
     args = parser.parse_args(argv)
 
-    points = load_points()
+    all_points = load_points()
+    points = (all_points if args.source.lower() == 'all'
+              else [p for p in all_points if p.get('src') == args.source])
+    if not points:
+        raise ValueError(f'no sample points have source {args.source!r}')
     manifest = create_manifest(points, args.labelers, args.campaign,
-                               args.seed or args.campaign, args.overlap)
+                               args.seed or args.campaign, args.overlap,
+                               ds_id=dataset_id(all_points),
+                               scope={} if args.source.lower() == 'all'
+                               else {'source': args.source})
     os.makedirs(os.path.dirname(os.path.abspath(args.output)), exist_ok=True)
     with open(args.output, 'w', encoding='utf-8') as fh:
         json.dump(manifest, fh, indent=2)

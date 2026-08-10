@@ -34,12 +34,16 @@ console.log('simplified ecological workflow:', simplifiedUiOK);
 await page.waitForFunction(() => window.map && window.map.loaded && window.map.loaded(), { timeout: 15000 })
   .catch(() => {}); // map var may not be global; fall through to layer check
 
-// the points layer should exist and have 846 features
+// Coordinator mode carries the combined analysis draw; only Round 2 is required.
 const nPts = await page.evaluate(() => {
   const src = window.map ? window.map.getSource('pts') : null;
   return src ? src._data.features.length : -1;
 });
 console.log('points on map:', nPts);
+const scope = await page.evaluate(() => ({required:window.REQUIRED_POINTS.length,
+  disagreements:Object.keys(window.DISAGREEMENT_MANIFEST).length,
+  first:window.REQUIRED_POINTS[0].id,second:window.REQUIRED_POINTS[1].id,third:window.REQUIRED_POINTS[2].id}));
+console.log('Round 2 scope:', scope);
 
 // Blind mode is the safe default: map strata and current model prediction hidden.
 const blindOK = await page.evaluate(() => {
@@ -56,7 +60,8 @@ await page.fill('#note', 'edge effect draft');
 await page.waitForTimeout(500);
 const draftOK = await page.evaluate(() => {
   const key = Object.keys(localStorage).find(k => k.startsWith('thicket-inspector-note-drafts-'));
-  return key && JSON.parse(localStorage.getItem(key))['0'] === 'edge effect draft';
+  const current=document.querySelector('#curId').textContent;
+  return key && JSON.parse(localStorage.getItem(key))[current] === 'edge effect draft';
 });
 console.log('unlabeled note draft saved:', !!draftOK);
 
@@ -92,21 +97,21 @@ const cSevere = await page.evaluate(() => Object.values(window.labels).filter(r 
 console.log('after key "3" on next point: severe =', cSevere);
 
 const progressOK = await page.evaluate(() =>
-  document.querySelector('#c_remaining').textContent === '844'
-  && document.querySelector('#progressText').textContent === '2 of 846 labeled'
+  document.querySelector('#c_remaining').textContent === '1250'
+  && document.querySelector('#progressText').textContent === '2 of 1252 Round 2 labeled'
   && document.querySelector('#progressPct').textContent === '0.2%');
 console.log('expanded progress:', progressOK);
 
 // A JSON backup from another dataset is rejected before it can alter labels.
 await page.evaluate(() => {
   const bad={tool:'thicket_inspector',dataset:'different-dataset',labels:[
-    {id:2,label:'intact',lon:window.POINTS[2].lon,lat:window.POINTS[2].lat}
+    {id:window.REQUIRED_POINTS[2].id,label:'intact',lon:window.REQUIRED_POINTS[2].lon,lat:window.REQUIRED_POINTS[2].lat}
   ]};
   window.handleUpload(new File([JSON.stringify(bad)], 'bad.json', {type:'application/json'}));
 });
 await page.waitForTimeout(100);
 const mismatchBlocked = await page.evaluate(() =>
-  !window.labels[2] && document.querySelector('#toast').textContent.includes('different dataset'));
+  !window.labels[window.REQUIRED_POINTS[2].id] && document.querySelector('#toast').textContent.includes('different dataset'));
 console.log('dataset mismatch blocked:', mismatchBlocked);
 
 // Valid imports are previewed. The default strategy fills blanks without
@@ -114,10 +119,10 @@ console.log('dataset mismatch blocked:', mismatchBlocked);
 await page.evaluate(() => {
   const ds=document.querySelector('#datasetId').textContent;
   const incoming={tool:'thicket_inspector',dataset:ds,labels:[
-    {id:0,label:'severe',note:'conflict',lon:window.POINTS[0].lon,lat:window.POINTS[0].lat,
-      stratum:window.POINTS[0].s,ts:'2099-01-01T00:00:00Z'},
-    {id:2,label:'intact',note:'new',lon:window.POINTS[2].lon,lat:window.POINTS[2].lat,
-      stratum:window.POINTS[2].s,ts:'2099-01-01T00:00:00Z'}
+    {id:window.REQUIRED_POINTS[0].id,label:'severe',note:'conflict',lon:window.REQUIRED_POINTS[0].lon,lat:window.REQUIRED_POINTS[0].lat,
+      stratum:window.REQUIRED_POINTS[0].s,ts:'2099-01-01T00:00:00Z'},
+    {id:window.REQUIRED_POINTS[2].id,label:'intact',note:'new',lon:window.REQUIRED_POINTS[2].lon,lat:window.REQUIRED_POINTS[2].lat,
+      stratum:window.REQUIRED_POINTS[2].s,ts:'2099-01-01T00:00:00Z'}
   ]};
   window.handleUpload(new File([JSON.stringify(incoming)], 'preview.json', {type:'application/json'}));
 });
@@ -129,11 +134,11 @@ const previewOK = await page.evaluate(() =>
   && document.querySelector('#importStrategy').value === 'fill');
 await page.click('#applyImport');
 const fillOK = await page.evaluate(() =>
-  window.labels[0].label === 'moderate' && window.labels[2].label === 'intact');
+  window.labels[window.REQUIRED_POINTS[0].id].label === 'moderate' && window.labels[window.REQUIRED_POINTS[2].id].label === 'intact');
 await page.click('#toast button');
 await page.waitForTimeout(100);
 const importUndoOK = await page.evaluate(() =>
-  window.labels[0].label === 'moderate' && !window.labels[2]);
+  window.labels[window.REQUIRED_POINTS[0].id].label === 'moderate' && !window.labels[window.REQUIRED_POINTS[2].id]);
 console.log('import preview/fill/undo:', previewOK, fillOK, importUndoOK);
 
 // Filters work from both the select and clickable progress chips.
@@ -146,11 +151,22 @@ const chipFilterOK = await page.evaluate(() =>
   document.querySelector('#pointFilter').value === 'moderate'
   && document.querySelector('#nextUnlabeled').textContent.includes('next moderate'));
 await page.click('#nextUnlabeled');
-const filteredNavOK = await page.textContent('#curId') === '0';
+const filteredNavOK = await page.textContent('#curId') === String(scope.first);
 await page.click('.chip.all');
 await page.click('.chip.all'); // clicking the active summary chip returns to All
 const filterResetOK = await page.evaluate(() => document.querySelector('#pointFilter').value === 'all');
 console.log('select/chip/navigation/reset filters:', selectFilterOK, chipFilterOK, filteredNavOK, filterResetOK);
+
+// Prior determinate conflicts are navigable and show the original labels.
+await page.selectOption('#pointFilter','disagreement');
+await page.click('#nextUnlabeled');
+const disagreementOK = await page.evaluate(() =>
+  !document.querySelector('#disagreementPanel').classList.contains('hidden')
+  && document.querySelectorAll('#priorLabels .prior-label').length >= 2
+  && Object.hasOwn(window.DISAGREEMENT_MANIFEST,document.querySelector('#curId').textContent));
+const syncDefaultOK = await page.evaluate(() => document.querySelector('#sheetSync').checked
+  && document.querySelector('#syncStatus').textContent.includes('needs a Web App URL'));
+console.log('disagreement exploration / default sync option:', disagreementOK, syncDefaultOK);
 
 // verify the in-memory export payload
 const payload = await page.evaluate(() => {
@@ -169,11 +185,12 @@ const tileOK = await page.evaluate(() => {
 console.log('basemap tile requests:', tileOK);
 
 console.log('JS errors:', errors.length ? errors : 'none');
-const pass = nPts === 846 && cModerate === '1' && cSevere === '1'
-  && simplifiedUiOK && blindOK && draftOK && autoAdvancedTo === '1'
+const pass = nPts === 2098 && scope.required === 1252 && scope.disagreements > 0
+  && cModerate === '1' && cSevere === '1'
+  && simplifiedUiOK && blindOK && draftOK && autoAdvancedTo === String(scope.second)
   && repeatKept === '1' && afterClear === '0' && afterUndo === '1'
   && progressOK && mismatchBlocked && previewOK && fillOK && importUndoOK
-  && selectFilterOK && chipFilterOK && filteredNavOK && filterResetOK
+  && selectFilterOK && chipFilterOK && filteredNavOK && filterResetOK && disagreementOK && syncDefaultOK
   && payload.length === 2 && payload.every(r => r.labeler === 'TEST')
   // Ignore the optional gee_layers.json fetch: over file:// it logs a scheme
   // error, over http a 404 — neither is an app fault.

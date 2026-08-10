@@ -7,8 +7,13 @@ shared as a link and run entirely in the browser.
 
 ## What it does
 
-- Shows all **846 stratified sample points** (from `analysis/results/sample_points.csv`)
-  on a satellite basemap, colored by their model stratum.
+- Shows the combined **2,098-point analysis draw** from
+  `analysis/results/sample_points_vegtype2022.csv`. The **1,252 new points** are
+  required Round 2 work; the original 846 remain available to the coordinator.
+- A dedicated **Round 1 disagreements** queue exposes the 34 points with at least
+  one determinate pairwise conflict across ARP, SVM, AP, and MP. Selecting one
+  shows each prior label without pre-filling a new decision. Exploration labels
+  are exported but do not count against Round 2 completion.
 - Labelers step through points and record the condition class they observe:
   **Intact**, **Moderate**, **Severe**, **Transformed**, **No thicket**, or **Unsure**.
   Older imports using the former combined class remain visible in a legacy review queue
@@ -26,7 +31,9 @@ shared as a link and run entirely in the browser.
     two dates side by side.
 - Optional **Earth Engine Sentinel-2 composites** (extra year basemaps) baked offline —
   see *Earth Engine layers* below. Keyless in the browser; no login required.
-- Labels **auto-save to the browser** (localStorage). Nothing is uploaded anywhere.
+- Labels **auto-save to the browser** (localStorage). Optional Google Sheets sync
+  is enabled by default; until a Web App URL is configured it remains safely
+  queued locally. JSON/CSV backups remain available in either case.
 - Optional pre-assigned campaigns restrict each personal `?assignment=CODE` link
   to a deterministic, balanced point list, with deliberate blind QA overlap.
 - **Blind labeling is on by default**: model strata are hidden until a point has
@@ -64,6 +71,8 @@ shared as a link and run entirely in the browser.
 | `build.py` | Regenerates `index.html` from the template + `app.js` + the sample CSV. |
 | `create_assignments.py` | Creates balanced point assignments and shareable links. |
 | `assignment_manifest.json` | Campaign assignments embedded into the built app. |
+| `sync_config.json` | Default Google Sheets sync switch, Apps Script endpoint, and optional Sheet link. |
+| `google_apps_script.gs` | Apps Script receiver: upserted `Labels` tab plus append-only `Events` audit. |
 | `LABELLER_INSTRUCTIONS.md` | Ready-to-share operating instructions for labellers. |
 | `bake_gee_layers.py` | One-shot Earth Engine bake → `gee_layers.json` (keyless S2 tile URLs). |
 | `gee_layers.json` | **Generated, git-ignored** manifest of baked EE tile URLs the page fetches at runtime. Tokens are temporary — re-bake to refresh. |
@@ -76,7 +85,7 @@ Edit `app.js` or `thicket_inspector.html`, then:
 python inspector/build.py        # or the geo env's python on this machine
 ```
 
-This re-reads `analysis/results/sample_points.csv`, so a new sample draw is
+This re-reads `analysis/results/sample_points_vegtype2022.csv`, so a new sample draw is
 picked up automatically. The build stamps a short **dataset id** (a hash of the
 point ids + coordinates + strata) into the page; browser labels are namespaced
 by it, so a new draw never shows stale labels, and importing a file exported for
@@ -92,6 +101,7 @@ node inspector/verify_wayback.mjs      # Wayback dropdown, capture date, local f
 node inspector/verify_data_integrity.mjs  # corrupt storage, dataset namespacing,
                                           # CSV round-trip + injection safety, import validation
 node inspector/verify_assignments.mjs     # balanced coverage, links, storage isolation
+node inspector/verify_round2_sync.mjs     # Round 2 scope, disagreement queue, sync outbox
 ```
 
 ## Deploy (shareable link)
@@ -114,8 +124,39 @@ folder's entry to `index.html`) — no build command needed.
 
 Each labeler clicks **Review & download**, chooses a format, and sends you their
 `thicket_labels_<name>_<timestamp>.csv` (or `.json`). Merge the CSVs; the `id`
-column joins back to `sample_points.csv`, and `label` is the reference class for
+column joins back to `sample_points_vegtype2022.csv`, and `label` is the reference class for
 the Olofsson accuracy/area estimation.
+
+Round 2 exports carry `source`, vegetation type/EFG, 2022 and 2025 classes,
+`required`, and `disagreement`. The estimator should use required Round 2 rows
+alongside the retained Round 1 data; optional disagreement re-reads are clearly
+marked rather than silently entering the design-based sample.
+
+## Google Sheets sync
+
+The app uses a Google Apps Script Web App because a static GitHub Pages site
+cannot safely contain Google service-account credentials. Local storage is still
+the first write, and every remote change stays queued until the browser can hand
+it to the Web App. The append-only `Events` tab is the delivery audit.
+
+1. Create/open the campaign Google Sheet and choose **Extensions → Apps Script**.
+2. Paste `google_apps_script.gs` into `Code.gs`. Set `EXPECTED_DATASET` to the id
+   printed by `python inspector/build.py` (currently also shown on the welcome screen).
+3. Deploy it as a **Web app**, execute as the sheet owner, and grant the narrowest
+   access that covers the labellers. Copy its `/exec` URL.
+4. Put that URL in `sync_config.json` as `endpoint`, optionally put the Sheet URL
+   in `sheet_url`, then rebuild. `enabled_by_default` is already `true`.
+
+For the GitHub Pages deployment, the same values can be kept out of source:
+create repository **Settings → Secrets and variables → Actions → Variables** named
+`GOOGLE_SHEETS_SYNC_ENDPOINT` and (optionally) `GOOGLE_SHEET_URL`. The workflow
+injects them into the build and they override `sync_config.json`.
+
+Labellers can also use **Configure** in the app without rebuilding. Each change
+is written to an upserted `Labels` tab and an append-only `Events` tab. A static
+page cannot keep an API token secret, so deployment access is the real security
+boundary; `EXPECTED_DATASET` is only a guardrail. Continue taking downloaded
+backups even when sync is active.
 
 For coordinated campaigns, see [MULTI_LABELLER_OPTIONS.md](MULTI_LABELLER_OPTIONS.md).
 The recommended first step is deterministic, balanced assignments with 10–15%

@@ -32,7 +32,9 @@ on:
     branches: [main]
     paths:
       - 'inspector/**'
-      - 'analysis/results/sample_points.csv'   # points are embedded at build time
+      - 'analysis/results/sample_points_vegtype2022.csv'   # Round 2 points embedded at build time
+      - 'thicket_labels_*.json'                # Round 1 disagreement context
+      - 'thicket_labels_*.csv'
       - '.github/workflows/bake-gee-and-deploy.yml'
 
 permissions:
@@ -59,6 +61,9 @@ jobs:
           python-version: '3.12'
 
       - name: Build index.html (embed points, inline app.js)
+        env:
+          GOOGLE_SHEETS_SYNC_ENDPOINT: ${{ vars.GOOGLE_SHEETS_SYNC_ENDPOINT }}
+          GOOGLE_SHEET_URL: ${{ vars.GOOGLE_SHEET_URL }}
         run: python inspector/build.py
 
       - name: Install Earth Engine API

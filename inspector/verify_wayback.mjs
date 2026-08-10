@@ -96,7 +96,7 @@ console.log('compare:', JSON.stringify(cmp));
 await browser.close();
 server.close();
 
-const ok = n === 846 && nOpts > 2 && /^\d{4}-\d{2}-\d{2}$/.test(firstDate)
+const ok = n === 2098 && nOpts > 2 && /^\d{4}-\d{2}-\d{2}$/.test(firstDate)
   && cap && cap !== '–' && after >= 1 && after < before && cmp.map && cmp.swipe && cmp.rowB
   && errors.length === 0;
 if (errors.length) console.log('CONSOLE ERRORS:\n' + errors.join('\n'));

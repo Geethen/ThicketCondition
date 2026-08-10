@@ -41,7 +41,7 @@
          display:flex; gap:8px; flex-wrap:wrap}
 
   /* progress */
-  .prog{display:grid; grid-template-columns:repeat(3,1fr); gap:6px; margin-top:8px}
+  .prog{display:grid; grid-template-columns:repeat(4,1fr); gap:6px; margin-top:8px}
   .chip{text-align:center; padding:6px 4px; border-radius:8px; background:#0c0e13;
         border:1px solid var(--line); font:inherit;font-size:11px;color:var(--ink)}
   .chip[data-filter]{cursor:pointer}
@@ -147,6 +147,10 @@
   .save-status{font-size:11px;color:var(--muted);margin-top:5px;min-height:14px}
   .assignment-badge{font-size:11px;color:#b9d2ff;margin-top:6px;padding:5px 7px;border-radius:7px;background:#14233c;border:1px solid #38577d}
   .assignment-badge.error{color:#ffaaa4;background:#2b1718;border-color:#a94442}
+  .syncrow{display:flex;gap:7px;align-items:center;justify-content:space-between;margin-top:7px}
+  .syncrow label{display:flex;gap:5px;align-items:center;font-size:11px}.sync-error{color:#ffaaa4!important}
+  .disagreement-panel{margin:8px 0;padding:9px;border:1px solid #9a6ed0;border-radius:8px;background:#241a32}
+  .disagreement-panel h3{font-size:12px;margin:0 0 5px;color:#d9baff}.prior-label{display:flex;justify-content:space-between;padding:3px 0;border-top:1px solid #ffffff12;font-size:12px}
 
   /* legend on map */
   .legend{position:absolute; top:10px; left:10px; background:rgba(16,18,24,.88);
@@ -177,6 +181,7 @@
   .importstats b{display:block;color:var(--ink);font-size:17px}
   .modalbox select{width:100%;background:#0c0e13;color:var(--ink);border:1px solid var(--line);
     border-radius:8px;padding:9px;margin:5px 0 14px}
+  .modalbox input{background:#0c0e13;color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:9px}
   .modalactions{display:flex;gap:8px;justify-content:flex-end}
   .hidden{display:none !important}
   .toolbar{display:flex;gap:6px;flex-wrap:wrap;margin:7px 0}.toolbar .btn{padding:7px 9px}
@@ -218,6 +223,9 @@
       <div class="filt">
         <select id="pointFilter" aria-label="Filter points">
           <option value="all">All points</option>
+          <option value="round2">Round 2 samples</option>
+          <option value="disagreement">Prior labeller disagreements</option>
+          <option value="previous">All Round 1 samples</option>
           <option value="unlabeled">Unlabeled only</option>
           <option value="labeled">Labeled only</option>
           <option value="intact">Labeled intact</option>
@@ -249,11 +257,14 @@
         <button class="chip all" data-filter="labeled" title="Show labeled points">labeled<b id="c_all">0</b></button>
         <button class="chip remaining" data-filter="unlabeled" title="Show unlabeled points">remaining<b id="c_remaining">0</b></button>
         <button class="chip review" data-filter="review" title="Show unsure, flagged, low-confidence, and legacy labels">to review<b id="c_review">0</b></button>
+        <button class="chip disagreement" data-filter="disagreement" title="Explore points where Round 1 labellers disagreed">disagreed<b id="c_disagreements">0</b></button>
       </div>
       <div class="progressline"><span id="progressText">0 of 0 labeled</span><span id="progressPct">0%</span></div>
       <div class="progressbar"><span id="progressFill"></span></div>
       <div class="settingsrow"><label><input type="checkbox" id="autoAdvance" checked> auto-advance after labeling</label><button class="btn" id="switchLabeller">Switch labeller</button></div>
       <div class="save-status" id="saveStatus" role="status" aria-live="polite">Saved locally</div>
+      <div class="syncrow"><label><input type="checkbox" id="sheetSync" checked> sync to Google Sheet</label><span><a class="btn hidden" id="openSheetLink" target="_blank" rel="noopener">Open sheet ↗</a><button class="btn" id="syncConfigure">Configure</button></span></div>
+      <div class="save-status" id="syncStatus" role="status" aria-live="polite"></div>
     </div>
 
     <div class="pbody">
@@ -282,12 +293,15 @@
         <button class="btn" id="copyPoint">Copy ID + coordinates</button>
         <button class="btn" id="recenterBtn">Recenter</button>
       </div>
-      <div class="toolbar"><button class="btn" id="nextFlagged">Next flagged</button><button class="btn" id="nextLow">Next low-confidence</button><button class="btn" data-zoom="12">Context</button><button class="btn" data-zoom="15.5">Canopy</button><button class="btn" data-zoom="18">Close-up</button></div>
+      <div class="toolbar"><button class="btn" id="nextDisagreement">Explore disagreements</button><button class="btn" id="nextFlagged">Next flagged</button><button class="btn" id="nextLow">Next low-confidence</button><button class="btn" data-zoom="12">Context</button><button class="btn" data-zoom="15.5">Canopy</button><button class="btn" data-zoom="18">Close-up</button></div>
       </details>
 
       <div class="metarow"><span>Coordinates</span><span id="mCoord">–</span></div>
-      <div class="metarow"><span>Map stratum (model)</span><span id="mStratum">–</span></div>
+      <div class="metarow"><span>Sample source</span><span id="mSampleSource">–</span></div>
+      <div class="metarow"><span>2022 design stratum (model)</span><span id="mStratum">–</span></div>
+      <div class="metarow"><span>Vegetation context</span><span id="mVegetation">–</span></div>
       <div class="metarow"><span>Your label</span><span id="mLabel">–</span></div>
+      <div class="disagreement-panel hidden" id="disagreementPanel"><h3>Round 1 labellers disagreed here</h3><div id="priorLabels"></div><p class="save-status">These labels are shown for exploration and do not pre-fill your Round 2 decision.</p></div>
 
       <div class="seclbl">Imagery</div>
       <div class="srcgrid" id="srcgrid"></div>
@@ -354,7 +368,7 @@
       <li>Click a point (or use <kbd>Next ›</kbd>) — the map zooms to it.</li>
       <li>Switch imagery sources & Wayback dates to judge canopy cover.</li>
       <li>Press a condition button, or keys <kbd>1</kbd> intact <kbd>2</kbd> moderate <kbd>3</kbd> severe <kbd>4</kbd> transformed <kbd>5</kbd> no thicket <kbd>6</kbd> unsure.</li>
-      <li>Your work is auto-saved in this browser. <b>Download</b> the file when done and send it back.</li>
+      <li>Your work is auto-saved in this browser and, when configured, synced to the campaign Google Sheet. Keep downloading backups.</li>
       <li>Returning? Click <b>Upload / resume</b> to continue from a saved file.</li>
     </ol>
     <div class="who">
@@ -380,6 +394,15 @@
 </div>
 
 <div id="helpModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="helpTitle"><div class="modalbox" tabindex="-1"><h2 id="helpTitle">Keyboard shortcuts</h2><p><kbd>1–6</kbd> label · <kbd>←</kbd>/<kbd>→</kbd> navigate · <kbd>N</kbd> next queue item · <kbd>F</kbd> flag · <kbd>Ctrl/⌘ Z</kbd> undo · <kbd>I/G/S/W</kbd> imagery · <kbd>[</kbd>/<kbd>]</kbd> Wayback dates · <kbd>Esc</kbd> focus map · <kbd>?</kbd> this panel.</p><div class="modalactions"><button class="btn primary" id="closeHelp">Close</button></div></div></div>
+
+<div id="syncModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="syncTitle">
+  <div class="modalbox" tabindex="-1"><h2 id="syncTitle">Google Sheets sync</h2>
+    <p>Paste the deployed Google Apps Script Web App URL. Labels always remain saved locally and downloadable.</p>
+    <label for="syncEndpointInput">Web App URL</label><input id="syncEndpointInput" type="url" placeholder="https://script.google.com/macros/s/…/exec" style="width:100%">
+    <label for="syncSheetInput" style="display:block;margin-top:10px">Google Sheet URL (optional shortcut)</label><input id="syncSheetInput" type="url" placeholder="https://docs.google.com/spreadsheets/d/…" style="width:100%">
+    <div class="modalactions"><button class="btn" id="cancelSyncConfig">Cancel</button><button class="btn" id="syncNow">Queue current labels</button><button class="btn primary" id="saveSyncConfig">Save &amp; sync</button></div>
+  </div>
+</div>
 
 <div id="importPreview" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="importTitle">
   <div class="modalbox">
@@ -418,6 +441,8 @@
 const DATASET_ID = '__DATASET_ID__';
 const ALL_POINTS = [__POINTS__];
 const ASSIGNMENT_MANIFEST = __ASSIGNMENTS__;
+const DISAGREEMENT_MANIFEST = __DISAGREEMENTS__;
+const GOOGLE_SHEETS_SYNC_CONFIG = __SYNC_CONFIG__;
 </script>
 <script src="app.js"></script>
 </body>
