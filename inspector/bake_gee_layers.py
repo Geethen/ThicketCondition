@@ -31,7 +31,7 @@ import sys
 import ee
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-SAMPLE_CSV = os.path.join(HERE, '..', 'analysis', 'results', 'sample_points.csv')
+SAMPLE_CSV = os.path.join(HERE, '..', 'analysis', 'results', 'sample_points_vegtype2022.csv')
 OUT = os.path.join(HERE, 'gee_layers.json')
 
 EE_PROJECT = os.environ.get('EE_PROJECT', 'ee-gsingh')

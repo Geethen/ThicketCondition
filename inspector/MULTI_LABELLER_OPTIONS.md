@@ -2,10 +2,11 @@
 
 ## Current constraint
 
-The inspector is a static GitHub Pages app. Labels live in each browser until
-they are exported, so the app cannot currently tell whether another person has
-already labelled or claimed a point. Importing files merges work safely, but it
-only detects duplication after the work has happened.
+The inspector is a static GitHub Pages app with deterministic assignments and an
+optional Google Apps Script outbox. Labels save locally first and can sync into
+the campaign Sheet, but the app does not use that Sheet for atomic point claims.
+Assignments therefore remain the mechanism that prevents accidental duplicate
+work; deliberate overlap is recorded for QA.
 
 ## Options
 
@@ -37,7 +38,7 @@ Create a campaign and its shareable link register with:
 
 ```powershell
 py -3 inspector/create_assignments.py `
-  --campaign thicket-2026-r1 `
+  --campaign thicket-2026-r2 `
   --labelers GS AB CD EF `
   --overlap 0.12 `
   --base-url https://geethen.github.io/ThicketCondition/

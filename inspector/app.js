@@ -4,6 +4,7 @@
 
 const URL_PARAMS=new URLSearchParams(location.search);
 const ASSIGNMENT_REQUEST=(URL_PARAMS.get('assignment')||'').trim();
+const SYNC_ENDPOINT_REQUEST=(URL_PARAMS.get('syncEndpoint')||'').trim();
 const COORDINATOR_MODE=URL_PARAMS.get('mode')==='coordinator';
 const ASSIGNMENT_CODES=Object.keys((ASSIGNMENT_MANIFEST&&ASSIGNMENT_MANIFEST.labelers)||{});
 const ASSIGNMENT_CODE=ASSIGNMENT_REQUEST
@@ -14,8 +15,16 @@ const ASSIGNMENT_ERROR=ASSIGNMENT_REQUEST&&!ASSIGNMENT_RECORD
   : (!ASSIGNMENT_REQUEST&&ASSIGNMENT_CODES.length&&!COORDINATOR_MODE
     ? 'A personal assignment link is required for this campaign. Ask the coordinator for your link.' : '');
 const ASSIGNED_IDS=new Set(ASSIGNMENT_RECORD?ASSIGNMENT_RECORD.point_ids:[]);
-const POINTS=ASSIGNMENT_RECORD?ALL_POINTS.filter(p=>ASSIGNED_IDS.has(p.id)):
-  (ASSIGNMENT_ERROR?[]:ALL_POINTS);
+const DISAGREEMENT_IDS=new Set(Object.keys(DISAGREEMENT_MANIFEST||{}).map(Number));
+// Round 2 completion is based only on the new draw. Historical disagreement
+// points are optional exploration/adjudication work and never inflate remaining.
+const REQUIRED_IDS=ASSIGNMENT_RECORD?ASSIGNED_IDS:
+  new Set(ALL_POINTS.filter(p=>p.src==='new').map(p=>p.id));
+const REQUIRED_POINTS=ALL_POINTS.filter(p=>REQUIRED_IDS.has(p.id));
+const POINTS=ASSIGNMENT_RECORD
+  ? ALL_POINTS.filter(p=>ASSIGNED_IDS.has(p.id)||DISAGREEMENT_IDS.has(p.id))
+  : (ASSIGNMENT_ERROR?[]:ALL_POINTS);
+const isRequiredPoint=p=>!!p&&REQUIRED_IDS.has(p.id);
 const ASSIGNMENT_ID=ASSIGNMENT_RECORD?ASSIGNMENT_RECORD.assignment_id||'':'';
 const CAMPAIGN=String((ASSIGNMENT_MANIFEST&&ASSIGNMENT_MANIFEST.campaign)||'');
 
@@ -42,6 +51,8 @@ const KEY_NAME   = 'thicket-inspector-name';
 const KEY_UI     = 'thicket-inspector-ui' + (ASSIGNMENT_ID?'-'+ASSIGNMENT_ID:'');
 const KEY_BACKUP = 'thicket-inspector-last-backup-' + STORAGE_SCOPE;
 const KEY_WBCACHE = 'thicket-inspector-wayback-cache-' + DS_ID;
+const KEY_SYNC_QUEUE = 'thicket-inspector-sheet-sync-queue-' + STORAGE_SCOPE;
+const KEY_SYNC_PREFS = 'thicket-inspector-sheet-sync-prefs-' + STORAGE_SCOPE;
 // Coordinates must match the embedded draw within ~1 m to count as the same point.
 const COORD_EPS = 1e-5;
 
@@ -53,13 +64,18 @@ let labeler = '';
 let activeSource = 'esri';
 let blindMode = true;
 let autoAdvance = true;
-let pointFilter = 'all';
+let pointFilter = 'round2';
 let pendingAdvance = 0;
 let pendingImport = null;
 let undoStack = [];
 let navHistory = [], navHistoryPos = -1;
 let lastBackup = localStorage.getItem(KEY_BACKUP) || '';
 let wbPointCache = {};
+let syncEnabled=!!(GOOGLE_SHEETS_SYNC_CONFIG&&GOOGLE_SHEETS_SYNC_CONFIG.enabled_by_default);
+let syncEndpoint=SYNC_ENDPOINT_REQUEST||String((GOOGLE_SHEETS_SYNC_CONFIG&&GOOGLE_SHEETS_SYNC_CONFIG.endpoint)||'').trim();
+let syncSheetUrl=String((GOOGLE_SHEETS_SYNC_CONFIG&&GOOGLE_SHEETS_SYNC_CONFIG.sheet_url)||'').trim();
+let syncQueue=[];
+let syncBusy=false;
 let map;
 let sourceErrors=0, fallbackInProgress=false;
 // Esri Wayback state
@@ -124,6 +140,16 @@ function loadStore(){
   }catch(e){ noteDrafts={}; }
   labeler = localStorage.getItem(KEY_NAME) || '';
   try{ wbPointCache=JSON.parse(localStorage.getItem(KEY_WBCACHE)||'{}')||{}; }catch(e){ wbPointCache={}; }
+  try{
+    const prefs=JSON.parse(localStorage.getItem(KEY_SYNC_PREFS)||'{}');
+    if(typeof prefs.enabled==='boolean') syncEnabled=prefs.enabled;
+    if(!SYNC_ENDPOINT_REQUEST&&typeof prefs.endpoint==='string') syncEndpoint=prefs.endpoint.trim();
+    if(typeof prefs.sheetUrl==='string') syncSheetUrl=prefs.sheetUrl.trim();
+  }catch(e){}
+  try{
+    const queued=JSON.parse(localStorage.getItem(KEY_SYNC_QUEUE)||'[]');
+    syncQueue=Array.isArray(queued)?queued.filter(x=>x&&typeof x==='object').slice(-5000):[];
+  }catch(e){syncQueue=[];}
 }
 function saveStore(){
   try{
@@ -137,15 +163,95 @@ function saveStore(){
   }
 }
 
+// --------------------------------------------------------- Google Sheets sync
+// A deployed Google Apps Script Web App accepts these events and upserts its
+// Labels sheet. Local storage remains authoritative; failed sends stay queued.
+function validSyncEndpoint(value){
+  try{
+    const u=new URL(value);
+    return u.protocol==='https:' || (u.protocol==='http:'&&['127.0.0.1','localhost'].includes(u.hostname));
+  }catch(e){return false;}
+}
+function persistSyncState(){
+  localStorage.setItem(KEY_SYNC_QUEUE,JSON.stringify(syncQueue.slice(-5000)));
+  localStorage.setItem(KEY_SYNC_PREFS,JSON.stringify({enabled:syncEnabled,endpoint:syncEndpoint,sheetUrl:syncSheetUrl}));
+}
+function updateSyncStatus(message='',error=false){
+  const box=$('#sheetSync'); if(box) box.checked=syncEnabled;
+  const el=$('#syncStatus'); if(!el)return;
+  let text=message;
+  if(!text){
+    if(!syncEnabled) text='Google Sheets sync is off · labels still save locally';
+    else if(!validSyncEndpoint(syncEndpoint)) text='Google Sheets sync needs a Web App URL · labels save locally';
+    else if(syncQueue.length) text=`Google Sheets sync · ${syncQueue.length} change${syncQueue.length===1?'':'s'} queued`;
+    else text='Google Sheets sync ready · local backup remains enabled';
+  }
+  el.textContent=text;
+  el.className='save-status'+(error?' sync-error':'');
+  const link=$('#openSheetLink');
+  if(link){link.href=syncSheetUrl||'#';link.classList.toggle('hidden',!validSyncEndpoint(syncSheetUrl));}
+}
+function syncEvent(point,record,action){
+  const ts=(record&&record.ts)||new Date().toISOString();
+  return {
+    tool:'thicket_inspector_sync',version:1,
+    event_id:[DS_ID,ASSIGNMENT_ID||'coordinator',labeler||'anon',point.id,ts,action].join('|'),
+    dataset:DS_ID,campaign:CAMPAIGN,
+    assignment:ASSIGNMENT_RECORD?{code:ASSIGNMENT_CODE,id:ASSIGNMENT_ID}:null,
+    labeler:labeler||'',action,occurred:ts,
+    point:{id:point.id,source:point.src,stratum:point.s,mapcode:point.mc||'',
+      vegtype:point.veg||'',efg:point.efg||'',cls2022:point.c22,cls2025:point.c25,
+      lon:point.lon,lat:point.lat,required:isRequiredPoint(point),
+      disagreement:DISAGREEMENT_IDS.has(point.id)},
+    record:record?{label:record.label,note:record.note||'',ts:record.ts||ts,
+      flagged:!!record.flagged,confidence:record.confidence||'',reasons:record.reasons||[]}:null
+  };
+}
+function enqueueSheetSync(point,record,action=record?'upsert':'clear'){
+  if(!point)return;
+  syncQueue.push(syncEvent(point,record,action));
+  if(syncQueue.length>5000)syncQueue=syncQueue.slice(-5000);
+  persistSyncState();updateSyncStatus();flushSheetSync();
+}
+function queueAllLabelsForSync(){
+  POINTS.forEach(p=>{if(labels[p.id])syncQueue.push(syncEvent(p,labels[p.id],'upsert'));});
+  if(syncQueue.length>5000)syncQueue=syncQueue.slice(-5000);
+  persistSyncState();updateSyncStatus();flushSheetSync();
+}
+function enqueueSyncChanges(before,after){
+  const ids=new Set([...Object.keys(before||{}),...Object.keys(after||{})]);
+  ids.forEach(raw=>{
+    const id=Number(raw),idx=byId(id),p=idx>=0?POINTS[idx]:null;
+    if(!p||JSON.stringify(before&&before[id])===JSON.stringify(after&&after[id]))return;
+    const rec=after&&after[id];enqueueSheetSync(p,rec||null,rec?'upsert':'clear');
+  });
+}
+async function flushSheetSync(){
+  if(syncBusy||!syncEnabled||!validSyncEndpoint(syncEndpoint)||!navigator.onLine||!syncQueue.length){updateSyncStatus();return;}
+  syncBusy=true;
+  try{
+    while(syncEnabled&&syncQueue.length&&navigator.onLine){
+      const event=syncQueue[0];
+      await fetch(syncEndpoint,{method:'POST',mode:'no-cors',cache:'no-store',keepalive:true,
+        headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(event)});
+      syncQueue.shift();persistSyncState();updateSyncStatus();
+    }
+    updateSyncStatus('Google Sheets sync sent · local backup remains enabled');
+  }catch(e){updateSyncStatus(`Google Sheets sync paused · ${syncQueue.length} queued`,true);}
+  finally{syncBusy=false;}
+}
+
 function snapshotUndo(description){
   undoStack.push({labels:JSON.stringify(labels),drafts:JSON.stringify(noteDrafts),description});
   if(undoStack.length>30) undoStack.shift();
 }
 function undoLast(){
   const u=undoStack.pop(); if(!u){ toast('Nothing to undo'); return; }
+  const before=labels;
   labels=sanitizeLabels(JSON.parse(u.labels));
   try{ noteDrafts=JSON.parse(u.drafts)||{}; }catch(e){ noteDrafts={}; }
   saveStore(); refreshPoints(); applyPointFilter(); updateCounts(); if(curIdx>=0) renderPoint();
+  enqueueSyncChanges(before,labels);
   toast(`${u.description||'Change'} undone`);
 }
 
@@ -242,7 +348,9 @@ function initMap(){
 function pointsGeoJSON(){
   return { type:'FeatureCollection', features: POINTS.map(p=>({
     type:'Feature', geometry:{type:'Point',coordinates:[p.lon,p.lat]},
-    properties:{ id:p.id, stratum:blindMode?'blind':p.s, labeled: !!labels[p.id],
+    properties:{ id:p.id, stratum:blindMode?'blind':p.m, source:p.src,
+                 required:isRequiredPoint(p), disagreement:DISAGREEMENT_IDS.has(p.id),
+                 labeled: !!labels[p.id],
                  label:labels[p.id] ? labels[p.id].label : '',
                  flagged:!!(labels[p.id]&&labels[p.id].flagged),
                  confidence:labels[p.id] ? labels[p.id].confidence||'' : '' }
@@ -255,6 +363,9 @@ function applyPointFilter(value=pointFilter){
   pointFilter=value;
   const filters={
     all:null,
+    round2:['==',['get','source'],'new'],
+    previous:['==',['get','source'],'existing'],
+    disagreement:['==',['get','disagreement'],true],
     unlabeled:['==',['get','labeled'],false],
     labeled:['==',['get','labeled'],true],
     intact:['==',['get','label'],'intact'],
@@ -276,7 +387,9 @@ function applyPointFilter(value=pointFilter){
     c.classList.toggle('filter-active',c.dataset.filter===pointFilter));
   const next=$('#nextUnlabeled');
   if(next){
-    const names={all:'unlabeled',unlabeled:'unlabeled',labeled:'labeled',review:'review item',nothicket:'no thicket',notthicket:'legacy combined'};
+    const names={all:'unlabeled Round 2 point',round2:'unlabeled Round 2 point',previous:'previous point',
+      disagreement:'disagreement',unlabeled:'unlabeled',labeled:'labeled',review:'review item',
+      nothicket:'no thicket',notthicket:'legacy combined'};
     next.textContent=`Jump to next ${names[pointFilter]||pointFilter} →`;
   }
   saveUI();
@@ -654,14 +767,16 @@ async function copyPoint(){ const p=POINTS[curIdx]; if(!p)return; const text=`ID
 function nextUnlabeled(){
   for(let k=1;k<=POINTS.length;k++){
     const i=(curIdx+k)%POINTS.length;
-    if(!labels[POINTS[i].id]){ gotoIdx(i); return; }
+    if(isRequiredPoint(POINTS[i])&&!labels[POINTS[i].id]){ gotoIdx(i); return; }
   }
-  toast('All points labeled 🎉');
+  toast('All required Round 2 points labeled 🎉');
 }
 function nextForFilter(){
-  if(pointFilter==='all'||pointFilter==='unlabeled'){ nextUnlabeled(); return; }
+  if(pointFilter==='all'||pointFilter==='round2'||pointFilter==='unlabeled'){ nextUnlabeled(); return; }
   for(let k=1;k<=POINTS.length;k++){
-    const i=(curIdx+k)%POINTS.length, rec=labels[POINTS[i].id];
+    const i=(curIdx+k)%POINTS.length, p=POINTS[i], rec=labels[p.id];
+    if(pointFilter==='disagreement'&&DISAGREEMENT_IDS.has(p.id)){gotoIdx(i);return;}
+    if(pointFilter==='previous'&&p.src==='existing'){gotoIdx(i);return;}
     if(pointFilter==='review'&&rec&&(rec.flagged||rec.confidence==='low'||rec.label==='unsure'||rec.label===LEGACY_CLASS)){ gotoIdx(i); return; }
     if((pointFilter==='labeled'&&rec)||(rec&&rec.label===pointFilter)){ gotoIdx(i); return; }
   }
@@ -674,11 +789,15 @@ function renderPoint(){
   $('#curId').textContent=p.id; $('#curOrdinal').textContent=curIdx+1; $('#totId').textContent=POINTS.length;
   const rec=labels[p.id];
   const showPrediction=!blindMode || !!rec;
-  if(showPrediction) $('#curStratum').innerHTML = ` · <span class="pill ${p.s}">${p.s}</span>`;
+  if(showPrediction) $('#curStratum').innerHTML = ` · <span class="pill ${p.m}">${p.m}</span>`;
   else $('#curStratum').textContent=' · model hidden';
   $('#mCoord').textContent=`${p.lat.toFixed(5)}, ${p.lon.toFixed(5)}`;
-  if(showPrediction) $('#mStratum').innerHTML=`<span class="pill ${p.s}">${CLASS_LABEL[p.s]||p.s}</span>`;
+  $('#mSampleSource').textContent=isRequiredPoint(p)?'Round 2 · required':
+    (DISAGREEMENT_IDS.has(p.id)?'Round 1 · disagreement exploration':'Round 1 · historical');
+  if(showPrediction) $('#mStratum').innerHTML=`<span class="pill ${p.m}">${CLASS_LABEL[p.m]||p.m}</span> · ${p.s}`;
   else $('#mStratum').textContent='Hidden until label saved';
+  $('#mVegetation').textContent=showPrediction?[p.mc,p.veg,p.efg].filter(Boolean).join(' · '):'Hidden until label saved';
+  renderPriorDisagreement(p);
   const mLabel=$('#mLabel');
   if(rec && isValidClass(rec.label)){
     const b=document.createElement('b');
@@ -703,6 +822,19 @@ function renderPoint(){
   $('#nextBtn').disabled = curIdx>=POINTS.length-1;
 }
 
+function renderPriorDisagreement(p){
+  const panel=$('#disagreementPanel'), list=$('#priorLabels');
+  const item=DISAGREEMENT_MANIFEST[String(p.id)];
+  panel.classList.toggle('hidden',!item);list.textContent='';
+  if(!item)return;
+  Object.entries(item.labels||{}).forEach(([code,value])=>{
+    const row=document.createElement('div');row.className='prior-label';
+    const who=document.createElement('b');who.textContent=code;
+    const label=document.createElement('span');label.textContent=CLASS_LABEL[value]||value;
+    label.style.color=STRAT_COLOR[value]||'#fff';row.append(who,label);list.appendChild(row);
+  });
+}
+
 function setLabel(cls){
   if(curIdx<0){ toast('Pick a point first'); return; }
   if(!isValidClass(cls)) return;
@@ -721,11 +853,13 @@ function setLabel(cls){
                  stratum:p.s, lon:p.lon, lat:p.lat };
   delete noteDrafts[p.id];
   const saved=saveStore(); renderPoint(); refreshPoints(); updateCounts();
+  enqueueSheetSync(p,labels[p.id]);
   const undo=()=>{
     clearTimeout(pendingAdvance);
     if(previous) labels[p.id]=previous; else delete labels[p.id];
     if(previousDraft!=null) noteDrafts[p.id]=previousDraft; else delete noteDrafts[p.id];
     saveStore(); refreshPoints(); updateCounts(); gotoId(p.id); toast('Change undone');
+    enqueueSheetSync(p,labels[p.id]||null,labels[p.id]?'upsert':'clear');
   };
   toast(`Point ${p.id} marked ${CLASS_LABEL[cls]}`, 'Undo', undo, 4200);
   if(autoAdvance && saved) pendingAdvance=setTimeout(nextUnlabeled, 450);
@@ -737,8 +871,10 @@ function clearLabel(){
   snapshotUndo('Clear label');
   const note=$('#note').value.trim(); if(note) noteDrafts[p.id]=note;
   delete labels[p.id]; saveStore(); renderPoint(); refreshPoints(); updateCounts();
+  enqueueSheetSync(p,null,'clear');
   toast(`Label cleared for point ${p.id}`, 'Undo', ()=>{
     labels[p.id]=previous; delete noteDrafts[p.id]; saveStore(); refreshPoints(); updateCounts();
+    enqueueSheetSync(p,labels[p.id]);
     gotoId(p.id); toast('Label restored');
   }, 4200);
 }
@@ -746,52 +882,61 @@ function updateReviewField(field,value){
   const p=POINTS[curIdx]; if(!p){return;} if(!labels[p.id]){ toast('Label the point before adding review metadata'); return; }
   snapshotUndo('Review metadata'); labels[p.id][field]=value; labels[p.id].ts=new Date().toISOString();
   saveStore(); refreshPoints(); updateCounts(); renderPoint();
+  enqueueSheetSync(p,labels[p.id]);
 }
 function toggleFlag(){ const p=POINTS[curIdx],r=p&&labels[p.id]; if(!r){toast('Label the point before flagging it');return;} updateReviewField('flagged',!r.flagged); }
 function addReason(tag){
   const p=POINTS[curIdx]; if(!p)return;
   const note=$('#note'), token=`[${tag}]`; if(!note.value.includes(token)) note.value=(note.value.trim()+' '+token).trim();
   autoGrowNote(); saveNote();
-  if(labels[p.id]){ const rs=new Set(labels[p.id].reasons||[]); rs.add(tag); labels[p.id].reasons=Array.from(rs); saveStore(); }
+  if(labels[p.id]){ const rs=new Set(labels[p.id].reasons||[]); rs.add(tag); labels[p.id].reasons=Array.from(rs); saveStore(); enqueueSheetSync(p,labels[p.id]); }
 }
 function autoGrowNote(){ const n=$('#note'); if(!n)return; n.style.height='auto'; n.style.height=Math.min(180,Math.max(44,n.scrollHeight))+'px'; }
 function saveNote(){
   const p=POINTS[curIdx]; if(!p) return;
-  const note=$('#note').value.trim();
-  if(labels[p.id]){ labels[p.id].note=note; delete noteDrafts[p.id]; }
+  const note=$('#note').value.trim();let changed=false;
+  if(labels[p.id]){
+    changed=(labels[p.id].note||'')!==note;labels[p.id].note=note;
+    if(changed)labels[p.id].ts=new Date().toISOString();delete noteDrafts[p.id];
+  }
   else if(note) noteDrafts[p.id]=note;
   else delete noteDrafts[p.id];
   saveStore();
+  if(changed)enqueueSheetSync(p,labels[p.id]);
   $('#noteStatus').textContent=note ? (labels[p.id]?'Note saved':'Draft saved locally') : '';
 }
 
 function updateCounts(){
   const c={intact:0,moderate:0,severe:0,transformed:0,nothicket:0,notthicket:0,unsure:0,all:0,flagged:0,low:0};
-  Object.values(labels).forEach(r=>{ if(!r||!isValidClass(r.label)) return;
+  REQUIRED_POINTS.forEach(p=>{const r=labels[p.id]; if(!r||!isValidClass(r.label)) return;
     c.all++; if(c[r.label]!=null) c[r.label]++; if(r.flagged)c.flagged++; if(r.confidence==='low')c.low++; });
   $('#c_all').textContent=c.all;
   $('#c_review').textContent=new Set(Object.entries(labels).filter(([,r])=>r.flagged||r.confidence==='low'||r.label==='unsure'||r.label===LEGACY_CLASS).map(([id])=>id)).size;
-  const remaining=Math.max(0,POINTS.length-c.all), pct=POINTS.length?c.all/POINTS.length*100:0;
-  $('#c_remaining').textContent=remaining; $('#progressText').textContent=`${c.all} of ${POINTS.length} labeled`;
+  $('#c_disagreements').textContent=POINTS.filter(p=>DISAGREEMENT_IDS.has(p.id)).length;
+  const remaining=Math.max(0,REQUIRED_POINTS.length-c.all), pct=REQUIRED_POINTS.length?c.all/REQUIRED_POINTS.length*100:0;
+  $('#c_remaining').textContent=remaining; $('#progressText').textContent=`${c.all} of ${REQUIRED_POINTS.length} Round 2 labeled`;
   $('#progressPct').textContent=(pct<10?pct.toFixed(1):Math.round(pct))+'%'; $('#progressFill').style.width=pct+'%';
 }
 
 // ------------------------------------------------------------------ import / export
 function exportRows(){
-  return POINTS.filter(p=>labels[p.id]).map(p=>{ const r=labels[p.id]; return {id:p.id,stratum:p.s,lon:p.lon,lat:p.lat,
+  return POINTS.filter(p=>labels[p.id]).map(p=>{ const r=labels[p.id]; return {id:p.id,source:p.src,stratum:p.s,
+    mapcode:p.mc||'',vegtype:p.veg||'',efg:p.efg||'',cls2022:p.c22,cls2025:p.c25,
+    required:isRequiredPoint(p),disagreement:DISAGREEMENT_IDS.has(p.id),lon:p.lon,lat:p.lat,
     label:r.label,note:r.note||'',labeler:r.labeler||labeler,ts:r.ts||'',flagged:!!r.flagged,
     confidence:r.confidence||'',reasons:(r.reasons||[]).join('|')}; });
 }
 function checksumText(text){ let h=2166136261; for(let i=0;i<text.length;i++){h^=text.charCodeAt(i);h=Math.imul(h,16777619);} return ('00000000'+(h>>>0).toString(16)).slice(-8); }
 function download(){ openCompletion(); }
 function openCompletion(){
-  saveNote(); const rows=exportRows(), remaining=POINTS.length-rows.length;
-  const counts={}; CLASSES.forEach(c=>counts[c]=rows.filter(r=>r.label===c).length);
-  const flagged=rows.filter(r=>r.flagged), low=rows.filter(r=>r.confidence==='low'), unsure=rows.filter(r=>r.label==='unsure'), legacy=rows.filter(r=>r.label===LEGACY_CLASS);
+  saveNote(); const rows=exportRows(), requiredRows=rows.filter(r=>r.required), remaining=REQUIRED_POINTS.length-requiredRows.length;
+  const counts={}; CLASSES.forEach(c=>counts[c]=requiredRows.filter(r=>r.label===c).length);
+  const flagged=requiredRows.filter(r=>r.flagged), low=requiredRows.filter(r=>r.confidence==='low'), unsure=requiredRows.filter(r=>r.label==='unsure'), legacy=requiredRows.filter(r=>r.label===LEGACY_CLASS);
   const qaIncomplete=remaining||legacy.length;
   $('#completionState').textContent=remaining?`${remaining} point${remaining===1?' is':'s are'} incomplete. You can export a backup now, but final QA is not complete.`:legacy.length?`${legacy.length} label${legacy.length===1?' uses':'s use'} the old combined class. Review and replace ${legacy.length===1?'it':'them'} with Transformed or No thicket before final export.`:'All points are labeled. Review the items below before final export.';
   $('#completionState').className=qaIncomplete?'statusline error':'statusline ok';
-  const stats=[['Labeled',rows.length],['Remaining',remaining],['Intact',counts.intact],['Moderate',counts.moderate],['Severe',counts.severe],['Transformed',counts.transformed],['No thicket',counts.nothicket],['Unsure',counts.unsure],['Legacy review',legacy.length],['Flagged',flagged.length],['Low confidence',low.length]];
+  const optional=rows.length-requiredRows.length;
+  const stats=[['Round 2 labeled',requiredRows.length],['Remaining',remaining],['Exploration labels',optional],['Intact',counts.intact],['Moderate',counts.moderate],['Severe',counts.severe],['Transformed',counts.transformed],['No thicket',counts.nothicket],['Unsure',counts.unsure],['Legacy review',legacy.length],['Flagged',flagged.length],['Low confidence',low.length]];
   const grid=$('#finalSummary'); grid.textContent=''; stats.forEach(([n,v])=>{const d=document.createElement('div'),b=document.createElement('b');b.textContent=v;d.append(n,b);grid.appendChild(d);});
   $('#lastBackup').textContent=lastBackup?new Date(lastBackup).toLocaleString():'Never';
   $('#finalDownload').textContent=qaIncomplete?'Download backup':'Download final';
@@ -803,19 +948,20 @@ function openCompletion(){
 }
 async function exportFinal(){
   const rows = exportRows();
-  const legacyCount=rows.filter(r=>r.label===LEGACY_CLASS).length;
-  const exported=new Date().toISOString(), completion={complete:rows.length===POINTS.length&&!legacyCount,total:POINTS.length,labeled:rows.length,
-    flagged:rows.filter(r=>r.flagged).length,unsure:rows.filter(r=>r.label==='unsure').length,legacyCombined:legacyCount,lowConfidence:rows.filter(r=>r.confidence==='low').length};
+  const requiredRows=rows.filter(r=>r.required),legacyCount=requiredRows.filter(r=>r.label===LEGACY_CLASS).length;
+  const exported=new Date().toISOString(), completion={complete:requiredRows.length===REQUIRED_POINTS.length&&!legacyCount,
+    total:REQUIRED_POINTS.length,labeled:requiredRows.length,explorationLabels:rows.length-requiredRows.length,
+    flagged:requiredRows.filter(r=>r.flagged).length,unsure:requiredRows.filter(r=>r.label==='unsure').length,legacyCombined:legacyCount,lowConfidence:requiredRows.filter(r=>r.confidence==='low').length};
   const canonical=JSON.stringify(rows), checksum=checksumText(canonical);
-  const assignment=ASSIGNMENT_RECORD?{campaign:CAMPAIGN,code:ASSIGNMENT_CODE,id:ASSIGNMENT_ID,assigned:POINTS.length}:null;
-  const payload={tool:'thicket_inspector',version:4,dataset:DS_ID,assignment,labeler,exported,n:rows.length,completion,checksum:{algorithm:'fnv1a-32',value:checksum},labels:rows};
+  const assignment=ASSIGNMENT_RECORD?{campaign:CAMPAIGN,code:ASSIGNMENT_CODE,id:ASSIGNMENT_ID,assigned:REQUIRED_POINTS.length}:null;
+  const payload={tool:'thicket_inspector',version:5,dataset:DS_ID,round:2,assignment,labeler,exported,n:rows.length,completion,checksum:{algorithm:'fnv1a-32',value:checksum},labels:rows};
   const stamp=exported.slice(0,19).replace(/[:T]/g,'-'), safe=(labeler||'anon').replace(/[^A-Za-z0-9_-]/g,''), assignmentSafe=ASSIGNMENT_CODE?`_${ASSIGNMENT_CODE}`:'';
   const format=$('#exportFormat').value;
   if(format==='json') blobDownload(JSON.stringify(payload,null,2),`thicket_labels_${safe}${assignmentSafe}_${stamp}.json`,'application/json');
   else {
     const csvSafe=v=>{let s=String(v==null?'':v);if(/^[=+\-@\t\r]/.test(s))s="'"+s;return s;},q=v=>'"'+String(v==null?'':v).replace(/"/g,'""')+'"',qt=v=>'"'+csvSafe(v).replace(/"/g,'""')+'"';
-    const hdr='dataset,id,stratum,lon,lat,label,note,labeler,ts,flagged,confidence,reasons,checksum,campaign,assignment,assignment_id';
-    const csv=[hdr].concat(rows.map(r=>[q(DS_ID),q(r.id),q(r.stratum),q(r.lon),q(r.lat),q(r.label),qt(r.note),qt(r.labeler),q(r.ts),q(r.flagged),q(r.confidence),qt(r.reasons),q(checksum),qt(CAMPAIGN),q(ASSIGNMENT_CODE),q(ASSIGNMENT_ID)].join(','))).join('\r\n');
+    const hdr='dataset,round,id,source,stratum,mapcode,vegtype,efg,cls2022,cls2025,required,disagreement,lon,lat,label,note,labeler,ts,flagged,confidence,reasons,checksum,campaign,assignment,assignment_id';
+    const csv=[hdr].concat(rows.map(r=>[q(DS_ID),q(2),q(r.id),q(r.source),q(r.stratum),q(r.mapcode),qt(r.vegtype),q(r.efg),q(r.cls2022),q(r.cls2025),q(r.required),q(r.disagreement),q(r.lon),q(r.lat),q(r.label),qt(r.note),qt(r.labeler),q(r.ts),q(r.flagged),q(r.confidence),qt(r.reasons),q(checksum),qt(CAMPAIGN),q(ASSIGNMENT_CODE),q(ASSIGNMENT_ID)].join(','))).join('\r\n');
     blobDownload(csv,`thicket_labels_${safe}${assignmentSafe}_${stamp}.csv`,'text/csv');
   }
   lastBackup=exported; localStorage.setItem(KEY_BACKUP,lastBackup); closeDialog('#completionModal'); saveStore(); toast(`Downloaded ${rows.length} labels as ${format.toUpperCase()}`);
@@ -940,7 +1086,7 @@ function closeImport(){
 }
 function applyImport(){
   if(!pendingImport) return;
-  const before=JSON.stringify(labels), strategy=$('#importStrategy').value;
+  const before=JSON.stringify(labels), beforeLabels=JSON.parse(before), strategy=$('#importStrategy').value;
   snapshotUndo('Import');
   let applied=0,kept=0;
   pendingImport.records.forEach(({id,rec,unchanged})=>{
@@ -954,9 +1100,11 @@ function applyImport(){
     else kept++;
   });
   closeImport(); saveStore(); refreshPoints(); applyPointFilter(); updateCounts();
+  enqueueSyncChanges(beforeLabels,labels);
   if(curIdx>=0) renderPoint();
   toast(`Applied ${applied} label${applied===1?'':'s'} · kept ${kept}`, 'Undo', ()=>{
-    labels=sanitizeLabels(JSON.parse(before)); saveStore(); refreshPoints(); applyPointFilter(); updateCounts();
+    const current=labels;labels=sanitizeLabels(JSON.parse(before)); saveStore(); refreshPoints(); applyPointFilter(); updateCounts();
+    enqueueSyncChanges(current,labels);
     if(curIdx>=0) renderPoint(); toast('Import undone');
   },5000);
 }
@@ -1013,6 +1161,18 @@ function closeDialog(sel){ const d=$(sel);d.classList.add('hidden');if(dialogRet
 function trapFocus(e,sel){ if(e.key!=='Tab')return;const els=Array.from($(sel).querySelectorAll('button:not([disabled]),input:not([disabled]),select:not([disabled]),[tabindex="0"]')).filter(x=>x.offsetParent!==null);if(!els.length)return;const a=els[0],z=els[els.length-1];if(e.shiftKey&&document.activeElement===a){z.focus();e.preventDefault();}else if(!e.shiftKey&&document.activeElement===z){a.focus();e.preventDefault();} }
 function setWaybackPreset(kind){ if(!wb.view.length)return; let idx=wb.view[0]; if(kind==='oldest')idx=wb.view[wb.view.length-1]; else if(kind==='5y'){const y=new Date().getFullYear()-5;idx=wb.view.reduce((best,i)=>Math.abs(parseInt(wb.releases[i].date)-y)<Math.abs(parseInt(wb.releases[best].date)-y)?i:best,wb.view[0]);} wb.idx=idx;applyWayback();updateWbStepBtns(); }
 
+function openSyncConfig(){
+  $('#syncEndpointInput').value=syncEndpoint;$('#syncSheetInput').value=syncSheetUrl;
+  openDialog('#syncModal');$('#syncEndpointInput').focus();
+}
+function saveSyncConfig(){
+  const endpoint=$('#syncEndpointInput').value.trim(),sheet=$('#syncSheetInput').value.trim();
+  if(endpoint&&!validSyncEndpoint(endpoint)){toast('Use an HTTPS Google Apps Script Web App URL');return;}
+  if(sheet&&!validSyncEndpoint(sheet)){toast('Use a valid HTTPS Google Sheet URL');return;}
+  syncEndpoint=endpoint;syncSheetUrl=sheet;syncEnabled=true;persistSyncState();
+  closeDialog('#syncModal');updateSyncStatus();queueAllLabelsForSync();
+}
+
 // ------------------------------------------------------------------ wiring
 function wire(){
   $('#prevBtn').onclick=()=>gotoIdx(curIdx-1);
@@ -1039,6 +1199,7 @@ function wire(){
   $('#historyBack').onclick=historyBack; $('#copyPoint').onclick=copyPoint; $('#copyCoords').onclick=copyPoint; $('#recenterBtn').onclick=recenter;
   $('#nextFlagged').onclick=()=>gotoQueue(r=>r.flagged,'No flagged points');
   $('#nextLow').onclick=()=>gotoQueue(r=>r.confidence==='low','No low-confidence points');
+  $('#nextDisagreement').onclick=()=>{applyPointFilter('disagreement');nextForFilter();};
   document.querySelectorAll('[data-zoom]').forEach(b=>b.onclick=()=>{recenter();map.easeTo({zoom:+b.dataset.zoom,duration:350});});
   $('#flagBtn').onclick=toggleFlag;
   document.querySelectorAll('[data-confidence]').forEach(b=>b.onclick=()=>updateReviewField('confidence',b.dataset.confidence));
@@ -1055,6 +1216,9 @@ function wire(){
     refreshPoints(); if(curIdx>=0) renderPoint(); saveUI();
   };
   $('#autoAdvance').onchange=e=>{ autoAdvance=e.target.checked; saveUI(); };
+  $('#sheetSync').onchange=e=>{syncEnabled=e.target.checked;persistSyncState();updateSyncStatus();if(syncEnabled)flushSheetSync();};
+  $('#syncConfigure').onclick=openSyncConfig;$('#cancelSyncConfig').onclick=()=>closeDialog('#syncModal');
+  $('#saveSyncConfig').onclick=saveSyncConfig;$('#syncNow').onclick=queueAllLabelsForSync;
   // Esri Wayback controls
   $('#wbSelect').onchange=e=>{ wb.idx=+e.target.value; applyWayback(); updateWbStepBtns(); };
   $('#wbPrev').onclick=()=>wbStep(+1);   // older
@@ -1083,6 +1247,7 @@ function wire(){
     }
     if(!$('#completionModal').classList.contains('hidden')){if(e.key==='Escape')closeDialog('#completionModal');else trapFocus(e,'#completionModal');return;}
     if(!$('#helpModal').classList.contains('hidden')){if(e.key==='Escape')closeDialog('#helpModal');else trapFocus(e,'#helpModal');return;}
+    if(!$('#syncModal').classList.contains('hidden')){if(e.key==='Escape')closeDialog('#syncModal');else trapFocus(e,'#syncModal');return;}
     if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'){undoLast();e.preventDefault();return;}
     if(e.target.tagName==='TEXTAREA'||e.target.tagName==='INPUT'||e.target.tagName==='SELECT') return;
     const map6={'1':'intact','2':'moderate','3':'severe','4':'transformed','5':'nothicket','6':'unsure'};
@@ -1104,7 +1269,7 @@ function wire(){
     localStorage.setItem(KEY_NAME, labeler);
     $('#intro').classList.add('hidden');
     // first unlabeled, or first point
-    const firstUnlab=POINTS.findIndex(p=>!labels[p.id]);
+    const firstUnlab=POINTS.findIndex(p=>isRequiredPoint(p)&&!labels[p.id]);
     gotoIdx(firstUnlab>=0?firstUnlab:0);
   };
 }
@@ -1114,26 +1279,28 @@ function boot(){
   loadStore(); loadUI();
   // expose for tooling / debugging (harmless in production)
   window.POINTS=POINTS;
-  window.ASSIGNMENT=ASSIGNMENT_RECORD?{campaign:CAMPAIGN,code:ASSIGNMENT_CODE,id:ASSIGNMENT_ID,assigned:POINTS.length}:null;
+  window.REQUIRED_POINTS=REQUIRED_POINTS;window.DISAGREEMENT_MANIFEST=DISAGREEMENT_MANIFEST;
+  window.ASSIGNMENT=ASSIGNMENT_RECORD?{campaign:CAMPAIGN,code:ASSIGNMENT_CODE,id:ASSIGNMENT_ID,assigned:REQUIRED_POINTS.length}:null;
   Object.defineProperty(window,'labels',{get:()=>labels});
   $('#labelerName').value = labeler;
   const assignmentText=ASSIGNMENT_RECORD
-    ? `${CAMPAIGN||'Campaign'} · assignment ${ASSIGNMENT_CODE} · ${POINTS.length} points`
-    : ASSIGNMENT_ERROR||(ASSIGNMENT_CODES.length?`Coordinator mode · all ${POINTS.length} points`:`No assignment campaign · all ${POINTS.length} points`);
+    ? `${CAMPAIGN||'Campaign'} · assignment ${ASSIGNMENT_CODE} · ${REQUIRED_POINTS.length} Round 2 points · ${DISAGREEMENT_IDS.size} disagreements available`
+    : ASSIGNMENT_ERROR||(ASSIGNMENT_CODES.length?`Coordinator mode · ${REQUIRED_POINTS.length} Round 2 points · ${DISAGREEMENT_IDS.size} disagreements`:`${REQUIRED_POINTS.length} Round 2 points · ${DISAGREEMENT_IDS.size} disagreements`);
   ['#assignmentStatus','#introAssignment'].forEach(sel=>{const el=$(sel);el.textContent=assignmentText;el.classList.toggle('error',!!ASSIGNMENT_ERROR);});
   if(ASSIGNMENT_ERROR){ $('#startBtn').disabled=true; $('#welcomeUpload').disabled=true; }
   $('#blindMode').checked=blindMode; $('#autoAdvance').checked=autoAdvance;
   $('#pointFilter').value=pointFilter;
   document.querySelectorAll('.model-key').forEach(x=>x.classList.toggle('hidden',blindMode));
-  const savedCount=Object.keys(labels).length;
-  if(labeler && savedCount) $('#startBtn').textContent=`Continue as ${labeler} · ${POINTS.length-savedCount} remaining`;
+  const savedCount=REQUIRED_POINTS.filter(p=>labels[p.id]).length;
+  if(labeler && savedCount) $('#startBtn').textContent=`Continue as ${labeler} · ${REQUIRED_POINTS.length-savedCount} remaining`;
   buildSourceButtons(); wire(); initMap(); updateCounts();
+  updateSyncStatus();flushSheetSync();
   loadGeeLayers();   // async; re-renders source buttons if a manifest is present
   // restore hash target after map ready
   const m=location.hash.match(/p=(\d+)/);
   if(m){ const tid=+m[1]; map && map.on('load',()=>gotoId(tid)); }
   if('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('./sw.js').catch(()=>{});
-  window.addEventListener('online',()=>setSourceHealth('Network restored',false));
+  window.addEventListener('online',()=>{setSourceHealth('Network restored',false);flushSheetSync();});
   window.addEventListener('offline',()=>setSourceHealth('Offline: saved labels remain available; uncached imagery may not load.',true));
   setInterval(()=>{ if(Object.keys(labels).length && (!lastBackup || Date.now()-Date.parse(lastBackup)>30*60*1000)) toast('Backup reminder: download your latest work',null,null,5000); },15*60*1000);
 }

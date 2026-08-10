@@ -52,7 +52,7 @@ const start = async page => { await page.fill('#labelerName','QA'); await page.c
   // Seed poisoned storage BEFORE the page boots (init script sets it after clear()).
   const page = await freshPage({ [key]: JSON.stringify({
     0: null,                          // null record
-    1: { label: 'moderate' },         // valid
+    846: { label: 'moderate' },       // valid Round 2 point
     2: { label: '<img src=x>' },      // invalid label
     3: 'not-an-object',               // scalar
     99999: { label: 'severe' },       // non-existent point id

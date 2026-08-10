@@ -25,6 +25,12 @@ selects your point list, so do not remove or change the `?assignment=...` part.
 4. Your progress is saved automatically in this browser. Prefer to continue on
    the same device and browser.
 
+Your required progress covers only the new Round 2 samples. The **disagreed**
+counter and **Explore disagreements** button open optional Round 1 points where
+previous labellers gave different determinate labels. Their labels are shown as
+context. A label you add there is exported as an exploration label and does not
+increase your Round 2 remaining count.
+
 Some points are intentionally assigned to two people. This is blind QA, not a
 mistake. Do not compare labels with another labeller until the coordinator has
 closed the campaign.
@@ -39,5 +45,8 @@ closed the campaign.
 4. When finished, download the final JSON and send it to the coordinator using
    the agreed file-sharing method. Do not rename the file unless asked.
 
-The app is not connected to a central server. Closing the browser does not send
-your work to the coordinator; the downloaded final file is your submission.
+When the campaign Google Sheets endpoint is configured, **sync to Google Sheet**
+is checked and changes are sent automatically. Check the status beneath it; a
+queued or setup-required message means the browser copy is still safe but remote
+delivery is not confirmed. The downloaded final file remains your authoritative
+submission.
