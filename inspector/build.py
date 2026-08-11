@@ -9,7 +9,7 @@ no server -- drop index.html on any static host (GitHub Pages, Netlify).
 Run:
     python inspector/build.py
 """
-import argparse, csv, hashlib, itertools, json, os
+import argparse, csv, hashlib, itertools, json, os, re
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
@@ -19,6 +19,7 @@ APP = os.path.join(HERE, 'app.js')
 OUT = os.path.join(HERE, 'index.html')
 ASSIGNMENTS = os.path.join(HERE, 'assignment_manifest.json')
 SYNC_CONFIG = os.path.join(HERE, 'sync_config.json')
+SW = os.path.join(HERE, 'sw.js')
 AREA_ESTIMATION = os.path.join(ROOT, 'analysis', 'results', 'area_estimation_vegtype2022.json')
 
 # Round 1 submissions are used only to identify and describe determinate
@@ -216,6 +217,26 @@ def load_assignments(path, ds_id, pts):
     return manifest
 
 
+SW_CACHE_RE = re.compile(r"(const CACHE = 'thicket-inspector-shell-)[^']*(')")
+
+
+def stamp_service_worker(ds_id, path=SW):
+    """Point the shell cache at this build.
+
+    The service worker keeps an offline copy of the app, so its cache name must
+    change whenever the build does -- otherwise `activate` never purges and
+    returning visitors keep an older index.html indefinitely. Rewriting in place
+    is idempotent: the previous id is replaced, not appended.
+    """
+    sw = open(path, encoding='utf-8').read()
+    stamped, n = SW_CACHE_RE.subn(lambda m: m.group(1) + ds_id + m.group(2), sw)
+    assert n == 1, f'expected exactly one CACHE constant in {path}, found {n}'
+    if stamped != sw:
+        with open(path, 'w', encoding='utf-8') as fh:
+            fh.write(stamped)
+    return n
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--assignments', default=ASSIGNMENTS,
@@ -250,10 +271,12 @@ def main(argv=None):
 
     with open(args.out, 'w', encoding='utf-8') as fh:
         fh.write(tpl)
+    stamp_service_worker(ds_id)
     n_new = sum(p['src'] == 'new' for p in pts)
     print(f'wrote {args.out}  ({len(pts)} points, {n_new} Round 2, '
           f'{len(disagreements)} disagreements, dataset {ds_id}, '
           f'{len(assignments.get("labelers", {}))} assignments, {len(tpl)//1024} KB)')
+    print(f'stamped {SW} shell cache -> thicket-inspector-shell-{ds_id}')
 
 
 if __name__ == '__main__':

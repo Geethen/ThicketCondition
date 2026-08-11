@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="385.511811pt" height="154.08pt" viewBox="0 0 385.511811 154.08" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2026-08-06T14:53:49.405731</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.11.0, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 154.08 
+L 385.511811 154.08 
+L 385.511811 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="axes_1">
+   <g id="line2d_1">
+    <path d="M 5.782677 6.9336 
+L 379.729134 6.9336 
+" style="fill: none; stroke: #111111; stroke-width: 0.8; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_2">
+    <path d="M 100.233071 22.3416 
+L 223.59685 22.3416 
+" clip-path="url(#p9c3e6accee)" style="fill: none; stroke: #666666; stroke-width: 0.45; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_3">
+    <path d="M 5.782677 40.0608 
+L 379.729134 40.0608 
+" style="fill: none; stroke: #111111; stroke-width: 0.55; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_4">
+    <path d="M 5.782677 126.3456 
+L 379.729134 126.3456 
+" style="fill: none; stroke: #111111; stroke-width: 0.55; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_5">
+    <path d="M 5.782677 148.6872 
+L 379.729134 148.6872 
+" style="fill: none; stroke: #111111; stroke-width: 0.8; stroke-linecap: square"/>
+   </g>
+   <g id="text_1">
+    <text style="font-size: 7px; font-family: 'Arial', 'Helvetica', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #444444" x="161.914961" y="17.786719" transform="rotate(-0 161.914961 17.786719)">Reference class (count)</text>
+   </g>
+   <g id="text_2">
+    <text style="font-size: 7px; font-family: 'Arial', 'Helvetica', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #444444" x="9.637795" y="33.194855" transform="rotate(-0 9.637795 33.194855)">Mapped class</text>
+   </g>
+   <g id="text_3">
+    <text style="font-size: 7px; font-family: 'Arial', 'Helvetica', 'DejaVu Sans', sans-serif; text-anchor: end; fill: #444444" x="79.029921" y="33.194855" transform="rotate(-0 79.029921 33.194855)">n</text>
+   </g>
+   <g id="text_4">
+    <text style="font-size: 7px; font-family: 'Arial', 'Helvetica', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #444444" x="121.43622" y="33.194855" transform="rotate(-0 121.43622 33.194855)">Intact</text>
+   </g>
+   <g id="text_5">
+    <text style="font-size: 7px; font-family: 'Arial', 'Helvetica', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #444444" x="161.914961" y="33.194855" transform="rotate(-0 161.914961 33.194855)">Moderate</text>
+   </g>
+   <g id="text_6">
+    <text style="font-size: 7px; font-family: 'Arial', 'Helvetica', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #444444" x="202.393701" y="33.194855" transform="rotate(-0 202.393701 33.194855)">Severe</text>
+   </g>
+   <g id="text_7">
+    <text style="font-size: 7px; font-family: 'Arial', 'Helvetica', 'DejaVu Sans', sans-serif; text-anchor: end; fill: #444444" x="283.351181" y="33.194719" transform="rotate(-0 283.351181 33.194719)">User's accuracy (%)</text>
+   </g>
+   <g id="text_8">
+    <text style="font-size: 7px; font-family: 'Arial', 'Helvetica', 'DejaVu Sans', sans-serif; text-anchor: end; fill: #444444" x="368.16378" y="33.194719" transform="rotate(-0 368.16378 33.194719)">Producer's accuracy (%)</text>
+   </g>
+   <g id="text_9">
+    <text style="font-size: 7px; font-family: 'Arial', 'Helvetica', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #111111" x="9.637795" y="63.443523" transform="rotate(-0 9.637795 63.443523)">Intact</text>
+   </g>
+   <g id="text_10">
+    <text style="font-size: 7px; font-family: 'Arial', 'Helvetica', 'DejaVu Sans', sans-serif; text-anchor: end; fill: #111111" x="79.029921" y="63.443523" transform="rotate(-0 79.029921 63.443523)">231</text>
+   </g>
+   <g id="text_11">
+    <text style="font-weight: 700; font-size: 7px; font-family: 'Arial', 'Helvetica', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #111111" x="121.43622" y="63.443523" transform="rotate(-0 121.43622 63.443523)">154</text>
+   </g>
+   <g id="text_12">
+    <text style="font-size: 7px; font-family: 'Arial', 'Helvetica', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #444444" x="161.914961" y="63.443523" transform="rotate(-0 161.914961 63.443523)">55</text>
+   </g>
+   <g id="text_13">
+    <text style="font-size: 7px; font-family: 'Arial', 'Helvetica', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #444444" x="202.393701" y="63.443523" transform="rotate(-0 202.393701 63.443523)">22</text>
+   </g>
+   <g id="text_14">
+    <text style="font-size: 7px; font-family: 'Arial', 'Helvetica', 'DejaVu Sans', sans-serif; text-anchor: end; fill: #111111" x="283.351181" y="60.361923" transform="rotate(-0 283.351181 60.361923)">66.7</text>
+   </g>
+   <g id="text_15">
+    <text style="font-size: 5.8px; font-family: 'Arial', 'Helvetica', 'DejaVu Sans', sans-serif; text-anchor: end; fill: #666666" x="283.351181" y="70.37468" transform="rotate(-0 283.351181 70.37468)">(60.6–72.8)</text>
+   </g>
+   <g id="text_16">
+    <text style="font-size: 7px; font-family: 'Arial', 'Helvetica', 'DejaVu Sans', sans-serif; text-anchor: end; fill: #111111" x="368.16378" y="60.361923" transform="rotate(-0 368.16378 60.361923)">82.9</text>
+   </g>
+   <g id="text_17">
+    <text style="font-size: 5.8px; font-family: 'Arial', 'Helvetica', 'DejaVu Sans', sans-serif; text-anchor: end; fill: #666666" x="368.16378" y="70.37468" transform="rotate(-0 368.16378 70.37468)">(78.1–87.6)</text>
+   </g>
+   <g id="text_18">
+    <text style="font-size: 7px; font-family: 'Arial', 'Helvetica', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #111111" x="9.637795" y="88.866723" transform="rotate(-0 9.637795 88.866723)">Moderate</text>
+   </g>
+   <g id="text_19">
+    <text style="font-size: 7px; font-family: 'Arial', 'Helvetica', 'DejaVu Sans', sans-serif; text-anchor: end; fill: #111111" x="79.029921" y="88.866723" transform="rotate(-0 79.029921 88.866723)">265</text>
+   </g>
+   <g id="text_20">
+    <text style="font-size: 7px; font-family: 'Arial', 'Helvetica', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #444444" x="121.43622" y="88.866723" transform="rotate(-0 121.43622 88.866723)">29</text>
+   </g>
+   <g id="text_21">
+    <text style="font-weight: 700; font-size: 7px; font-family: 'Arial', 'Helvetica', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #111111" x="161.914961" y="88.866723" transform="rotate(-0 161.914961 88.866723)">119</text>
+   </g>
+   <g id="text_22">
+    <text style="font-size: 7px; font-family: 'Arial', 'Helvetica', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #444444" x="202.393701" y="88.866723" transform="rotate(-0 202.393701 88.866723)">117</text>
+   </g>
+   <g id="text_23">
+    <text style="font-size: 7px; font-family: 'Arial', 'Helvetica', 'DejaVu Sans', sans-serif; text-anchor: end; fill: #111111" x="283.351181" y="85.785123" transform="rotate(-0 283.351181 85.785123)">44.9</text>
+   </g>
+   <g id="text_24">
+    <text style="font-size: 5.8px; font-family: 'Arial', 'Helvetica', 'DejaVu Sans', sans-serif; text-anchor: end; fill: #666666" x="283.351181" y="95.79788" transform="rotate(-0 283.351181 95.79788)">(38.9–50.9)</text>
+   </g>
+   <g id="text_25">
+    <text style="font-size: 7px; font-family: 'Arial', 'Helvetica', 'DejaVu Sans', sans-serif; text-anchor: end; fill: #111111" x="368.16378" y="85.785123" transform="rotate(-0 368.16378 85.785123)">53.1</text>
+   </g>
+   <g id="text_26">
+    <text style="font-size: 5.8px; font-family: 'Arial', 'Helvetica', 'DejaVu Sans', sans-serif; text-anchor: end; fill: #666666" x="368.16378" y="95.79788" transform="rotate(-0 368.16378 95.79788)">(47.4–58.8)</text>
+   </g>
+   <g id="text_27">
+    <text style="font-size: 7px; font-family: 'Arial', 'Helvetica', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #111111" x="9.637795" y="114.289923" transform="rotate(-0 9.637795 114.289923)">Severe</text>
+   </g>
+   <g id="text_28">
+    <text style="font-size: 7px; font-family: 'Arial', 'Helvetica', 'DejaVu Sans', sans-serif; text-anchor: end; fill: #111111" x="79.029921" y="114.289923" transform="rotate(-0 79.029921 114.289923)">325</text>
+   </g>
+   <g id="text_29">
+    <text style="font-size: 7px; font-family: 'Arial', 'Helvetica', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #444444" x="121.43622" y="114.289923" transform="rotate(-0 121.43622 114.289923)">5</text>
+   </g>
+   <g id="text_30">
+    <text style="font-size: 7px; font-family: 'Arial', 'Helvetica', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #444444" x="161.914961" y="114.289923" transform="rotate(-0 161.914961 114.289923)">37</text>
+   </g>
+   <g id="text_31">
+    <text style="font-weight: 700; font-size: 7px; font-family: 'Arial', 'Helvetica', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #111111" x="202.393701" y="114.289923" transform="rotate(-0 202.393701 114.289923)">283</text>
+   </g>
+   <g id="text_32">
+    <text style="font-size: 7px; font-family: 'Arial', 'Helvetica', 'DejaVu Sans', sans-serif; text-anchor: end; fill: #111111" x="283.351181" y="111.208323" transform="rotate(-0 283.351181 111.208323)">87.1</text>
+   </g>
+   <g id="text_33">
+    <text style="font-size: 5.8px; font-family: 'Arial', 'Helvetica', 'DejaVu Sans', sans-serif; text-anchor: end; fill: #666666" x="283.351181" y="121.22108" transform="rotate(-0 283.351181 121.22108)">(83.4–90.7)</text>
+   </g>
+   <g id="text_34">
+    <text style="font-size: 7px; font-family: 'Arial', 'Helvetica', 'DejaVu Sans', sans-serif; text-anchor: end; fill: #111111" x="368.16378" y="111.208323" transform="rotate(-0 368.16378 111.208323)">70.7</text>
+   </g>
+   <g id="text_35">
+    <text style="font-size: 5.8px; font-family: 'Arial', 'Helvetica', 'DejaVu Sans', sans-serif; text-anchor: end; fill: #666666" x="368.16378" y="121.22108" transform="rotate(-0 368.16378 121.22108)">(67.9–73.6)</text>
+   </g>
+   <g id="text_36">
+    <text style="font-weight: 700; font-size: 7px; font-family: 'Arial', 'Helvetica', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #111111" x="9.637795" y="139.713055" transform="rotate(-0 9.637795 139.713055)">Overall accuracy</text>
+   </g>
+   <g id="text_37">
+    <text style="font-weight: 700; font-size: 7px; font-family: 'Arial', 'Helvetica', 'DejaVu Sans', sans-serif; text-anchor: end; fill: #111111" x="368.16378" y="139.713055" transform="rotate(-0 368.16378 139.713055)">69.1%  (95% CI, 66.2–72.0%)</text>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="p9c3e6accee">
+   <rect x="0" y="0" width="385.511811" height="154.08"/>
+  </clipPath>
+ </defs>
+</svg>

@@ -110,6 +110,8 @@ node inspector/verify_data_integrity.mjs  # corrupt storage, dataset namespacing
                                           # CSV round-trip + injection safety, import validation
 node inspector/verify_assignments.mjs     # balanced coverage, links, storage isolation
 node inspector/verify_round2_sync.mjs     # Round 2 scope, disagreement queue, sync outbox
+node inspector/verify_sw_cache.mjs        # redeploys reach returning users; upgrade keeps
+                                          # labels and offline use (serves over HTTP)
 ```
 
 ## Deploy (shareable link)
