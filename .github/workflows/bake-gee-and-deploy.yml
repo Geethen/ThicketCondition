@@ -32,7 +32,7 @@ on:
     branches: [main]
     paths:
       - 'inspector/**'
-      - 'analysis/results/sample_points_vegtype2022.csv'   # Round 2 points embedded at build time
+      - 'analysis/results/sample_points_v3.csv'            # Round 3 points embedded at build time
       - 'analysis/results/area_estimation_vegtype2022.json' # Area chart embedded at build time
       - 'thicket_labels_*.json'                # Round 1 disagreement context
       - 'thicket_labels_*.csv'

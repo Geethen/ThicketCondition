@@ -8,7 +8,7 @@
 //
 // build.py rewrites the version below with the dataset id on every build, so a
 // rebuilt draw also drops every stale entry from the previous one.
-const CACHE = 'thicket-inspector-shell-d085313296f1b27e';
+const CACHE = 'thicket-inspector-shell-6bda2aff9e69194f';
 const SHELL = ['./', './index.html', './manifest.webmanifest',
   'https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css',
   'https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js'];

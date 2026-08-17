@@ -25,11 +25,21 @@ selects your point list, so do not remove or change the `?assignment=...` part.
 4. Your progress is saved automatically in this browser. Prefer to continue on
    the same device and browser.
 
-Your required progress covers only the new Round 2 samples. The **disagreed**
+Your required progress covers only the new Round 3 samples. The **disagreed**
 counter and **Explore disagreements** button open optional Round 1 points where
 previous labellers gave different determinate labels. Their labels are shown as
 context. A label you add there is exported as an exploration label and does not
-increase your Round 2 remaining count.
+increase your Round 3 remaining count.
+
+### New in Round 3: points on already-transformed land
+
+About one point in seven now falls on land the map already calls **transformed**
+-- cultivation, plantation, settlement, road or quarry. These were never sampled
+before, so the map's accuracy there is completely unmeasured and your answer
+carries real weight. Label what you actually see: if the point is on transformed
+land choose **Transformed**, and if the map is wrong and thicket is still
+standing there, label the thicket condition you observe. Do not assume the map
+is right because the point was drawn from that class.
 
 Some points are intentionally assigned to two people. This is blind QA, not a
 mistake. Do not compare labels with another labeller until the coordinator has

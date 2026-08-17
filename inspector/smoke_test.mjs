@@ -34,7 +34,7 @@ console.log('simplified ecological workflow:', simplifiedUiOK);
 await page.waitForFunction(() => window.map && window.map.loaded && window.map.loaded(), { timeout: 15000 })
   .catch(() => {}); // map var may not be global; fall through to layer check
 
-// Coordinator mode carries the combined analysis draw; only Round 2 is required.
+// Coordinator mode carries the combined analysis draw; only Round 3 is required.
 const nPts = await page.evaluate(() => {
   const src = window.map ? window.map.getSource('pts') : null;
   return src ? src._data.features.length : -1;
@@ -43,7 +43,7 @@ console.log('points on map:', nPts);
 const scope = await page.evaluate(() => ({required:window.REQUIRED_POINTS.length,
   disagreements:Object.keys(window.DISAGREEMENT_MANIFEST).length,
   first:window.REQUIRED_POINTS[0].id,second:window.REQUIRED_POINTS[1].id,third:window.REQUIRED_POINTS[2].id}));
-console.log('Round 2 scope:', scope);
+console.log('Round 3 scope:', scope);
 
 // Area-estimation snapshot is embedded and can be explored at all three levels.
 await page.click('#areaEstimatesBtn');
@@ -59,7 +59,7 @@ const areaLandscapeOK = areaLandscapeState.open && areaLandscapeState.labels ===
   && areaLandscapeState.rows === 1 && areaLandscapeState.segments === 4
   && !areaLandscapeState.dated
   && areaLandscapeState.meta.includes('Round 1 reference data only')
-  && areaLandscapeState.meta.includes('no Round 2 labels included')
+  && areaLandscapeState.meta.includes('no new labels included')
   && areaLandscapeState.meta.includes('99.3% area coverage');
 await page.selectOption('#areaLevel','efg');
 const areaEfgOK = await page.evaluate(() => document.querySelectorAll('#areaChart .area-row').length === 3
@@ -75,7 +75,7 @@ await page.click('#areaChart .area-segment');
 const areaScenarioOK = await page.evaluate(() => document.querySelectorAll('#areaLegend .area-swatch').length === 3
   && document.querySelectorAll('#areaChart .area-segment').length === 3
   && document.querySelector('#areaDetail').textContent.includes('95% CI')
-  && document.querySelector('#areaSnapshot').textContent.includes('excludes Round 2 labels')
+  && document.querySelector('#areaSnapshot').textContent.includes('excludes Round 3 labels')
   && !document.querySelector('#areaSnapshot').textContent.includes('generated'));
 await page.click('#closeAreaEstimates');
 console.log('area estimates landscape / EFG / vegetation type / CI / scenario:', areaLandscapeOK, areaEfgOK, areaVegtypeOK, areaCiOK, areaScenarioOK, areaLandscapeState);
@@ -159,9 +159,9 @@ const cSevere = await page.evaluate(() => Object.values(window.labels).filter(r 
 console.log('after key "3" on next point: severe =', cSevere);
 
 const progressOK = await page.evaluate(() =>
-  document.querySelector('#c_remaining').textContent === '1250'
-  && document.querySelector('#progressText').textContent === '2 of 1252 Round 2 labeled'
-  && document.querySelector('#progressPct').textContent === '0.2%');
+  document.querySelector('#c_remaining').textContent === '2149'
+  && document.querySelector('#progressText').textContent === '2 of 2151 Round 3 labeled'
+  && document.querySelector('#progressPct').textContent === '0.1%');
 console.log('expanded progress:', progressOK);
 
 // A JSON backup from another dataset is rejected before it can alter labels.
@@ -188,7 +188,10 @@ await page.evaluate(() => {
   ]};
   window.handleUpload(new File([JSON.stringify(incoming)], 'preview.json', {type:'application/json'}));
 });
-await page.waitForTimeout(100);
+// The preview panel is populated after an async FileReader round-trip; give it
+// room so the assertion is not a race.
+await page.waitForFunction(() => !document.querySelector('#importPreview').classList.contains('hidden'),
+  {timeout: 5000}).catch(() => {});
 const previewOK = await page.evaluate(() =>
   !document.querySelector('#importPreview').classList.contains('hidden')
   && document.querySelector('#impNew').textContent === '1'
@@ -255,7 +258,7 @@ const tileOK = await page.evaluate(() => {
 console.log('basemap tile requests:', tileOK);
 
 console.log('JS errors:', errors.length ? errors : 'none');
-const pass = nPts === 2098 && scope.required === 1252 && scope.disagreements > 0
+const pass = nPts === 2997 && scope.required === 2151 && scope.disagreements > 0
   && cModerate === '1' && cSevere === '1'
   && areaLandscapeOK && areaEfgOK && areaVegtypeOK && areaCiOK && areaScenarioOK
   && simplifiedUiOK && blindOK && preFlagOK && reviewFilterOK && draftOK && flagMergedOK && autoAdvancedTo === String(scope.second)
