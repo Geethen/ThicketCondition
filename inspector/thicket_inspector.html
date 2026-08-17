@@ -70,7 +70,7 @@
   .pill{display:inline-block; padding:2px 8px; border-radius:999px; font-size:11px; font-weight:600;
     color:#fff}
   .pill.intact{background:var(--intact)} .pill.moderate{background:var(--moderate)}
-  .pill.severe{background:var(--severe)}
+  .pill.severe{background:var(--severe)} .pill.transformed{background:var(--transformed)}
 
   /* imagery source buttons */
   .srcgrid{display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-top:8px}
@@ -228,7 +228,7 @@
       <div class="filt">
         <select id="pointFilter" aria-label="Filter points">
           <option value="all">All points</option>
-          <option value="round2">Round 2 samples</option>
+          <option value="round2">Round 3 samples</option>
           <option value="disagreement">Prior labeller disagreements</option>
           <option value="previous">All Round 1 samples</option>
           <option value="unlabeled">Unlabeled only</option>
@@ -306,7 +306,7 @@
       <div class="metarow"><span>2022 design stratum (model)</span><span id="mStratum">–</span></div>
       <div class="metarow"><span>Vegetation context</span><span id="mVegetation">–</span></div>
       <div class="metarow"><span>Your label</span><span id="mLabel">–</span></div>
-      <div class="disagreement-panel hidden" id="disagreementPanel"><h3>Round 1 labellers disagreed here</h3><div id="priorLabels"></div><p class="save-status">These labels are shown for exploration and do not pre-fill your Round 2 decision.</p></div>
+      <div class="disagreement-panel hidden" id="disagreementPanel"><h3>Round 1 labellers disagreed here</h3><div id="priorLabels"></div><p class="save-status">These labels are shown for exploration and do not pre-fill your Round 3 decision.</p></div>
 
       <div class="seclbl">Imagery</div>
       <div class="srcgrid" id="srcgrid"></div>

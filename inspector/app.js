@@ -16,7 +16,7 @@ const ASSIGNMENT_ERROR=ASSIGNMENT_REQUEST&&!ASSIGNMENT_RECORD
     ? 'A personal assignment link is required for this campaign. Ask the coordinator for your link.' : '');
 const ASSIGNED_IDS=new Set(ASSIGNMENT_RECORD?ASSIGNMENT_RECORD.point_ids:[]);
 const DISAGREEMENT_IDS=new Set(Object.keys(DISAGREEMENT_MANIFEST||{}).map(Number));
-// Round 2 completion is based only on the new draw. Historical disagreement
+// Round 3 completion is based only on the new draw. Historical disagreement
 // points are optional exploration/adjudication work and never inflate remaining.
 const REQUIRED_IDS=ASSIGNMENT_RECORD?ASSIGNED_IDS:
   new Set(ALL_POINTS.filter(p=>p.src==='new').map(p=>p.id));
@@ -336,7 +336,7 @@ function initMap(){
       'circle-radius':['interpolate',['linear'],['zoom'],5,3,10,5,14,7],
       'circle-color':['match',['get','stratum'],
         'intact',STRAT_COLOR.intact,'moderate',STRAT_COLOR.moderate,
-        'severe',STRAT_COLOR.severe,'#888'],
+        'severe',STRAT_COLOR.severe,'transformed',STRAT_COLOR.transformed,'#888'],
       'circle-stroke-width':['case',['get','labeled'],2.5,1],
       'circle-stroke-color':['case',['get','labeled'],'#ffffff','#00000088'],
       'circle-opacity':0.55
@@ -413,7 +413,7 @@ function applyPointFilter(value=pointFilter){
     c.classList.toggle('filter-active',c.dataset.filter===pointFilter));
   const next=$('#nextUnlabeled');
   if(next){
-    const names={all:'unlabeled Round 2 point',round2:'unlabeled Round 2 point',previous:'previous point',
+    const names={all:'unlabeled Round 3 point',round2:'unlabeled Round 3 point',previous:'previous point',
       disagreement:'disagreement',unlabeled:'unlabeled',labeled:'labeled',review:'review item',
       nothicket:'no thicket',notthicket:'legacy combined'};
     next.textContent=`Jump to next ${names[pointFilter]||pointFilter} →`;
@@ -795,7 +795,7 @@ function nextUnlabeled(){
     const i=(curIdx+k)%POINTS.length;
     if(isRequiredPoint(POINTS[i])&&!labels[POINTS[i].id]){ gotoIdx(i); return; }
   }
-  toast('All required Round 2 points labeled 🎉');
+  toast('All required Round 3 points labeled 🎉');
 }
 function nextForFilter(){
   if(pointFilter==='all'||pointFilter==='round2'||pointFilter==='unlabeled'){ nextUnlabeled(); return; }
@@ -820,7 +820,7 @@ function renderPoint(){
   if(showPrediction) $('#curStratum').innerHTML = ` · <span class="pill ${p.m}">${p.m}</span>`;
   else $('#curStratum').textContent=' · model hidden';
   $('#mCoord').textContent=`${p.lat.toFixed(5)}, ${p.lon.toFixed(5)}`;
-  $('#mSampleSource').textContent=isRequiredPoint(p)?'Round 2 · required':
+  $('#mSampleSource').textContent=isRequiredPoint(p)?'Round 3 · required':
     (DISAGREEMENT_IDS.has(p.id)?'Round 1 · disagreement exploration':'Round 1 · historical');
   if(showPrediction) $('#mStratum').innerHTML=`<span class="pill ${p.m}">${CLASS_LABEL[p.m]||p.m}</span> · ${p.s}`;
   else $('#mStratum').textContent='Hidden until label saved';
@@ -958,7 +958,7 @@ function updateCounts(){
   $('#c_review').textContent=POINTS.filter(needsReview).length;
   $('#c_disagreements').textContent=POINTS.filter(p=>DISAGREEMENT_IDS.has(p.id)).length;
   const remaining=Math.max(0,REQUIRED_POINTS.length-c.all), pct=REQUIRED_POINTS.length?c.all/REQUIRED_POINTS.length*100:0;
-  $('#c_remaining').textContent=remaining; $('#progressText').textContent=`${c.all} of ${REQUIRED_POINTS.length} Round 2 labeled`;
+  $('#c_remaining').textContent=remaining; $('#progressText').textContent=`${c.all} of ${REQUIRED_POINTS.length} Round 3 labeled`;
   $('#progressPct').textContent=(pct<10?pct.toFixed(1):Math.round(pct))+'%'; $('#progressFill').style.width=pct+'%';
 }
 
@@ -996,7 +996,7 @@ function renderAreaEstimates(){
   const scenario=AREA_ESTIMATION.scenarios[scenarioKey]||Object.values(AREA_ESTIMATION.scenarios)[0];
   const groups=areaGroups(scenario,level),maxArea=Math.max(...groups.map(g=>g.area_ha),1);
   const coverage=scenario.area_total_ha?scenario.area_covered_ha/scenario.area_total_ha*100:0;
-  const roundText=AREA_ESTIMATION.n_reference_labels_on_new_points===0?'Round 1 reference data only · no Round 2 labels included':`${AREA_ESTIMATION.n_reference_labels_on_new_points.toLocaleString('en-ZA')} Round 2 labels included`;
+  const roundText=AREA_ESTIMATION.n_reference_labels_on_new_points===0?'Round 1 reference data only · no new labels included':`${AREA_ESTIMATION.n_reference_labels_on_new_points.toLocaleString('en-ZA')} new labels included`;
   $('#areaMeta').textContent=`${roundText} · ${scenario.n_used.toLocaleString('en-ZA')} of ${AREA_ESTIMATION.n_reference_labels.toLocaleString('en-ZA')} labels usable · ${coverage.toFixed(1)}% area coverage`;
 
   const legend=$('#areaLegend');legend.textContent='';
@@ -1036,7 +1036,7 @@ function renderAreaEstimates(){
   const weak=level==='landscape'?scenario.strata_without_variance:groups.filter(g=>!g.estimable).length;
   const unit=level==='landscape'?`${weak} of ${scenario.strata_total} strata`:`${weak} of ${groups.length} ${level==='efg'?'EFGs':'vegetation types'}`;
   $('#areaCaveat').textContent=(weak?`⚠ ${unit} include fewer than two usable labels for at least one variance estimate; uncertainty there is incomplete. `:'')+'Confidence intervals use estimate ± 1.96 SE; negative lower bounds are displayed as 0 ha.';
-  $('#areaSnapshot').textContent=`Static Round 1 analysis snapshot; ${formatArea(scenario.area_uncovered_ha)} is outside the covered strata. It excludes Round 2 labels and does not recalculate live from Google Sheets.`;
+  $('#areaSnapshot').textContent=`Static Round 1 analysis snapshot; ${formatArea(scenario.area_uncovered_ha)} is outside the covered strata. It excludes Round 3 labels and does not recalculate live from Google Sheets.`;
 }
 function openAreaEstimates(){ renderAreaEstimates();openDialog('#areaModal'); }
 
@@ -1058,7 +1058,7 @@ function openCompletion(){
   $('#completionState').textContent=remaining?`${remaining} point${remaining===1?' is':'s are'} incomplete. You can export a backup now, but final QA is not complete.`:legacy.length?`${legacy.length} label${legacy.length===1?' uses':'s use'} the old combined class. Review and replace ${legacy.length===1?'it':'them'} with Transformed or No thicket before final export.`:'All points are labeled. Review the items below before final export.';
   $('#completionState').className=qaIncomplete?'statusline error':'statusline ok';
   const optional=rows.length-requiredRows.length;
-  const stats=[['Round 2 labeled',requiredRows.length],['Remaining',remaining],['Exploration labels',optional],['Intact',counts.intact],['Moderate',counts.moderate],['Severe',counts.severe],['Transformed',counts.transformed],['No thicket',counts.nothicket],['Unsure',counts.unsure],['Legacy review',legacy.length],['Flagged',flagged.length],['Low confidence',low.length]];
+  const stats=[['Round 3 labeled',requiredRows.length],['Remaining',remaining],['Exploration labels',optional],['Intact',counts.intact],['Moderate',counts.moderate],['Severe',counts.severe],['Transformed',counts.transformed],['No thicket',counts.nothicket],['Unsure',counts.unsure],['Legacy review',legacy.length],['Flagged',flagged.length],['Low confidence',low.length]];
   const grid=$('#finalSummary'); grid.textContent=''; stats.forEach(([n,v])=>{const d=document.createElement('div'),b=document.createElement('b');b.textContent=v;d.append(n,b);grid.appendChild(d);});
   $('#lastBackup').textContent=lastBackup?new Date(lastBackup).toLocaleString():'Never';
   $('#finalDownload').textContent=qaIncomplete?'Download backup':'Download final';
@@ -1083,7 +1083,7 @@ async function exportFinal(){
   else {
     const csvSafe=v=>{let s=String(v==null?'':v);if(/^[=+\-@\t\r]/.test(s))s="'"+s;return s;},q=v=>'"'+String(v==null?'':v).replace(/"/g,'""')+'"',qt=v=>'"'+csvSafe(v).replace(/"/g,'""')+'"';
     const hdr='dataset,round,id,source,stratum,mapcode,vegtype,efg,cls2022,cls2025,required,disagreement,lon,lat,label,note,labeler,ts,flagged,confidence,reasons,checksum,campaign,assignment,assignment_id';
-    const csv=[hdr].concat(rows.map(r=>[q(DS_ID),q(2),q(r.id),q(r.source),q(r.stratum),q(r.mapcode),qt(r.vegtype),q(r.efg),q(r.cls2022),q(r.cls2025),q(r.required),q(r.disagreement),q(r.lon),q(r.lat),q(r.label),qt(r.note),qt(r.labeler),q(r.ts),q(r.flagged),q(r.confidence),qt(r.reasons),q(checksum),qt(CAMPAIGN),q(ASSIGNMENT_CODE),q(ASSIGNMENT_ID)].join(','))).join('\r\n');
+    const csv=[hdr].concat(rows.map(r=>[q(DS_ID),q(3),q(r.id),q(r.source),q(r.stratum),q(r.mapcode),qt(r.vegtype),q(r.efg),q(r.cls2022),q(r.cls2025),q(r.required),q(r.disagreement),q(r.lon),q(r.lat),q(r.label),qt(r.note),qt(r.labeler),q(r.ts),q(r.flagged),q(r.confidence),qt(r.reasons),q(checksum),qt(CAMPAIGN),q(ASSIGNMENT_CODE),q(ASSIGNMENT_ID)].join(','))).join('\r\n');
     blobDownload(csv,`thicket_labels_${safe}${assignmentSafe}_${stamp}.csv`,'text/csv');
   }
   lastBackup=exported; localStorage.setItem(KEY_BACKUP,lastBackup); closeDialog('#completionModal'); saveStore(); toast(`Downloaded ${rows.length} labels as ${format.toUpperCase()}`);
@@ -1415,8 +1415,8 @@ function boot(){
   Object.defineProperty(window,'labels',{get:()=>labels});
   $('#labelerName').value = labeler;
   const assignmentText=ASSIGNMENT_RECORD
-    ? `${CAMPAIGN||'Campaign'} · assignment ${ASSIGNMENT_CODE} · ${REQUIRED_POINTS.length} Round 2 points · ${DISAGREEMENT_IDS.size} disagreements available`
-    : ASSIGNMENT_ERROR||(ASSIGNMENT_CODES.length?`Coordinator mode · ${REQUIRED_POINTS.length} Round 2 points · ${DISAGREEMENT_IDS.size} disagreements`:`${REQUIRED_POINTS.length} Round 2 points · ${DISAGREEMENT_IDS.size} disagreements`);
+    ? `${CAMPAIGN||'Campaign'} · assignment ${ASSIGNMENT_CODE} · ${REQUIRED_POINTS.length} Round 3 points · ${DISAGREEMENT_IDS.size} disagreements available`
+    : ASSIGNMENT_ERROR||(ASSIGNMENT_CODES.length?`Coordinator mode · ${REQUIRED_POINTS.length} Round 3 points · ${DISAGREEMENT_IDS.size} disagreements`:`${REQUIRED_POINTS.length} Round 3 points · ${DISAGREEMENT_IDS.size} disagreements`);
   ['#assignmentStatus','#introAssignment'].forEach(sel=>{const el=$(sel);el.textContent=assignmentText;el.classList.toggle('error',!!ASSIGNMENT_ERROR);});
   if(ASSIGNMENT_ERROR){ $('#startBtn').disabled=true; $('#welcomeUpload').disabled=true; }
   $('#blindMode').checked=blindMode; $('#autoAdvance').checked=autoAdvance;

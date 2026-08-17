@@ -2,7 +2,7 @@
 """Assemble the single-file deployable inspector.
 
 Reads the template (thicket_inspector.html), the app logic (app.js), and the
-Round 2 sample points (../analysis/results/sample_points_vegtype2022.csv), and writes a fully
+Round 3 sample points (../analysis/results/sample_points_v3.csv), and writes a fully
 self-contained index.html: points embedded, app.js inlined. No build tooling,
 no server -- drop index.html on any static host (GitHub Pages, Netlify).
 
@@ -13,7 +13,7 @@ import argparse, csv, hashlib, itertools, json, os, re
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
-CSV = os.path.join(ROOT, 'analysis', 'results', 'sample_points_vegtype2022.csv')
+CSV = os.path.join(ROOT, 'analysis', 'results', 'sample_points_v3.csv')
 TPL = os.path.join(HERE, 'thicket_inspector.html')
 APP = os.path.join(HERE, 'app.js')
 OUT = os.path.join(HERE, 'index.html')
@@ -273,7 +273,7 @@ def main(argv=None):
         fh.write(tpl)
     stamp_service_worker(ds_id)
     n_new = sum(p['src'] == 'new' for p in pts)
-    print(f'wrote {args.out}  ({len(pts)} points, {n_new} Round 2, '
+    print(f'wrote {args.out}  ({len(pts)} points, {n_new} Round 3, '
           f'{len(disagreements)} disagreements, dataset {ds_id}, '
           f'{len(assignments.get("labelers", {}))} assignments, {len(tpl)//1024} KB)')
     print(f'stamped {SW} shell cache -> thicket-inspector-shell-{ds_id}')

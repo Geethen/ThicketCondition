@@ -25,7 +25,7 @@ for (const record of Object.values(manifest.labelers)) {
   for (const id of record.point_ids) occurrence.set(id, (occurrence.get(id)||0)+1);
 }
 const overlap = new Set(manifest.qa_overlap_point_ids);
-const allocationOK = occurrence.size === 1252
+const allocationOK = occurrence.size === 2151
   && [...occurrence].every(([id,n]) => n === (overlap.has(id)?2:1))
   && Math.max(...Object.values(manifest.labelers).map(r=>r.point_ids.length))
      - Math.min(...Object.values(manifest.labelers).map(r=>r.point_ids.length)) <= 2;
@@ -40,7 +40,7 @@ const alphaOK = await page.evaluate(expected =>
   window.REQUIRED_POINTS.length === expected
   && window.POINTS.length === expected + Object.keys(window.DISAGREEMENT_MANIFEST).length
   && window.ASSIGNMENT.code === 'ALPHA'
-  && document.querySelector('#assignmentStatus').textContent.includes(`${expected} Round 2 points`), alphaExpected);
+  && document.querySelector('#assignmentStatus').textContent.includes(`${expected} Round 3 points`), alphaExpected);
 await page.fill('#labelerName','Alice');
 await page.click('#startBtn');
 await page.click('.phead h1');
@@ -78,7 +78,7 @@ const bareLinkBlocked = await page.evaluate(() =>
   window.POINTS.length === 0 && document.querySelector('#startBtn').disabled);
 await page.goto(url+'?mode=coordinator', {waitUntil:'load'});
 const coordinatorOK = await page.evaluate(() =>
-  window.POINTS.length === 2098 && window.REQUIRED_POINTS.length === 1252
+  window.POINTS.length === 2997 && window.REQUIRED_POINTS.length === 2151
   && !document.querySelector('#startBtn').disabled);
 console.log('bare campaign link blocked; coordinator override works:', bareLinkBlocked, coordinatorOK);
 
