@@ -62,11 +62,18 @@ const carriedOK = Object.entries(oldManifest.labelers).every(([code, rec]) => {
 });
 check('existing point lists are identical, element for element', carriedOK);
 
-const newPointIds = new Set(manifest.extensions.at(-1).new_points);
-const noLeak = Object.keys(oldManifest.labelers)
-  .every(code => manifest.labelers[code].point_ids.every(id => !newPointIds.has(id)));
-check('no Round 4 point lands in an existing assignment', noLeak,
-  `${newPointIds.size} new points`);
+// Points added by an extension belong to the labellers that extension added,
+// and to nobody who was already working. Checked per extension so this stays
+// true for later rounds, once today's newcomers are themselves incumbents.
+const noLeak = (manifest.extensions || []).every(ext => {
+  const added = new Set(ext.added);
+  const brought = new Set(ext.new_points);
+  return Object.entries(manifest.labelers)
+    .filter(([code]) => !added.has(code))
+    .every(([, rec]) => rec.point_ids.every(id => !brought.has(id)));
+});
+check('points added by an extension reach only the labellers it added', noLeak,
+  (manifest.extensions || []).map(e => `${e.added.join('+')}: ${e.new_points.length}`).join(', '));
 
 // ------------------------------------------------------------ live swap test
 const server = createServer((req, res) => {

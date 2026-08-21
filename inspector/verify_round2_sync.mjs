@@ -10,8 +10,13 @@ const received = [];
 const server = http.createServer(async (req,res) => {
   if (req.url.startsWith('/sync') && req.method === 'POST') {
     let body=''; for await (const chunk of req) body += chunk;
-    received.push(JSON.parse(body));
-    res.setHeader('content-type','application/json');res.end('{"ok":true}');return;
+    // The client batches: {tool, version:2, events:[...]}. A single v1 event is
+    // still accepted so an older tab keeps working during a rollout.
+    const doc=JSON.parse(body);
+    const events=doc&&doc.version===2&&Array.isArray(doc.events)?doc.events:[doc];
+    received.push(...events);
+    res.setHeader('content-type','application/json');
+    res.end(JSON.stringify({ok:true,accepted:events.length}));return;
   }
   try {
     const pathname=decodeURIComponent(req.url.split('?')[0]);

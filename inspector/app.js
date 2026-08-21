@@ -78,6 +78,12 @@ let syncEndpoint=SYNC_ENDPOINT_REQUEST||String((GOOGLE_SHEETS_SYNC_CONFIG&&GOOGL
 let syncSheetUrl=String((GOOGLE_SHEETS_SYNC_CONFIG&&GOOGLE_SHEETS_SYNC_CONFIG.sheet_url)||'').trim();
 let syncQueue=[];
 let syncBusy=false;
+let syncBackfilled=false;      // has this assignment replayed its labels once?
+let syncBatchUnsupported=false; // endpoint still runs the pre-batch Apps Script
+// 50 events is ~33 KB of body and turns a 600-label backfill into 12 requests
+// instead of 600. The queue cap is a localStorage budget: 2,000 events is ~1.3 MB
+// of the ~5 MB origin quota, and anything dropped is recoverable from `labels`.
+const SYNC_BATCH=50, SYNC_QUEUE_MAX=2000;
 let map;
 let sourceErrors=0, fallbackInProgress=false;
 // Esri Wayback state
@@ -169,10 +175,11 @@ function loadStore(){
     if(typeof prefs.enabled==='boolean') syncEnabled=prefs.enabled;
     if(!SYNC_ENDPOINT_REQUEST&&typeof prefs.endpoint==='string') syncEndpoint=prefs.endpoint.trim();
     if(typeof prefs.sheetUrl==='string') syncSheetUrl=prefs.sheetUrl.trim();
+    if(typeof prefs.backfilled==='boolean') syncBackfilled=prefs.backfilled;
   }catch(e){}
   try{
     const queued=JSON.parse(localStorage.getItem(KEY_SYNC_QUEUE)||'[]');
-    syncQueue=Array.isArray(queued)?queued.filter(x=>x&&typeof x==='object').slice(-5000):[];
+    syncQueue=Array.isArray(queued)?queued.filter(x=>x&&typeof x==='object').slice(-SYNC_QUEUE_MAX):[];
   }catch(e){syncQueue=[];}
 }
 function saveStore(){
@@ -198,8 +205,16 @@ function validSyncEndpoint(value){
   }catch(e){return false;}
 }
 function persistSyncState(){
-  localStorage.setItem(KEY_SYNC_QUEUE,JSON.stringify(syncQueue.slice(-5000)));
-  localStorage.setItem(KEY_SYNC_PREFS,JSON.stringify({enabled:syncEnabled,endpoint:syncEndpoint,sheetUrl:syncSheetUrl}));
+  // Never let a full quota take the app down with it: the queue is a
+  // convenience, the labels in KEY_LABELS are the record.
+  try{
+    localStorage.setItem(KEY_SYNC_QUEUE,JSON.stringify(syncQueue.slice(-SYNC_QUEUE_MAX)));
+    localStorage.setItem(KEY_SYNC_PREFS,JSON.stringify({enabled:syncEnabled,endpoint:syncEndpoint,
+      sheetUrl:syncSheetUrl,backfilled:syncBackfilled}));
+  }catch(e){
+    if(syncQueue.length>200){ syncQueue=syncQueue.slice(-200); try{
+      localStorage.setItem(KEY_SYNC_QUEUE,JSON.stringify(syncQueue)); }catch(e2){} }
+  }
 }
 function updateSyncStatus(message='',error=false){
   const box=$('#sheetSync'); if(box) box.checked=syncEnabled;
@@ -235,12 +250,12 @@ function syncEvent(point,record,action){
 function enqueueSheetSync(point,record,action=record?'upsert':'clear'){
   if(!point)return;
   syncQueue.push(syncEvent(point,record,action));
-  if(syncQueue.length>5000)syncQueue=syncQueue.slice(-5000);
+  if(syncQueue.length>SYNC_QUEUE_MAX)syncQueue=syncQueue.slice(-SYNC_QUEUE_MAX);
   persistSyncState();updateSyncStatus();flushSheetSync();
 }
 function queueAllLabelsForSync(){
   POINTS.forEach(p=>{if(labels[p.id])syncQueue.push(syncEvent(p,labels[p.id],'upsert'));});
-  if(syncQueue.length>5000)syncQueue=syncQueue.slice(-5000);
+  if(syncQueue.length>SYNC_QUEUE_MAX)syncQueue=syncQueue.slice(-SYNC_QUEUE_MAX);
   persistSyncState();updateSyncStatus();flushSheetSync();
 }
 function enqueueSyncChanges(before,after){
@@ -251,19 +266,71 @@ function enqueueSyncChanges(before,after){
     const rec=after&&after[id];enqueueSheetSync(p,rec||null,rec?'upsert':'clear');
   });
 }
+// Send a batch and report what the Sheet actually did with it.
+//
+// This used to post one event at a time with mode:'no-cors'. Both were wrong.
+// An opaque response cannot be read, so a rejected event -- a stale
+// EXPECTED_DATASET, a lock timeout, an exhausted quota -- looked exactly like a
+// successful one, and the client dropped it from the queue. Round 3 labels were
+// posted for a month and thrown away at both ends. The Apps Script /exec
+// endpoint answers CORS requests with a readable body, so read it, and only
+// discard an event once the Sheet confirms it.
+async function postSyncBatch(events){
+  const body = syncBatchUnsupported
+    ? JSON.stringify(events[0])
+    : JSON.stringify({tool:'thicket_inspector_sync',version:2,events});
+  const r = await fetch(syncEndpoint,{method:'POST',mode:'cors',cache:'no-store',
+    headers:{'Content-Type':'text/plain;charset=utf-8'},body});
+  if(!r.ok) throw new Error(`HTTP ${r.status}`);
+  let doc; try{ doc=JSON.parse(await r.text()); }catch(e){ throw new Error('unreadable response'); }
+  if(doc && doc.ok) return syncBatchUnsupported?1:(Number(doc.accepted)||events.length);
+  const error=String((doc&&doc.error)||'rejected');
+  // An endpoint still running the pre-batch script: fall back to single events
+  // so the rollout order of app and Apps Script does not matter.
+  if(!syncBatchUnsupported && /unsupported payload/i.test(error)){
+    syncBatchUnsupported=true; return 0;
+  }
+  throw new Error(error);
+}
+
 async function flushSheetSync(){
   if(syncBusy||!syncEnabled||!validSyncEndpoint(syncEndpoint)||!navigator.onLine||!syncQueue.length){updateSyncStatus();return;}
   syncBusy=true;
+  const started=syncQueue.length;
   try{
     while(syncEnabled&&syncQueue.length&&navigator.onLine){
-      const event=syncQueue[0];
-      await fetch(syncEndpoint,{method:'POST',mode:'no-cors',cache:'no-store',keepalive:true,
-        headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(event)});
-      syncQueue.shift();persistSyncState();updateSyncStatus();
+      const batch=syncQueue.slice(0,SYNC_BATCH);
+      const sent=await postSyncBatch(batch);
+      if(sent>0){
+        syncQueue=syncQueue.slice(sent);
+        // Persist once per batch. Doing it per event rewrote the whole queue
+        // every time: a 600-event backfill wrote 115 MB to localStorage and
+        // blocked the main thread for half a second in 600 small stutters.
+        persistSyncState();
+        updateSyncStatus(syncQueue.length
+          ? `Google Sheets sync · sending ${started-syncQueue.length} of ${started}`
+          : '');
+      }
+      // Hand the frame back so a long backfill scrolls and clicks normally.
+      await new Promise(r=>setTimeout(r,0));
     }
-    updateSyncStatus('Google Sheets sync sent · local backup remains enabled');
-  }catch(e){updateSyncStatus(`Google Sheets sync paused · ${syncQueue.length} queued`,true);}
+    if(!syncQueue.length) updateSyncStatus('Google Sheets sync sent · local backup remains enabled');
+  }catch(e){
+    persistSyncState();
+    updateSyncStatus(`Google Sheets sync paused · ${syncQueue.length} queued · ${e.message}`,true);
+  }
   finally{syncBusy=false;}
+}
+
+// One-time catch-up. Anything labelled while the endpoint was rejecting posts
+// was never recorded, and the queue cannot hold it because the old client threw
+// it away. Re-sending is safe: the Sheet upserts on
+// (dataset, assignment, labeller, point), so a replay overwrites its own row.
+function backfillSheetSync(){
+  if(syncBackfilled||!syncEnabled||!validSyncEndpoint(syncEndpoint)) return;
+  if(!Object.keys(labels).length){ syncBackfilled=true; persistSyncState(); return; }
+  syncBackfilled=true;
+  queueAllLabelsForSync();
 }
 
 function snapshotUndo(description){
@@ -1463,6 +1530,9 @@ function wire(){
     // first unlabeled, or first point
     const firstUnlab=POINTS.findIndex(p=>isRequiredPoint(p)&&!labels[p.id]);
     gotoIdx(firstUnlab>=0?firstUnlab:0);
+    // Only now is `labeler` known, and it is part of the Sheet's upsert key --
+    // backfilling before this would file the catch-up under "anon".
+    backfillSheetSync();
   };
 }
 

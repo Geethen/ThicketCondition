@@ -15,6 +15,14 @@ shared as a link and run entirely in the browser.
   fingerprint so it survives that growth. See *Extending a live campaign* in
   [MULTI_LABELLER_OPTIONS.md](MULTI_LABELLER_OPTIONS.md) before adding points or
   labellers to a campaign people are already working through.
+- **Sheets sync is confirmed, batched and resumable.** Events post 50 at a time
+  in CORS mode, and an event only leaves the outbox once the Apps Script says it
+  landed — a rejection (stale `EXPECTED_DATASET`, lock timeout, quota) keeps the
+  queue and shows the reason. The previous `no-cors` single-event path could not
+  read the reply, so it discarded rejected events and reported "sync sent". On
+  first start after a labeller's work has never been accepted, the app replays
+  its labels once; the Sheet upserts on
+  `(dataset, assignment, labeller, point)`, so a replay is idempotent.
 - **Deploys reach open tabs on their own.** `build.py` stamps `sw.js` with a hash
   of the built page, so every deploy ships a byte-different service worker;
   `app.js` polls for it (every 10 min, on tab focus, and on reconnect) and

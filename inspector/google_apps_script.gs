@@ -13,6 +13,12 @@
  * 3. Deploy -> New deployment -> Web app; execute as yourself and grant the
  *    campaign labellers access. Copy the /exec URL into sync_config.json.
  *
+ * Updating an existing deployment: Deploy -> Manage deployments -> the pencil
+ * icon -> Version: New version -> Deploy. That keeps the /exec URL, which is
+ * baked into the site through the GOOGLE_SHEETS_SYNC_ENDPOINT repo variable.
+ * "New deployment" mints a DIFFERENT URL and every labeller silently stops
+ * syncing until the variable is updated and the site rebuilt.
+ *
  * The Labels tab is the current upserted state. Events is an append-only audit
  * trail. The static inspector cannot keep a secret, so dataset validation is a
  * guardrail, not authentication; choose the narrowest deployment access that
@@ -37,21 +43,73 @@ function doGet() {
   return json_({ok:true, service:'thicket_inspector_sync', utc:new Date().toISOString()});
 }
 
+// The client sends {tool, version:2, events:[...]} and waits for this reply
+// before it drops anything from its outbox, so an error here is a retry, never
+// a lost label. A single v1 event is still accepted: an older tab must keep
+// working while the campaign updates.
+//
+// Batching is what makes a catch-up finish. One event per request meant one
+// document lock, one full-column search and one sheet write per label; six
+// labellers replaying 600 labels each took hours and lost whatever timed out
+// waiting for the lock. A batch takes the lock once, reads the key column once,
+// and writes appends in a single call.
 function doPost(e) {
   const lock = LockService.getDocumentLock();
   try {
     const body = JSON.parse((e && e.postData && e.postData.contents) || '{}');
-    validate_(body);
-    lock.waitLock(20000);
-    const now = new Date().toISOString();
-    appendEvent_(body, now);
-    upsertLabel_(body, now);
-    return json_({ok:true, event_id:body.event_id});
+    const events = batchEvents_(body);
+    events.forEach(validate_);
+    lock.waitLock(30000);
+    applyEvents_(events, new Date().toISOString());
+    return json_({ok:true, accepted:events.length,
+                  event_id:events.length === 1 ? events[0].event_id : undefined});
   } catch (error) {
     return json_({ok:false, error:String(error && error.message || error)});
   } finally {
     try { lock.releaseLock(); } catch (_) {}
   }
+}
+
+function batchEvents_(body) {
+  if (body && body.version === 2 && Array.isArray(body.events)) {
+    if (!body.events.length) throw new Error('Empty batch');
+    if (body.events.length > 200) throw new Error('Batch too large');
+    return body.events;
+  }
+  if (body && body.version === 1) return [body];
+  throw new Error('Unsupported payload');
+}
+
+function applyEvents_(events, now) {
+  const labels = sheet_(LABELS_SHEET, LABEL_HEADERS);
+  // One read of the key column, not one search per event. TextFinder over A:A
+  // rescans the whole sheet every call and gets slower as the campaign grows.
+  const lastRow = labels.getLastRow();
+  const rowOf = {};
+  if (lastRow > 1) {
+    const keys = labels.getRange(2, 1, lastRow - 1, 1).getValues();
+    for (var i = 0; i < keys.length; i++) rowOf[String(keys[i][0])] = i + 2;
+  }
+  const appends = [];
+  events.forEach(function (b) {
+    const row = labelRow_(b, now);
+    const at = rowOf[row[0]];
+    if (at) labels.getRange(at, 1, 1, row.length).setValues([row]);
+    else {
+      // A batch can carry two edits of the same point; the later one wins, and
+      // the pair must not become two rows.
+      rowOf[row[0]] = lastRow + appends.length + 1;
+      appends.push(row);
+    }
+  });
+  if (appends.length) {
+    labels.getRange(labels.getLastRow() + 1, 1, appends.length, LABEL_HEADERS.length)
+          .setValues(appends);
+  }
+  const events_ = sheet_(EVENTS_SHEET, EVENT_HEADERS);
+  const trail = events.map(function (b) { return eventRow_(b, now); });
+  events_.getRange(events_.getLastRow() + 1, 1, trail.length, EVENT_HEADERS.length)
+         .setValues(trail);
 }
 
 function validate_(body) {
@@ -69,20 +127,21 @@ function sheet_(name, headers) {
   return sheet;
 }
 
-function appendEvent_(b, now) {
+function eventRow_(b, now) {
   const a = b.assignment || {}, r = b.record || {}, p = b.point || {};
-  sheet_(EVENTS_SHEET, EVENT_HEADERS).appendRow([
+  return [
     safe_(b.event_id), now, safe_(b.action), safe_(b.dataset), safe_(b.campaign),
     safe_(a.code), safe_(a.id), safe_(b.labeler), Number(p.id), safe_(r.label), safe_(r.ts)
-  ]);
+  ];
 }
 
-function upsertLabel_(b, now) {
+// Column A is the upsert key: one row per (dataset, assignment, labeller,
+// point). Replaying an event overwrites its own row, which is what makes a
+// catch-up idempotent and a retry harmless.
+function labelRow_(b, now) {
   const a = b.assignment || {}, r = b.record || {}, p = b.point || {};
   const key = [b.dataset, a.id || 'coordinator', b.labeler || 'anon', p.id].join('|');
-  const sheet = sheet_(LABELS_SHEET, LABEL_HEADERS);
-  const finder = sheet.getRange('A:A').createTextFinder(key).matchEntireCell(true).findNext();
-  const row = [
+  return [
     key,safe_(b.dataset),safe_(b.campaign),safe_(a.code),safe_(a.id),safe_(b.labeler),Number(p.id),
     safe_(p.source),!!p.required,!!p.disagreement,safe_(p.stratum),safe_(p.mapcode),safe_(p.vegtype),safe_(p.efg),
     numberOrBlank_(p.cls2022),numberOrBlank_(p.cls2025),numberOrBlank_(p.lon),numberOrBlank_(p.lat),
@@ -90,8 +149,6 @@ function upsertLabel_(b, now) {
     b.action === 'clear' ? false : !!r.flagged,b.action === 'clear' ? '' : safe_(r.confidence),
     b.action === 'clear' ? '' : safe_((r.reasons || []).join('|')),safe_(r.ts),safe_(b.event_id),now
   ];
-  if (finder) sheet.getRange(finder.getRow(), 1, 1, row.length).setValues([row]);
-  else sheet.appendRow(row);
 }
 
 function safe_(value) {
