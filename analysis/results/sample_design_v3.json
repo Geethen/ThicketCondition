@@ -1,0 +1,648 @@
+{
+ "method": "stratified random; strata = vegetation type x {intact, moderate, severe, transformed}; transformed domain self-weighting, thicket domain greedy-minimax on the per-type worst-class interval",
+ "supersedes": "sample_design_vegtype2022.json",
+ "stratification_year": 2022,
+ "assessment_year": 2025,
+ "seed": 42,
+ "budget_new_labels_beyond_round2": 900,
+ "n_transformed_target": 300,
+ "cap_big": 220,
+ "cap_small": 90,
+ "small_ha": 6000.0,
+ "n_total": 2997,
+ "n_round1_labelled": 846,
+ "n_round2_retained": 721,
+ "n_round3_new_draws": 1430,
+ "n_round2_discarded": 531,
+ "n_unlabelled_to_do": 2151,
+ "area_ha": {
+  "AT15_intact": 1362.7027594973301,
+  "AT15_moderate": 86.14228158250978,
+  "AT15_severe": 10.706950253193307,
+  "AT15_transformed": 0.22580393181358688,
+  "AT17_intact": 37480.911113495036,
+  "AT17_moderate": 20855.13731217817,
+  "AT17_severe": 4448.123692457582,
+  "AT17_transformed": 10463.759062173978,
+  "AT18_intact": 55022.563215484915,
+  "AT18_moderate": 22769.30856709169,
+  "AT18_severe": 31391.077731911268,
+  "AT18_transformed": 9407.30496037627,
+  "AT19_intact": 35823.04145790366,
+  "AT19_moderate": 37583.65232193303,
+  "AT19_severe": 33164.15974487972,
+  "AT19_transformed": 752.5089759781873,
+  "AT21_intact": 24132.64898699235,
+  "AT21_moderate": 8203.040237307432,
+  "AT21_severe": 849.9225363615235,
+  "AT21_transformed": 4877.839152830624,
+  "AT22_intact": 4912.296217799959,
+  "AT22_moderate": 5479.652067516621,
+  "AT22_severe": 2118.607286916649,
+  "AT22_transformed": 8681.998207371395,
+  "AT27_intact": 13515.253632212758,
+  "AT27_moderate": 39429.822523336305,
+  "AT27_severe": 70510.77277233935,
+  "AT27_transformed": 532.1848067895215,
+  "AT28_intact": 38814.11427393166,
+  "AT28_moderate": 45409.07882313066,
+  "AT28_severe": 11575.536734792007,
+  "AT28_transformed": 6231.3953012659495,
+  "AT29_intact": 5439.972873102951,
+  "AT29_moderate": 19039.905055860327,
+  "AT29_severe": 53013.581797017694,
+  "AT29_transformed": 1019.1511911263067,
+  "AT30_intact": 21389.477511826528,
+  "AT30_moderate": 22243.25917721456,
+  "AT30_severe": 19547.1065496734,
+  "AT30_transformed": 3569.632511385507,
+  "AT31_intact": 13535.444324334334,
+  "AT31_moderate": 8541.941139437564,
+  "AT31_severe": 1099.8552031042727,
+  "AT31_transformed": 851.9199324396425,
+  "AT32_intact": 81313.69137331308,
+  "AT32_moderate": 155854.7473037377,
+  "AT32_severe": 112274.31054080321,
+  "AT32_transformed": 9544.80220146215,
+  "AT33_intact": 10197.32588251377,
+  "AT33_moderate": 9197.266591784926,
+  "AT33_severe": 29280.42447937233,
+  "AT33_transformed": 395.48799203987585,
+  "AT34_intact": 1619.4464667263824,
+  "AT34_moderate": 4333.415373033354,
+  "AT34_severe": 10370.041685209972,
+  "AT34_transformed": 401.177206617259,
+  "AT37_intact": 4045.5173176775097,
+  "AT37_moderate": 2520.3514002415927,
+  "AT37_severe": 5529.462534642185,
+  "AT37_transformed": 5381.062396594038,
+  "AT49_intact": 43199.46027226257,
+  "AT49_moderate": 102551.39643989889,
+  "AT49_severe": 410584.15941339335,
+  "AT49_transformed": 5964.223931919081,
+  "AT50_intact": 33055.42705026097,
+  "AT50_moderate": 15786.517286670936,
+  "AT50_severe": 4177.651525862919,
+  "AT50_transformed": 4280.928911198602,
+  "AT51_intact": 92427.80906092576,
+  "AT51_moderate": 22928.154728358917,
+  "AT51_severe": 57930.40194669767,
+  "AT51_transformed": 22617.648263155228
+ },
+ "area_total_ha": 2012949.0463549206,
+ "confusion_prior": {
+  "intact": {
+   "intact": 0.658008658008658,
+   "moderate": 0.24675324675324675,
+   "severe": 0.025974025974025976,
+   "transformed": 0.012987012987012988,
+   "nothicket": 0.05627705627705628
+  },
+  "moderate": {
+   "intact": 0.11406844106463879,
+   "moderate": 0.44866920152091255,
+   "severe": 0.2965779467680608,
+   "transformed": 0.034220532319391636,
+   "nothicket": 0.10646387832699619
+  },
+  "severe": {
+   "intact": 0.01557632398753894,
+   "moderate": 0.11214953271028037,
+   "severe": 0.6978193146417445,
+   "transformed": 0.03426791277258567,
+   "nothicket": 0.14018691588785046
+  },
+  "transformed": {
+   "intact": 0.02,
+   "moderate": 0.03,
+   "severe": 0.08,
+   "transformed": 0.85,
+   "nothicket": 0.02
+  }
+ },
+ "confusion_note": "intact/moderate/severe rows are the Round 1 majority-vote confusion (nothicket and unsure counted as errors); the transformed row is a prior (UA 0.85) -- no point has ever been drawn in that stratum.",
+ "per_type": {
+  "AT15": {
+   "area_ha": 1459.7777952648469,
+   "efg": "AridThicket",
+   "n_total": 88,
+   "n_by_stratum": {
+    "intact": 80,
+    "moderate": 4,
+    "severe": 4,
+    "transformed": 0
+   },
+   "share_pct": {
+    "intact": 62.11,
+    "moderate": 25.76,
+    "severe": 4.69,
+    "transformed": 1.44
+   },
+   "ci95_pp": {
+    "intact": 9.88,
+    "moderate": 9.28,
+    "severe": 4.2,
+    "transformed": 2.55
+   },
+   "ci95_relative_pct": {
+    "intact": 16,
+    "moderate": 36,
+    "severe": 90,
+    "transformed": 177
+   }
+  },
+  "AT17": {
+   "area_ha": 73247.93118030476,
+   "efg": "MesicThicket",
+   "n_total": 171,
+   "n_by_stratum": {
+    "intact": 78,
+    "moderate": 52,
+    "severe": 8,
+    "transformed": 33
+   },
+   "share_pct": {
+    "intact": 37.3,
+    "moderate": 26.51,
+    "severe": 15.15,
+    "transformed": 13.99
+   },
+   "ci95_pp": {
+    "intact": 5.98,
+    "moderate": 6.42,
+    "severe": 4.61,
+    "transformed": 2.69
+   },
+   "ci95_relative_pct": {
+    "intact": 16,
+    "moderate": 24,
+    "severe": 30,
+    "transformed": 19
+   }
+  },
+  "AT18": {
+   "area_ha": 118590.25447486414,
+   "efg": "ValleyThicket",
+   "n_total": 167,
+   "n_by_stratum": {
+    "intact": 73,
+    "moderate": 36,
+    "severe": 28,
+    "transformed": 30
+   },
+   "share_pct": {
+    "intact": 33.29,
+    "moderate": 23.27,
+    "severe": 26.01,
+    "transformed": 8.91
+   },
+   "ci95_pp": {
+    "intact": 5.58,
+    "moderate": 6.37,
+    "severe": 5.65,
+    "transformed": 2.64
+   },
+   "ci95_relative_pct": {
+    "intact": 17,
+    "moderate": 27,
+    "severe": 22,
+    "transformed": 30
+   }
+  },
+  "AT19": {
+   "area_ha": 107323.36250069458,
+   "efg": "ValleyThicket",
+   "n_total": 166,
+   "n_by_stratum": {
+    "intact": 57,
+    "moderate": 65,
+    "severe": 39,
+    "transformed": 5
+   },
+   "share_pct": {
+    "intact": 26.45,
+    "moderate": 27.43,
+    "severe": 32.87,
+    "transformed": 3.29
+   },
+   "ci95_pp": {
+    "intact": 5.07,
+    "moderate": 6.42,
+    "severe": 6.07,
+    "transformed": 2.55
+   },
+   "ci95_relative_pct": {
+    "intact": 19,
+    "moderate": 23,
+    "severe": 18,
+    "transformed": 78
+   }
+  },
+  "AT21": {
+   "area_ha": 38063.45091349193,
+   "efg": "MesicThicket",
+   "n_total": 160,
+   "n_by_stratum": {
+    "intact": 101,
+    "moderate": 40,
+    "severe": 4,
+    "transformed": 15
+   },
+   "share_pct": {
+    "intact": 44.47,
+    "moderate": 25.95,
+    "severe": 10.62,
+    "transformed": 12.53
+   },
+   "ci95_pp": {
+    "intact": 6.31,
+    "moderate": 6.41,
+    "severe": 4.16,
+    "transformed": 2.99
+   },
+   "ci95_relative_pct": {
+    "intact": 14,
+    "moderate": 25,
+    "severe": 39,
+    "transformed": 24
+   }
+  },
+  "AT22": {
+   "area_ha": 21192.553779604623,
+   "efg": "ValleyThicket",
+   "n_total": 107,
+   "n_by_stratum": {
+    "intact": 28,
+    "moderate": 40,
+    "severe": 12,
+    "transformed": 27
+   },
+   "share_pct": {
+    "intact": 19.18,
+    "moderate": 19.67,
+    "severe": 18.52,
+    "transformed": 36.35
+   },
+   "ci95_pp": {
+    "intact": 5.31,
+    "moderate": 6.3,
+    "severe": 6.29,
+    "transformed": 5.88
+   },
+   "ci95_relative_pct": {
+    "intact": 28,
+    "moderate": 32,
+    "severe": 34,
+    "transformed": 16
+   }
+  },
+  "AT27": {
+   "area_ha": 123988.03373467793,
+   "efg": "AridThicket",
+   "n_total": 171,
+   "n_by_stratum": {
+    "intact": 9,
+    "moderate": 55,
+    "severe": 102,
+    "transformed": 5
+   },
+   "share_pct": {
+    "intact": 11.69,
+    "moderate": 23.35,
+    "severe": 49.43,
+    "transformed": 3.54
+   },
+   "ci95_pp": {
+    "intact": 4.52,
+    "moderate": 6.25,
+    "severe": 6.46,
+    "transformed": 2.65
+   },
+   "ci95_relative_pct": {
+    "intact": 39,
+    "moderate": 27,
+    "severe": 13,
+    "transformed": 75
+   }
+  },
+  "AT28": {
+   "area_ha": 102030.12513312028,
+   "efg": "MesicThicket",
+   "n_total": 186,
+   "n_by_stratum": {
+    "intact": 64,
+    "moderate": 86,
+    "severe": 16,
+    "transformed": 20
+   },
+   "share_pct": {
+    "intact": 30.41,
+    "moderate": 30.81,
+    "severe": 22.59,
+    "transformed": 7.6
+   },
+   "ci95_pp": {
+    "intact": 5.39,
+    "moderate": 6.43,
+    "severe": 5.26,
+    "transformed": 2.44
+   },
+   "ci95_relative_pct": {
+    "intact": 18,
+    "moderate": 21,
+    "severe": 23,
+    "transformed": 32
+   }
+  },
+  "AT29": {
+   "area_ha": 78512.61091710727,
+   "efg": "ValleyThicket",
+   "n_total": 178,
+   "n_by_stratum": {
+    "intact": 6,
+    "moderate": 45,
+    "severe": 122,
+    "transformed": 5
+   },
+   "share_pct": {
+    "intact": 8.4,
+    "moderate": 20.2,
+    "severe": 54.59,
+    "transformed": 4.34
+   },
+   "ci95_pp": {
+    "intact": 3.77,
+    "moderate": 5.7,
+    "severe": 6.45,
+    "transformed": 2.64
+   },
+   "ci95_relative_pct": {
+    "intact": 45,
+    "moderate": 28,
+    "severe": 12,
+    "transformed": 61
+   }
+  },
+  "AT30": {
+   "area_ha": 66749.4757501,
+   "efg": "AridThicket",
+   "n_total": 158,
+   "n_by_stratum": {
+    "intact": 50,
+    "moderate": 61,
+    "severe": 36,
+    "transformed": 11
+   },
+   "share_pct": {
+    "intact": 25.45,
+    "moderate": 26.3,
+    "severe": 31.58,
+    "transformed": 7.11
+   },
+   "ci95_pp": {
+    "intact": 5.14,
+    "moderate": 6.43,
+    "severe": 6.05,
+    "transformed": 2.76
+   },
+   "ci95_relative_pct": {
+    "intact": 20,
+    "moderate": 24,
+    "severe": 19,
+    "transformed": 39
+   }
+  },
+  "AT31": {
+   "area_ha": 24029.160599315812,
+   "efg": "MesicThicket",
+   "n_total": 181,
+   "n_by_stratum": {
+    "intact": 96,
+    "moderate": 72,
+    "severe": 8,
+    "transformed": 5
+   },
+   "share_pct": {
+    "intact": 41.26,
+    "moderate": 30.47,
+    "severe": 15.48,
+    "transformed": 5.12
+   },
+   "ci95_pp": {
+    "intact": 5.98,
+    "moderate": 6.45,
+    "severe": 4.48,
+    "transformed": 2.33
+   },
+   "ci95_relative_pct": {
+    "intact": 14,
+    "moderate": 21,
+    "severe": 29,
+    "transformed": 45
+   }
+  },
+  "AT32": {
+   "area_ha": 358987.55141931615,
+   "efg": "ValleyThicket",
+   "n_total": 200,
+   "n_by_stratum": {
+    "intact": 44,
+    "moderate": 82,
+    "severe": 44,
+    "transformed": 30
+   },
+   "share_pct": {
+    "intact": 20.4,
+    "moderate": 28.66,
+    "severe": 35.5,
+    "transformed": 5.11
+   },
+   "ci95_pp": {
+    "intact": 4.51,
+    "moderate": 6.22,
+    "severe": 6.13,
+    "transformed": 2.54
+   },
+   "ci95_relative_pct": {
+    "intact": 22,
+    "moderate": 22,
+    "severe": 17,
+    "transformed": 50
+   }
+  },
+  "AT33": {
+   "area_ha": 49070.504945710905,
+   "efg": "AridThicket",
+   "n_total": 154,
+   "n_by_stratum": {
+    "intact": 18,
+    "moderate": 37,
+    "severe": 94,
+    "transformed": 5
+   },
+   "share_pct": {
+    "intact": 16.76,
+    "moderate": 20.25,
+    "severe": 47.8,
+    "transformed": 3.64
+   },
+   "ci95_pp": {
+    "intact": 5.16,
+    "moderate": 6.38,
+    "severe": 6.38,
+    "transformed": 2.7
+   },
+   "ci95_relative_pct": {
+    "intact": 31,
+    "moderate": 31,
+    "severe": 13,
+    "transformed": 74
+   }
+  },
+  "AT34": {
+   "area_ha": 16724.080731586968,
+   "efg": "ValleyThicket",
+   "n_total": 170,
+   "n_by_stratum": {
+    "intact": 8,
+    "moderate": 45,
+    "severe": 112,
+    "transformed": 5
+   },
+   "share_pct": {
+    "intact": 10.34,
+    "moderate": 21.04,
+    "severe": 51.4,
+    "transformed": 5.18
+   },
+   "ci95_pp": {
+    "intact": 4.25,
+    "moderate": 5.98,
+    "severe": 6.42,
+    "transformed": 2.72
+   },
+   "ci95_relative_pct": {
+    "intact": 41,
+    "moderate": 28,
+    "severe": 12,
+    "transformed": 53
+   }
+  },
+  "AT37": {
+   "area_ha": 17476.393649155325,
+   "efg": "ValleyThicket",
+   "n_total": 113,
+   "n_by_stratum": {
+    "intact": 20,
+    "moderate": 28,
+    "severe": 48,
+    "transformed": 17
+   },
+   "share_pct": {
+    "intact": 17.99,
+    "moderate": 16.65,
+    "severe": 29.42,
+    "transformed": 28.05
+   },
+   "ci95_pp": {
+    "intact": 5.61,
+    "moderate": 6.36,
+    "severe": 6.42,
+    "transformed": 5.68
+   },
+   "ci95_relative_pct": {
+    "intact": 31,
+    "moderate": 38,
+    "severe": 22,
+    "transformed": 20
+   }
+  },
+  "AT49": {
+   "area_ha": 562299.2400574739,
+   "efg": "AridThicket",
+   "n_total": 245,
+   "n_by_stratum": {
+    "intact": 16,
+    "moderate": 40,
+    "severe": 170,
+    "transformed": 19
+   },
+   "share_pct": {
+    "intact": 8.29,
+    "moderate": 18.3,
+    "severe": 56.65,
+    "transformed": 4.13
+   },
+   "ci95_pp": {
+    "intact": 2.88,
+    "moderate": 4.75,
+    "severe": 5.7,
+    "transformed": 2.29
+   },
+   "ci95_relative_pct": {
+    "intact": 35,
+    "moderate": 26,
+    "severe": 10,
+    "transformed": 56
+   }
+  },
+  "AT50": {
+   "area_ha": 57300.52477399343,
+   "efg": "MesicThicket",
+   "n_total": 173,
+   "n_by_stratum": {
+    "intact": 97,
+    "moderate": 54,
+    "severe": 8,
+    "transformed": 14
+   },
+   "share_pct": {
+    "intact": 41.36,
+    "moderate": 27.64,
+    "severe": 15.35,
+    "transformed": 8.29
+   },
+   "ci95_pp": {
+    "intact": 5.98,
+    "moderate": 6.39,
+    "severe": 4.59,
+    "transformed": 2.5
+   },
+   "ci95_relative_pct": {
+    "intact": 14,
+    "moderate": 23,
+    "severe": 30,
+    "transformed": 30
+   }
+  },
+  "AT51": {
+   "area_ha": 195904.01399913756,
+   "efg": "ValleyThicket",
+   "n_total": 188,
+   "n_by_stratum": {
+    "intact": 66,
+    "moderate": 21,
+    "severe": 30,
+    "transformed": 71
+   },
+   "share_pct": {
+    "intact": 33.07,
+    "moderate": 20.56,
+    "severe": 26.26,
+    "transformed": 11.84
+   },
+   "ci95_pp": {
+    "intact": 5.79,
+    "moderate": 6.45,
+    "severe": 5.71,
+    "transformed": 2.67
+   },
+   "ci95_relative_pct": {
+    "intact": 18,
+    "moderate": 31,
+    "severe": 22,
+    "transformed": 23
+   }
+  }
+ }
+}

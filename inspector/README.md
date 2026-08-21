@@ -7,9 +7,22 @@ shared as a link and run entirely in the browser.
 
 ## What it does
 
-- Shows the combined **2,098-point analysis draw** from
-  `analysis/results/sample_points_vegtype2022.csv`. The **1,252 new points** are
-  required Round 2 work; the original 846 remain available to the coordinator.
+- Shows the combined **4,197-point analysis draw** from
+  `analysis/results/sample_points_v4.csv`. The **3,351 unlabelled points** are the
+  required work (2,151 dealt in Round 3, 1,200 added in the Round 4 top-up); the
+  original 846 Round 1 points remain available to the coordinator.
+- The draw grows by **append only**, and `dataset_lineage.json` pins the campaign
+  fingerprint so it survives that growth. See *Extending a live campaign* in
+  [MULTI_LABELLER_OPTIONS.md](MULTI_LABELLER_OPTIONS.md) before adding points or
+  labellers to a campaign people are already working through.
+- **Deploys reach open tabs on their own.** `build.py` stamps `sw.js` with a hash
+  of the built page, so every deploy ships a byte-different service worker;
+  `app.js` polls for it (every 10 min, on tab focus, and on reconnect) and
+  reloads once the replacement takes over. An idle or hidden tab reloads
+  silently; a tab in active use is offered a **Reload** button instead of being
+  interrupted. Nothing is lost either way — labels and review state are written
+  as they happen, notes save 350 ms after typing stops, and the current point
+  travels in `location.hash`.
 - A dedicated **Round 1 disagreements** queue exposes the 34 points with at least
   one determinate pairwise conflict across ARP, SVM, AP, and MP. Selecting one
   shows each prior label without pre-filling a new decision. Exploration labels

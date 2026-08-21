@@ -24,6 +24,10 @@ selects your point list, so do not remove or change the `?assignment=...` part.
    does not support a defensible decision; do not guess.
 4. Your progress is saved automatically in this browser. Prefer to continue on
    the same device and browser.
+5. The app keeps itself up to date. If you see **"A newer version of the app is
+   ready"**, press **Reload** when you reach a natural break — your work is
+   already saved and you will come back to the same point. If you leave the tab
+   open and idle, it updates on its own. You should never need to hard-refresh.
 
 Your required progress covers only the new Round 3 samples. The **disagreed**
 counter and **Explore disagreements** button open optional Round 1 points where

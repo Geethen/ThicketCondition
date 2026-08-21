@@ -57,10 +57,29 @@ const base = `http://localhost:${server.address().port}/`;
 
 // Nudge the update check, then let install -> activate settle. Without this the
 // lifecycle can still be mid-install when we sample, which looks like a failure.
+// The app reloads itself once it spots a new build, so any evaluate here can
+// race a navigation it just triggered. Losing the execution context that way is
+// the feature working, not a failure -- retry once the page has settled.
+async function settle(page, fn, arg) {
+  for (let i = 0; i < 3; i++) {
+    try { return await page.evaluate(fn, arg); }
+    catch (e) {
+      if (!/Execution context was destroyed|navigation/i.test(String(e))) throw e;
+      await page.waitForTimeout(700);
+    }
+  }
+  return undefined;
+}
+
 async function reloadAndSettle(page) {
-  await page.reload({ waitUntil: 'load' });
+  // The app's own reload can abort ours; either way the page ends up loaded.
+  try { await page.reload({ waitUntil: 'load' }); }
+  catch (e) {
+    if (!/ERR_ABORTED|detached|navigation/i.test(String(e))) throw e;
+    await page.waitForLoadState('load').catch(() => {});
+  }
   await page.waitForTimeout(1200);
-  await page.evaluate(async () => {
+  await settle(page, async () => {
     const reg = await navigator.serviceWorker.getRegistration();
     if (reg) { try { await reg.update(); } catch { /* offline; fine */ } }
   });
@@ -94,7 +113,7 @@ async function redeployReaches(label, swAfterRedeploy, expectReached) {
   let reloads = -1;
   for (let i = 1; i <= 6; i++) {
     await reloadAndSettle(page);
-    if (await page.evaluate(m => document.body.innerHTML.includes(m), MARKER)) { reloads = i; break; }
+    if (await settle(page, m => document.body.innerHTML.includes(m), MARKER)) { reloads = i; break; }
   }
   await browser.close();
 
@@ -126,7 +145,7 @@ await redeployReaches('current worker', swNew, true);
   await page.keyboard.press('2');
   await page.waitForTimeout(400);
 
-  const readStore = () => page.evaluate(() => {
+  const readStore = () => settle(page, () => {
     const key = Object.keys(localStorage).find(k => k.startsWith('thicket-inspector-labels-'));
     return { key, labels: localStorage.getItem(key), name: localStorage.getItem('thicket-inspector-name') };
   });
@@ -138,7 +157,7 @@ await redeployReaches('current worker', swNew, true);
   for (let i = 0; i < 3; i++) await reloadAndSettle(page);
 
   const after = await readStore();
-  const cacheKeys = await page.evaluate(() => caches.keys());
+  const cacheKeys = await settle(page, () => caches.keys());
 
   check('labeller keeps labels, name and storage key across the upgrade',
         before.labels === after.labels && before.key === after.key && before.name === after.name
@@ -167,6 +186,74 @@ await redeployReaches('current worker', swNew, true);
 
   check('app still opens offline after the upgrade', offlineOK && ms < 15000, `${ms} ms`);
   check('labels still readable offline', offlineLabels === before.labels);
+}
+
+// ---------------------------------------------------------------------------
+// 3. An OPEN tab must pick a redeploy up on its own. Labellers leave the app
+//    open for days; before this they kept labelling an older point set until
+//    somebody told them to hard-reload.
+// ---------------------------------------------------------------------------
+{
+  const swNewer = swNew.replace(/thicket-inspector-shell-[^']*/, 'thicket-inspector-shell-next');
+
+  // 3a. idle tab: reload itself, no prompt, no manual reload from the test.
+  const browser = await chromium.launch();
+  const page = await (await browser.newContext()).newPage();
+  serving = 'old'; swSource = swNew;
+  await page.goto(base + '?assignment=AP', { waitUntil: 'load' });
+  await page.waitForFunction(() => navigator.serviceWorker.controller !== null, { timeout: 15000 })
+    .catch(() => {});
+  await page.reload({ waitUntil: 'load' });   // now controlled by the old worker
+  await page.waitForTimeout(800);
+
+  serving = 'new'; swSource = swNewer;        // the deploy happens
+  await page.evaluate(() => { lastInteraction = Date.now() - 60000; }); // an idle tab
+  await page.evaluate(() => window.checkForUpdate());
+  let picked = false;
+  for (let i = 0; i < 20 && !picked; i++) {
+    await page.waitForTimeout(500);
+    picked = await settle(page, m => document.body.innerHTML.includes(m), MARKER)
+      .catch(() => false) || false;
+  }
+  check('an open, idle tab picks up a redeploy with no manual reload', picked);
+  await browser.close();
+
+  // 3b. tab in active use: offer the reload rather than yanking the page away.
+  const browser2 = await chromium.launch();
+  const page2 = await (await browser2.newContext()).newPage();
+  serving = 'old'; swSource = swNew;
+  await page2.goto(base + '?assignment=AP', { waitUntil: 'load' });
+  await page2.waitForFunction(() => navigator.serviceWorker.controller !== null, { timeout: 15000 })
+    .catch(() => {});
+  await page2.reload({ waitUntil: 'load' });
+  await page2.waitForTimeout(800);
+  // Get past the intro: an unstarted session is always safe to reload outright,
+  // so the "offer instead of interrupt" path only exists once work has begun.
+  await page2.fill('#labelerName', 'FIELDTEST');
+  await page2.click('#startBtn');
+  await page2.waitForTimeout(400);
+
+  serving = 'new'; swSource = swNewer;
+  await page2.evaluate(() => { lastInteraction = Date.now(); });  // mid-judgement
+  await page2.evaluate(() => window.checkForUpdate());
+  await page2.waitForTimeout(3000);
+  const state = await settle(page2, m => ({
+    reloaded: document.body.innerHTML.includes(m),
+    offered: document.querySelector('#toast')?.textContent.includes('newer version') || false,
+  }), MARKER);
+  check('a tab in active use is offered the update instead of interrupted',
+        !state.reloaded && state.offered, JSON.stringify(state));
+
+  // and taking the offer applies it
+  await page2.click('#toast button');
+  let applied = false;
+  for (let i = 0; i < 20 && !applied; i++) {
+    await page2.waitForTimeout(500);
+    applied = await settle(page2, m => document.body.innerHTML.includes(m), MARKER)
+      .catch(() => false) || false;
+  }
+  check('taking the offer applies the update', applied);
+  await browser2.close();
 }
 
 server.close();

@@ -21,6 +21,9 @@ venv/
 *sa*.json
 gee_service_account*.json
 ee-service-account*.json
+# ...but `*sa*.json` also swallows the sampling design records, which are the
+# written record of how each round's sample was allocated and must be tracked.
+!analysis/results/sample_design_*.json
 
 # OS/editor noise
 Thumbs.db

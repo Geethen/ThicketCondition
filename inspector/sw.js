@@ -8,14 +8,16 @@
 //
 // build.py rewrites the version below with the dataset id on every build, so a
 // rebuilt draw also drops every stale entry from the previous one.
-const CACHE = 'thicket-inspector-shell-6bda2aff9e69194f';
+const CACHE = 'thicket-inspector-shell-f2ab99bf7ce24e95';
 const SHELL = ['./', './index.html', './manifest.webmanifest',
   'https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css',
   'https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js'];
 
+// cache:'reload' because Pages serves index.html with max-age=600: a plain
+// c.add() can install the very build this worker was shipped to replace.
 self.addEventListener('install', e => e.waitUntil(
   caches.open(CACHE)
-    .then(c => Promise.allSettled(SHELL.map(u => c.add(u))))
+    .then(c => Promise.allSettled(SHELL.map(u => c.add(new Request(u, {cache: 'reload'})))))
     .then(() => self.skipWaiting())));
 
 // Labellers work in the field. Never drop a working offline copy for an empty

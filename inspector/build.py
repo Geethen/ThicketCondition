@@ -2,7 +2,7 @@
 """Assemble the single-file deployable inspector.
 
 Reads the template (thicket_inspector.html), the app logic (app.js), and the
-Round 3 sample points (../analysis/results/sample_points_v3.csv), and writes a fully
+sample points (../analysis/results/sample_points_v4.csv), and writes a fully
 self-contained index.html: points embedded, app.js inlined. No build tooling,
 no server -- drop index.html on any static host (GitHub Pages, Netlify).
 
@@ -13,11 +13,12 @@ import argparse, csv, hashlib, itertools, json, os, re
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
-CSV = os.path.join(ROOT, 'analysis', 'results', 'sample_points_v3.csv')
+CSV = os.path.join(ROOT, 'analysis', 'results', 'sample_points_v4.csv')
 TPL = os.path.join(HERE, 'thicket_inspector.html')
 APP = os.path.join(HERE, 'app.js')
 OUT = os.path.join(HERE, 'index.html')
 ASSIGNMENTS = os.path.join(HERE, 'assignment_manifest.json')
+LINEAGE = os.path.join(HERE, 'dataset_lineage.json')
 SYNC_CONFIG = os.path.join(HERE, 'sync_config.json')
 SW = os.path.join(HERE, 'sw.js')
 AREA_ESTIMATION = os.path.join(ROOT, 'analysis', 'results', 'area_estimation_vegtype2022.json')
@@ -72,6 +73,47 @@ def dataset_id(pts):
     for p in pts:
         h.update(f"{p['id']}|{p['lon']:.6f}|{p['lat']:.6f}|{p['s']}\n".encode())
     return h.hexdigest()[:16]
+
+
+def campaign_dataset_id(pts, path=LINEAGE):
+    """The fingerprint the CAMPAIGN is keyed by, which may outlive one draw.
+
+    The id keys three things that must survive a mid-campaign top-up: every
+    labeller's browser storage (app.js STORAGE_SCOPE), their assignment ids
+    (create_assignments.digest), and the Google Sheet upsert key. Minting a new
+    one because the draw grew would strand every assignment already in flight --
+    labels still in localStorage under a key nothing reads, and their own
+    exports refused by the import guard.
+
+    Reusing it is only sound while the draw grows by APPEND. So prove that
+    first: the baseline draw must still fingerprint as the pinned id, and every
+    one of its points must still be here with the same id, coordinates and
+    stratum. Anything else is a re-draw and must not inherit the identity.
+    """
+    if not path or not os.path.exists(path):
+        return dataset_id(pts)
+    with open(path, encoding='utf-8') as fh:
+        lineage = json.load(fh)
+    pinned = lineage['dataset']
+    baseline_csv = os.path.join(ROOT, *lineage['baseline_csv'].split('/'))
+    baseline = load_points(baseline_csv)
+    actual = dataset_id(baseline)
+    if actual != pinned:
+        raise ValueError(
+            f'{lineage["baseline_csv"]} fingerprints as {actual}, not the pinned '
+            f'{pinned}. The baseline draw has been edited; the deployed campaign '
+            f'no longer matches it and the id must not be reused.')
+    here = {p['id']: p for p in pts}
+    for b in baseline:
+        p = here.get(b['id'])
+        if p is None:
+            raise ValueError(f'point {b["id"]} of the pinned draw is missing from '
+                             f'the current draw: this is a re-draw, not a top-up')
+        if (p['lon'], p['lat'], p['s']) != (b['lon'], b['lat'], b['s']):
+            raise ValueError(f'point {b["id"]} moved ({b["lon"]},{b["lat"]},{b["s"]}'
+                             f' -> {p["lon"]},{p["lat"]},{p["s"]}): this is a '
+                             f're-draw, not a top-up')
+    return pinned
 
 
 def _load_label_rows(path):
@@ -220,16 +262,30 @@ def load_assignments(path, ds_id, pts):
 SW_CACHE_RE = re.compile(r"(const CACHE = 'thicket-inspector-shell-)[^']*(')")
 
 
-def stamp_service_worker(ds_id, path=SW):
+def build_id(html):
+    """Fingerprint of the shipped page: changes on ANY build change.
+
+    The draw fingerprint only moves when points move, so an app-only fix leaves
+    it untouched. The service worker is what tells an open tab that a new
+    version exists, so it has to turn over on every build, not just on a
+    re-draw."""
+    return hashlib.sha256(html.encode('utf-8')).hexdigest()[:16]
+
+
+def stamp_service_worker(bid, path=SW):
     """Point the shell cache at this build.
 
     The service worker keeps an offline copy of the app, so its cache name must
     change whenever the build does -- otherwise `activate` never purges and
     returning visitors keep an older index.html indefinitely. Rewriting in place
     is idempotent: the previous id is replaced, not appended.
+
+    Changing sw.js is also how an already-open tab learns a deploy happened:
+    app.js polls the registration, and a byte-different worker installs, claims
+    the page and triggers a reload.
     """
     sw = open(path, encoding='utf-8').read()
-    stamped, n = SW_CACHE_RE.subn(lambda m: m.group(1) + ds_id + m.group(2), sw)
+    stamped, n = SW_CACHE_RE.subn(lambda m: m.group(1) + bid + m.group(2), sw)
     assert n == 1, f'expected exactly one CACHE constant in {path}, found {n}'
     if stamped != sw:
         with open(path, 'w', encoding='utf-8') as fh:
@@ -249,8 +305,13 @@ def main(argv=None):
     args = parser.parse_args(argv)
     pts = load_points()
     pts_js = ',\n'.join(json.dumps(p, separators=(',', ':')) for p in pts)
-    ds_id = dataset_id(pts)
+    draw_id = dataset_id(pts)
+    ds_id = campaign_dataset_id(pts)
     assignments = load_assignments(args.assignments, ds_id, pts)
+    # Provenance: which exact draw this build shipped. Inert in the app (it reads
+    # only `campaign` and `labelers`), but it keeps the draw recoverable once the
+    # campaign id stops tracking it.
+    assignments['draw'] = draw_id
     disagreements = load_disagreements(DISAGREEMENT_FILES, pts)
     sync_config = load_sync_config(args.sync_config)
     area_estimation = load_area_estimation(args.area_estimates)
@@ -271,12 +332,14 @@ def main(argv=None):
 
     with open(args.out, 'w', encoding='utf-8') as fh:
         fh.write(tpl)
-    stamp_service_worker(ds_id)
+    bid = build_id(tpl)
+    stamp_service_worker(bid)
     n_new = sum(p['src'] == 'new' for p in pts)
-    print(f'wrote {args.out}  ({len(pts)} points, {n_new} Round 3, '
-          f'{len(disagreements)} disagreements, dataset {ds_id}, '
+    print(f'wrote {args.out}  ({len(pts)} points, {n_new} unlabelled, '
+          f'{len(disagreements)} disagreements, dataset {ds_id}'
+          f'{"" if draw_id == ds_id else f" (pinned; this draw is {draw_id})"}, '
           f'{len(assignments.get("labelers", {}))} assignments, {len(tpl)//1024} KB)')
-    print(f'stamped {SW} shell cache -> thicket-inspector-shell-{ds_id}')
+    print(f'stamped {SW} shell cache -> thicket-inspector-shell-{bid}')
 
 
 if __name__ == '__main__':

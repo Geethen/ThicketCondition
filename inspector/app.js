@@ -1270,6 +1270,67 @@ function parseCSV(txt){
 }
 
 // ------------------------------------------------------------------ UI persistence
+// ------------------------------------------------------ staying up to date
+// Labellers keep a tab open for days, so before this a redeploy went unnoticed
+// until someone told them to hard-reload -- and until they did, they were
+// labelling an older point set. build.py stamps sw.js with a hash of the built
+// page, so every deploy ships a byte-different worker: poll for it, and reload
+// once the replacement claims the page.
+//
+// Reloading costs a labeller nothing. Labels and review drafts are written to
+// localStorage as they happen, notes save 350 ms after typing stops, and the
+// current point is in location.hash -- so a reload lands back on the same
+// point. Even so, do not yank the page out from under someone mid-judgement:
+// reload straight away only when the tab is hidden or they have been idle, and
+// otherwise offer it and wait.
+let updatePending = false, updateReloading = false, lastInteraction = Date.now();
+const IDLE_BEFORE_RELOAD = 45000;
+
+function applyUpdate(){
+  if(updateReloading) return;
+  updateReloading = true;
+  location.reload();
+}
+function maybeApplyUpdate(){
+  if(!updatePending || updateReloading) return;
+  // Still on the intro screen means no work is in progress, and the toast would
+  // sit behind the overlay where nobody can reach it.
+  const notStarted = !$('#intro').classList.contains('hidden');
+  if(notStarted || document.hidden || Date.now()-lastInteraction > IDLE_BEFORE_RELOAD){
+    applyUpdate(); return;
+  }
+  toast('A newer version of the app is ready','Reload',applyUpdate,12000);
+}
+async function checkForUpdate(){
+  try{
+    const reg = await navigator.serviceWorker.getRegistration();
+    if(reg) await reg.update();
+  }catch(e){}
+}
+function watchForUpdates(){
+  if(!('serviceWorker' in navigator) || !location.protocol.startsWith('http')) return;
+  // A page that loaded without a controller gets one as soon as registration
+  // completes. That first claim is not an update, and reloading on it would
+  // bounce every first-time visitor.
+  const hadController = !!navigator.serviceWorker.controller;
+  navigator.serviceWorker.addEventListener('controllerchange', ()=>{
+    if(!hadController) return;
+    updatePending = true; maybeApplyUpdate();
+  });
+  // updateViaCache:'none' because Pages serves sw.js with max-age=600, and an
+  // update check that reads its own ten-minute-old copy never sees the deploy.
+  navigator.serviceWorker.register('./sw.js',{updateViaCache:'none'}).catch(()=>{});
+  ['pointerdown','keydown'].forEach(t => document.addEventListener(
+    t, ()=>{ lastInteraction = Date.now(); }, {capture:true, passive:true}));
+  document.addEventListener('visibilitychange', ()=>{
+    if(document.hidden) return;
+    checkForUpdate(); maybeApplyUpdate();
+  });
+  window.addEventListener('online', checkForUpdate);
+  setInterval(checkForUpdate, 10*60*1000);
+  setInterval(maybeApplyUpdate, 30*1000);
+}
+
 function saveUI(){ localStorage.setItem(KEY_UI, JSON.stringify({
   src:activeSource, blind:blindMode, autoAdvance, filter:pointFilter,
   panelCollapsed:document.body.classList.contains('panel-collapsed')
@@ -1411,6 +1472,9 @@ function boot(){
   // expose for tooling / debugging (harmless in production)
   window.POINTS=POINTS;
   window.REQUIRED_POINTS=REQUIRED_POINTS;window.DISAGREEMENT_MANIFEST=DISAGREEMENT_MANIFEST;
+  // Exposed so the update path is testable without waiting out the poll, and so
+  // a coordinator can force the check from the console during support.
+  window.checkForUpdate=checkForUpdate;
   window.ASSIGNMENT=ASSIGNMENT_RECORD?{campaign:CAMPAIGN,code:ASSIGNMENT_CODE,id:ASSIGNMENT_ID,assigned:REQUIRED_POINTS.length}:null;
   Object.defineProperty(window,'labels',{get:()=>labels});
   $('#labelerName').value = labeler;
@@ -1430,7 +1494,7 @@ function boot(){
   // restore hash target after map ready
   const m=location.hash.match(/p=(\d+)/);
   if(m){ const tid=+m[1]; map && map.on('load',()=>gotoId(tid)); }
-  if('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('./sw.js').catch(()=>{});
+  watchForUpdates();
   window.addEventListener('online',()=>{setSourceHealth('Network restored',false);flushSheetSync();});
   window.addEventListener('offline',()=>setSourceHealth('Offline: saved labels remain available; uncached imagery may not load.',true));
   setInterval(()=>{ if(Object.keys(labels).length && (!lastBackup || Date.now()-Date.parse(lastBackup)>30*60*1000)) toast('Backup reminder: download your latest work',null,null,5000); },15*60*1000);

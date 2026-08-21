@@ -5,6 +5,11 @@
  * 1. Create the destination Google Sheet, then Extensions -> Apps Script.
  * 2. Paste this file into Code.gs and set EXPECTED_DATASET below after running
  *    `py -3 inspector/build.py` (the dataset id is printed by the build).
+ *    This must equal the id in inspector/dataset_lineage.json, which is pinned
+ *    for the life of the campaign: a mismatch is not a warning, it is a silent
+ *    outage -- every POST is rejected with "Wrong dataset" while the app goes on
+ *    reporting that labels save locally, which they do. Round 3 shipped with
+ *    this constant still holding the Round 2 id.
  * 3. Deploy -> New deployment -> Web app; execute as yourself and grant the
  *    campaign labellers access. Copy the /exec URL into sync_config.json.
  *
@@ -13,7 +18,7 @@
  * guardrail, not authentication; choose the narrowest deployment access that
  * works for the campaign.
  */
-const EXPECTED_DATASET = 'd085313296f1b27e';
+const EXPECTED_DATASET = '6bda2aff9e69194f';
 const LABELS_SHEET = 'Labels';
 const EVENTS_SHEET = 'Events';
 

@@ -1,0 +1,6 @@
+{
+  "dataset": "6bda2aff9e69194f",
+  "established_by": "thicket-2026-r3",
+  "baseline_csv": "analysis/results/sample_points_v3.csv",
+  "note": "The campaign's dataset fingerprint. It keys every labeller's browser storage, their assignment ids and the Google Sheet upsert key, so it must survive a mid-campaign top-up: minting a new one strands four in-flight assignments. build.py reuses it ONLY after proving the current draw still contains every baseline point with the same id, coordinates and stratum. Delete this file to let the fingerprint float again (a fresh campaign); never edit the id by hand."
+}

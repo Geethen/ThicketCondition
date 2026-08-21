@@ -14,7 +14,7 @@ import re
 from collections import Counter
 from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 
-from build import ASSIGNMENTS, CSV, dataset_id, load_points
+from build import ASSIGNMENTS, CSV, campaign_dataset_id, dataset_id, load_points
 
 
 CODE_RE = re.compile(r'^[A-Za-z0-9_-]+$')
@@ -137,7 +137,7 @@ def main(argv=None):
         raise ValueError(f'no sample points have source {args.source!r}')
     manifest = create_manifest(points, args.labelers, args.campaign,
                                args.seed or args.campaign, args.overlap,
-                               ds_id=dataset_id(all_points),
+                               ds_id=campaign_dataset_id(all_points),
                                scope={} if args.source.lower() == 'all'
                                else {'source': args.source})
     os.makedirs(os.path.dirname(os.path.abspath(args.output)), exist_ok=True)

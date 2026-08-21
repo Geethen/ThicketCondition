@@ -159,8 +159,8 @@ const cSevere = await page.evaluate(() => Object.values(window.labels).filter(r 
 console.log('after key "3" on next point: severe =', cSevere);
 
 const progressOK = await page.evaluate(() =>
-  document.querySelector('#c_remaining').textContent === '2149'
-  && document.querySelector('#progressText').textContent === '2 of 2151 Round 3 labeled'
+  document.querySelector('#c_remaining').textContent === '3349'
+  && document.querySelector('#progressText').textContent === '2 of 3351 Round 3 labeled'
   && document.querySelector('#progressPct').textContent === '0.1%');
 console.log('expanded progress:', progressOK);
 
@@ -258,7 +258,7 @@ const tileOK = await page.evaluate(() => {
 console.log('basemap tile requests:', tileOK);
 
 console.log('JS errors:', errors.length ? errors : 'none');
-const pass = nPts === 2997 && scope.required === 2151 && scope.disagreements > 0
+const pass = nPts === 4197 && scope.required === 3351 && scope.disagreements > 0
   && cModerate === '1' && cSevere === '1'
   && areaLandscapeOK && areaEfgOK && areaVegtypeOK && areaCiOK && areaScenarioOK
   && simplifiedUiOK && blindOK && preFlagOK && reviewFilterOK && draftOK && flagMergedOK && autoAdvancedTo === String(scope.second)
