@@ -28,6 +28,12 @@ ratios of these areas with variances by the delta method:
 
     Cov(A(i,i), A(i,.)) = sum_g A_g^2 * p_gii (1 - p_gi.) / (n_g - 1)
 
+F1 is the same kind of ratio, F1_j = 2 A(j,j) / (A(j,.) + A(.,j)) -- the harmonic
+mean of UA and PA, equivalently the Dice coefficient of the mapped and reference
+extents of class j -- and gets a delta-method CI the same way. Its denominator
+scores the diagonal cell twice, so the variance uses the general per-point-score
+form (`_terms_w`) rather than the 0/1 indicator form.
+
 Validity of pooling the old and new points
 ------------------------------------------
 The 54 strata nest exactly inside the 3 severity strata the original 846 were
@@ -174,6 +180,44 @@ def _cov(counts, n, areas, pick_a, pick_b):
     return cov
 
 
+def _terms_w(counts, n, areas, w):
+    """sum_g A_g * mean_g(w) and its variance, for a per-point SCORE w(cell).
+
+    `_terms`/`_cov` above assume the picked quantity is a 0/1 indicator, so the
+    within-stratum variance is p(1-p). F1 needs a score that takes the value 2 on
+    the diagonal cell, where that no longer holds. This is the general form,
+        V = A_g^2 * (E[w^2] - E[w]^2) / (n_g - 1),
+    which reduces to `_terms` exactly when w is an indicator."""
+    est = 0.0
+    var = 0.0
+    for g, A in areas.items():
+        ng = n.get(g, 0)
+        if ng == 0:
+            continue
+        cells = counts[g]
+        m1 = sum(w(cell) * c for cell, c in cells.items()) / ng
+        m2 = sum(w(cell) ** 2 * c for cell, c in cells.items()) / ng
+        est += A * m1
+        if ng >= MIN_N_VAR:
+            var += A * A * (m2 - m1 * m1) / (ng - 1)
+    return est, var
+
+
+def _cov_w(counts, n, areas, wa, wb):
+    """Cov of two per-point-score area estimators (general form of `_cov`)."""
+    cov = 0.0
+    for g, A in areas.items():
+        ng = n.get(g, 0)
+        if ng < MIN_N_VAR:
+            continue
+        cells = counts[g]
+        ma = sum(wa(cell) * c for cell, c in cells.items()) / ng
+        mb = sum(wb(cell) * c for cell, c in cells.items()) / ng
+        mab = sum(wa(cell) * wb(cell) * c for cell, c in cells.items()) / ng
+        cov += A * A * (mab - ma * mb) / (ng - 1)
+    return cov
+
+
 def ratio_se(x, vx, y, vy, cxy):
     """Delta-method SE of R = x / y."""
     if y <= 0:
@@ -181,6 +225,16 @@ def ratio_se(x, vx, y, vy, cxy):
     r = x / y
     v = (vx - 2 * r * cxy + r * r * vy) / (y * y)
     return math.sqrt(max(v, 0.0))
+
+
+def logit_ci(p, se):
+    """95% CI for a bounded ratio, built on the logit scale and back-transformed,
+    so it cannot leave [0,1] the way the symmetric Wald interval can."""
+    if not (0 < p < 1) or not math.isfinite(se) or se <= 0:
+        return [float('nan'), float('nan')]
+    l = math.log(p / (1 - p))
+    sl = se / (p * (1 - p))
+    return [1 / (1 + math.exp(-(l - Z * sl))), 1 / (1 + math.exp(-(l + Z * sl)))]
 
 
 # ------------------------------------------------------------------ scenario --
@@ -243,6 +297,26 @@ def run_scenario(rows, pts, areas, mode):
         se = ratio_se(x, vx, y, vy, cxy)
         producers[j] = dict(value=pa, se=se, moe95=Z * se)
 
+    # ---- F1 = harmonic mean of UA and PA, as an area ratio -----------------
+    # 2*A(j,j) / (A(j,.) + A(.,j)) -- the Dice coefficient of the mapped and
+    # reference extents of class j. Numerator and denominator share the diagonal
+    # cell (UA and PA are positively correlated through it), so the delta method
+    # needs the covariance; combining the separate UA and PA intervals by hand
+    # would give the wrong width. Unlike scripts 14/17/23, A(j,.) is estimated
+    # here too, because the stratum is not the mapped class.
+    f1 = {}
+    for j in map_classes:
+        w_num = lambda cell, j=j: 2.0 if cell == (j, j) else 0.0
+        w_den = lambda cell, j=j: (1.0 if cell[0] == j else 0.0) + (1.0 if cell[1] == j else 0.0)
+        x, vx = _terms_w(counts, n, covered, w_num)
+        y, vy = _terms_w(counts, n, covered, w_den)
+        cxy = _cov_w(counts, n, covered, w_num, w_den)
+        value = x / y if y > 0 else float('nan')
+        se = ratio_se(x, vx, y, vy, cxy)
+        f1[j] = dict(value=value, se=se, moe95=Z * se,
+                     ci95=[value - Z * se, value + Z * se],
+                     ci95_logit=logit_ci(value, se))
+
     xd, vd = _terms(counts, n, covered,
                     lambda c: sum(cc for (mi, rj), cc in c.items() if mi == rj))
     oa = xd / A_cov if A_cov else float('nan')
@@ -294,7 +368,7 @@ def run_scenario(rows, pts, areas, mode):
         strata_without_variance=sum(1 for g in areas if n.get(g, 0) < MIN_N_VAR),
         error_matrix_area_ha=matrix, error_matrix_se_ha=matrix_se,
         reference_area=ref_area, map_class_area=map_area,
-        users_accuracy=users, producers_accuracy=producers,
+        users_accuracy=users, producers_accuracy=producers, f1=f1,
         overall_accuracy=dict(value=oa, se=oa_se, moe95=Z * oa_se),
         by_vegtype=composition(lambda g: veg_of.get(g, '?')),
         by_efg=composition(lambda g: efg_of.get(g, '?')),
@@ -362,11 +436,13 @@ def main():
         print(f'{"+/-95%":<12}' + ''.join(
             f'{sc["reference_area"][c]["moe95_ha"]:>14,.0f}' for c in refs))
         print()
-        print(f'{"class":<12}{"users_acc":>18}{"producers_acc":>20}')
+        print(f'{"class":<12}{"users_acc":>18}{"producers_acc":>20}{"F1":>20}')
         for c in sc['map_classes']:
             u, p = sc['users_accuracy'][c], sc['producers_accuracy'][c]
+            f = sc['f1'][c]
             print(f'{c:<12}{u["value"]:>10.3f} +/-{u["moe95"]:<6.3f}'
-                  f'{p["value"]:>12.3f} +/-{p["moe95"]:<6.3f}')
+                  f'{p["value"]:>12.3f} +/-{p["moe95"]:<6.3f}'
+                  f'{f["value"]:>12.3f} +/-{f["moe95"]:<6.3f}')
         o = sc['overall_accuracy']
         print(f'{"OVERALL":<12}{o["value"]:>10.3f} +/-{o["moe95"]:<6.3f}')
         print()

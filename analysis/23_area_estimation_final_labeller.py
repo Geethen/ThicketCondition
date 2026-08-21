@@ -387,7 +387,7 @@ def efg_area_estimates(efg_result, adjudicate="ARP", scenario="B_nothicket_to_se
 
 
 def map_accuracy_summary(reports):
-    """Extract Olofsson OA, UA, and PA with their design-based uncertainty."""
+    """Extract Olofsson OA, UA, PA, and F1 with their design-based uncertainty."""
     out = {}
     for adjudicate, arm in reports.items():
         out[adjudicate] = {}
@@ -419,6 +419,16 @@ def map_accuracy_summary(reports):
                         "ci95": [value["P"] - Z * value["se"], value["P"] + Z * value["se"]],
                     }
                     for cls, value in olofsson["producers_accuracy"].items()
+                },
+                "f1": {
+                    cls: {
+                        "F1": value["F1"],
+                        "se": value["se"],
+                        "moe95": Z * value["se"],
+                        "ci95": value["ci95"],
+                        "ci95_logit": value["ci95_logit"],
+                    }
+                    for cls, value in olofsson["f1"].items()
                 },
             }
     return out
@@ -1084,7 +1094,10 @@ def build_html(result):
             "</details>",
             "<h2>4. Olofsson map-accuracy assessment</h2>",
             "<p class='muted'>The accuracy chart above compares all sensitivity choices. OA is overall "
-            "accuracy; UA is mapped-class reliability; PA is reference-class completeness.</p>",
+            "accuracy; UA is mapped-class reliability; PA is reference-class completeness; F1 is their "
+            "harmonic mean, estimated as 2·(agreement area) / (mapped area + reference area) so its "
+            "interval accounts for UA and PA sharing the diagonal cell. The logit interval is the one "
+            "to quote when a bound would otherwise fall outside 0–100%.</p>",
             "<details class='audit'><summary>Show exact Olofsson accuracy tables</summary>",
             "<div class='scroll'><table><caption>Overall accuracy across sensitivity arms</caption>"
             "<tr><th>adjudication</th><th>scenario</th><th>n</th><th>OA</th><th>OA SE</th><th>OA ±95%</th></tr>",
@@ -1104,15 +1117,20 @@ def build_html(result):
         [
             "</table></div>",
             "<div class='scroll'><table><caption>Primary ARP-preferred, nothicket-to-severe class accuracies</caption>"
-            "<tr><th>class</th><th>UA</th><th>UA ±95%</th><th>PA</th><th>PA ±95%</th></tr>",
+            "<tr><th>class</th><th>UA</th><th>UA ±95%</th><th>PA</th><th>PA ±95%</th>"
+            "<th>F1</th><th>F1 ±95%</th><th>F1 95% CI (logit)</th></tr>",
         ]
     )
     for cls in STRATA:
         ua = primary_accuracy["users_accuracy"][cls]
         pa = primary_accuracy["producers_accuracy"][cls]
+        f1 = primary_accuracy["f1"][cls]
+        lo, hi = f1["ci95_logit"]
         parts.append(
             f"<tr><td>{cls}</td><td>{pct(100 * ua['U'])}</td><td>{pct(100 * ua['moe95'])}</td>"
-            f"<td>{pct(100 * pa['P'])}</td><td>{pct(100 * pa['moe95'])}</td></tr>"
+            f"<td>{pct(100 * pa['P'])}</td><td>{pct(100 * pa['moe95'])}</td>"
+            f"<td>{pct(100 * f1['F1'])}</td><td>{pct(100 * f1['moe95'])}</td>"
+            f"<td>{pct(100 * lo)}–{pct(100 * hi)}</td></tr>"
         )
     parts.extend(
         [

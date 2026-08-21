@@ -78,6 +78,19 @@ def remap(rows, nothicket_mode):
     return out, ref_classes
 
 
+def logit_ci(p, se):
+    """95% CI for a bounded ratio, built on the logit scale and back-transformed.
+
+    The symmetric Wald interval can run outside [0,1] when the estimate sits near
+    a boundary or n_h is small; the logit interval cannot. SE is mapped through
+    the delta method: se(logit p) = se(p) / (p(1-p))."""
+    if not (0 < p < 1) or not np.isfinite(se) or se <= 0:
+        return [float("nan"), float("nan")]
+    l = np.log(p / (1 - p))
+    sl = se / (p * (1 - p))
+    return [float(1/(1+np.exp(-(l - Z*sl)))), float(1/(1+np.exp(-(l + Z*sl))))]
+
+
 # ------------------------------------------------------- Olofsson 2014 estimator
 def olofsson(rows, W, area_total_ha, ref_classes):
     """Stratified estimator of area proportion per reference class (Olofsson 2014).
@@ -89,8 +102,8 @@ def olofsson(rows, W, area_total_ha, ref_classes):
     Reports area = p_hat * A_total, with 95% CI = +/- Z*SE.
 
     ref_classes may include 'nothicket' as a 4th class; the map strata are always
-    STRATA (intact/moderate/severe). Accuracy metrics (OA/UA/PA) are computed only
-    over the 3 map classes (diagonal defined only where ref==map class)."""
+    STRATA (intact/moderate/severe). Accuracy metrics (OA/UA/PA/F1) are computed
+    only over the 3 map classes (diagonal defined only where ref==map class)."""
     strata = STRATA
     n_h = {h: sum(1 for r in rows if r["stratum"] == h) for h in strata}
     # confusion counts n_hk : stratum h (map) x ref class k (k over ref_classes)
@@ -138,6 +151,33 @@ def olofsson(rows, W, area_total_ha, ref_classes):
         varPk = (1.0 / Nk[k]**2) * (term1 + Pk**2 * term2) if Nk[k] > 0 else float("nan")
         sePA[k] = np.sqrt(varPk)
 
+    # --- F1 per map class, in the same design-based currency as UA/PA ---
+    # In area-proportion form the harmonic mean of UA and PA collapses to a ratio
+    # of estimated proportions (this is exactly the Dice/Sorensen coefficient of
+    # the mapped and reference sets of class k):
+    #     F1_k = 2*UA_k*PA_k / (UA_k + PA_k) = 2*p_kk / (p_k. + p_.k)
+    # with p_kk = W_k * n_kk/n_k (agreement), p_k. = W_k (mapped area share, a
+    # KNOWN design constant with no sampling error) and p_.k = p_hat_k (estimated
+    # reference share).  Delta method on R = N/D with N = 2*p_kk, D = W_k + p_.k:
+    #     V(R) = [V(N) - 2R*Cov(N,D) + R^2*V(D)] / D^2
+    # Sampling is independent across strata and the h=k term of p_.k IS p_kk, so
+    # Cov(p_kk, p_.k) = V(p_kk) -- i.e. UA and PA share the diagonal cell and are
+    # positively correlated; combining their separate CIs by hand would be wrong.
+    F1, seF1 = {}, {}
+    for k in strata:
+        p_kk = W[k] * n_hk[k][k] / n_h[k]
+        v_kk = W[k]**2 * U[k] * (1 - U[k]) / (n_h[k] - 1)   # V(p_kk)
+        v_col = se_p[k]**2                                   # V(p_.k)
+        D = W[k] + p_hat[k]
+        if D > 0:
+            R = 2 * p_kk / D
+            varF = (4*v_kk - 4*R*v_kk + R*R*v_col) / (D*D)
+            F1[k] = R
+            seF1[k] = np.sqrt(max(varF, 0.0))
+        else:
+            F1[k] = float("nan")
+            seF1[k] = float("nan")
+
     A = area_total_ha
     out = {
         "ref_classes": ref_classes,
@@ -152,6 +192,9 @@ def olofsson(rows, W, area_total_ha, ref_classes):
         "overall_accuracy": {"OA": OA, "se": seOA, "ci95": [OA-Z*seOA, OA+Z*seOA]},
         "users_accuracy": {h: {"U": U[h], "se": seU[h]} for h in strata},
         "producers_accuracy": {k: {"P": PA[k], "se": sePA[k]} for k in strata},
+        "f1": {k: {"F1": F1[k], "se": seF1[k],
+                   "ci95": [F1[k]-Z*seF1[k], F1[k]+Z*seF1[k]],
+                   "ci95_logit": logit_ci(F1[k], seF1[k])} for k in strata},
         "area_total_ha": A,
     }
     return out
@@ -292,6 +335,12 @@ def run():
             o = sc["olofsson"]
             print(f"Overall accuracy: {o['overall_accuracy']['OA']:.3f} "
                   f"+/- {Z*o['overall_accuracy']['se']:.3f}")
+            print(f"{'class':>10} | {'UA':>16} | {'PA':>16} | {'F1':>16}")
+            for k in STRATA:
+                u, p, f = o["users_accuracy"][k], o["producers_accuracy"][k], o["f1"][k]
+                print(f"{k:>10} | {u['U']:>8.3f} +/-{Z*u['se']:<5.3f} | "
+                      f"{p['P']:>8.3f} +/-{Z*p['se']:<5.3f} | "
+                      f"{f['F1']:>8.3f} +/-{Z*f['se']:<5.3f}")
             print(f"{'class':>10} | {'Olofsson area (ha)':>26} | "
                   f"{'PPI++ area (ha)':>26} | {'stratified (ha)':>24}")
             for k in sc["ref_classes"]:
